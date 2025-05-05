@@ -1,14 +1,10 @@
 const fs = require('fs/promises');
 const path = require('path');
 const mysql = require('mysql2/promise');
+const { DB_OPTIONS } = require('./config');
 
 async function main() {
-    const connection = await mysql.createConnection({
-        host: '212.44.101.98',
-        user: 'tijand89_test',
-        password: 'tijand89_test',
-        database: 'tijand89_test',
-    });
+    const connection = await mysql.createConnection(DB_OPTIONS);
 
     const indexesDir = path.join(__dirname, 'data_indexes');
     const files = await fs.readdir(indexesDir);
