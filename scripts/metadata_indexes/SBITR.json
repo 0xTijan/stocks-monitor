@@ -1,0 +1,51 @@
+{
+  "symbol": "SBITR",
+  "composition": [
+    {
+      "isin": "SI0031103805",
+      "freeFloatFactor": "0.55",
+      "weight": "3.26 %"
+    },
+    {
+      "isin": "SI0031117813",
+      "freeFloatFactor": "0.17",
+      "weight": "0.41 %"
+    },
+    {
+      "isin": "SI0031102120",
+      "freeFloatFactor": "0.67",
+      "weight": "30.14 %"
+    },
+    {
+      "isin": "SI0031101346",
+      "freeFloatFactor": "0.38",
+      "weight": "5.63 %"
+    },
+    {
+      "isin": "SI0021117344",
+      "freeFloatFactor": "0.40",
+      "weight": "19.16 %"
+    },
+    {
+      "isin": "SI0031102153",
+      "freeFloatFactor": "0.60",
+      "weight": "20.38 %"
+    },
+    {
+      "isin": "SI0021110513",
+      "freeFloatFactor": "0.41",
+      "weight": "7.84 %"
+    },
+    {
+      "isin": "SI0031104290",
+      "freeFloatFactor": "0.32",
+      "weight": "4.28 %"
+    },
+    {
+      "isin": "SI0021111651",
+      "freeFloatFactor": "0.36",
+      "weight": "8.91 %"
+    }
+  ],
+  "id": "SI0028409892"
+}

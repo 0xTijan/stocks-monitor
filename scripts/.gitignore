@@ -1,3 +1,7 @@
 /node_modules
 /package-lock.json
 .env
+/data_stocks
+/data_indexes
+/metadata_stocks
+/metadata_indexes

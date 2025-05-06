@@ -21,8 +21,6 @@ async function main() {
         const contentMetadata = await fs.readFile(filePathMetadata, 'utf-8');
         const { name, logo, nace, sectorId, sectorName, firstDay, quantity, description, url } = JSON.parse(contentMetadata);
 
-
-
         try {
             await connection.beginTransaction();
 

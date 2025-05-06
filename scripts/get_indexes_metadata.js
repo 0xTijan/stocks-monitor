@@ -20,15 +20,36 @@ async function main() {
 
             // open this URL, and wait for the DOM to load
             await page.goto(url, { waitUntil: "domcontentloaded" });
-
+            
+            await page.waitForSelector('.tableComposition tbody', {
+                visible: true,
+            });
+            
             // get instrument page data { fullName, logo, quantity, sectorId, sectorName, firstDay, nace }
             const compositionData = await page.evaluate(() => {
                 // heading
                 const heading = document.querySelector(".stock-page-left");
                 const symbol = heading.querySelector(".stock-short").innerText;
 
-                // read table data (find tbody each row is a stock)
-                // get free float factor and weight and isin
+                // read table data - composition
+                const composition = [];
+                const table = document.querySelector(".tableComposition");
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 9) {
+                        const isin = cells[1].innerText.trim();
+                        const freeFloatFactor = cells[4].innerText.trim();
+                        const weight = cells[8].innerText.trim().replace(' ', '');
+                    
+                        composition.push({
+                            isin,
+                            freeFloatFactor,
+                            weight
+                        });
+                    }
+                });
+                
+                return { symbol, composition };
             });
 
             // save metadata to file

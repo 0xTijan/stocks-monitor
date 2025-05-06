@@ -18,7 +18,7 @@ function main() {
     runTask("get_indexes_metadata.js");
     runTask("node upload_stocks.js");
     runTask("node upload_indexes.js");
-    // runTask("node upload_index_members.js");
+    runTask("node upload_index_members.js");
 }
 
 main();
