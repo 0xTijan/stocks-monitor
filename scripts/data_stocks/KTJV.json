@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:29.14092+02:00",
+  "timestamp": "2025-05-06T18:52:44.969588+02:00",
   "mic": "XZAG",
   "symbol": "KTJV",
   "isin": "HRKTJVRA0002",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CTLL",
+      "open_price": "4.50",
+      "high_price": "4.50",
+      "low_price": "4.50",
+      "last_price": "4.50",
+      "vwap_price": "4.5000000000000",
+      "change_prev_close_percentage": "3.21",
+      "num_trades": 1,
+      "volume": "285.00000",
+      "turnover": "1282.50",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-02",
       "trading_model_id": "CTLL",

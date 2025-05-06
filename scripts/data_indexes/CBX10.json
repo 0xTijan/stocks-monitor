@@ -1,9 +1,18 @@
 {
-  "timestamp": "2025-05-05T17:56:29.835551+02:00",
+  "timestamp": "2025-05-06T18:52:46.20363+02:00",
   "mic": "XZAG",
   "symbol": "CBX10",
   "isin": "HRZB00ICBE11",
   "history": [
+    {
+      "date": "2025-05-06",
+      "open_value": "2082.92",
+      "high_value": "2087.74",
+      "low_value": "2073.55",
+      "last_value": "2084.58",
+      "change_prev_close_percentage": "0.07",
+      "turnover": "997835.54"
+    },
     {
       "date": "2025-05-05",
       "open_value": "2072.61",

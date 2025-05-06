@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:28.152458+02:00",
+  "timestamp": "2025-05-06T18:52:42.49395+02:00",
   "mic": "XZAG",
   "symbol": "ADRS2",
   "isin": "HRADRSPA0009",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "64.60",
+      "high_price": "64.60",
+      "low_price": "64.60",
+      "last_price": "64.60",
+      "vwap_price": "64.600000000000",
+      "change_prev_close_percentage": "0.31",
+      "num_trades": 6,
+      "volume": "197.00000",
+      "turnover": "12726.20",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

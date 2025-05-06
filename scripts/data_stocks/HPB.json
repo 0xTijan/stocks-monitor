@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:26.085368+02:00",
+  "timestamp": "2025-05-06T18:52:37.145275+02:00",
   "mic": "XZAG",
   "symbol": "HPB",
   "isin": "HRHPB0RA0002",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "272.00",
+      "high_price": "276.00",
+      "low_price": "272.00",
+      "last_price": "276.00",
+      "vwap_price": "272.02967359050",
+      "change_prev_close_percentage": "0.73",
+      "num_trades": 21,
+      "volume": "674.00000",
+      "turnover": "183348.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

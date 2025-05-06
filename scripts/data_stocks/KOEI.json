@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:26.229166+02:00",
+  "timestamp": "2025-05-06T18:52:37.496619+02:00",
   "mic": "XZAG",
   "symbol": "KOEI",
   "isin": "HRKOEIRA0009",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "487.00",
+      "high_price": "490.00",
+      "low_price": "482.00",
+      "last_price": "486.00",
+      "vwap_price": "485.73333333333",
+      "change_prev_close_percentage": "-0.82",
+      "num_trades": 29,
+      "volume": "345.00000",
+      "turnover": "167578.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

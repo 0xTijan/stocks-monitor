@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:24.049424+02:00",
+  "timestamp": "2025-05-06T18:52:32.629872+02:00",
   "mic": "XLJU",
   "symbol": "TLSG",
   "isin": "SI0031104290",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "88.00",
+      "high_price": "88.50",
+      "low_price": "88.00",
+      "last_price": "88.50",
+      "vwap_price": "88.344827586207",
+      "change_prev_close_percentage": "0.57",
+      "num_trades": 2,
+      "volume": "58.00000",
+      "turnover": "5124.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

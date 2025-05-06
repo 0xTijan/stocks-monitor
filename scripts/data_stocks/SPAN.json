@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:25.614932+02:00",
+  "timestamp": "2025-05-06T18:52:36.209528+02:00",
   "mic": "XZAG",
   "symbol": "SPAN",
   "isin": "HRSPANRA0007",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "51.80",
+      "high_price": "51.80",
+      "low_price": "51.00",
+      "last_price": "51.00",
+      "vwap_price": "51.159907834101",
+      "change_prev_close_percentage": "-1.92",
+      "num_trades": 9,
+      "volume": "434.00000",
+      "turnover": "22203.40",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

@@ -4,8 +4,18 @@ CREATE TABLE stocks (
     mic VARCHAR(10) NOT NULL,
     symbol VARCHAR(10) NOT NULL,
     name TEXT,
+    nace TEXT,
+    sector_id VARCHAR(10),
+    sector_name TEXT,
+    first_trading_date DATE,
+    quantity BIGINT,
+    description TEXT,
+    logo_url TEXT,
+    website_url TEXT,
     CONSTRAINT unique_stock UNIQUE (mic, symbol)
 );
+
+-- add stock financial data table (revenue, equity, assests, net profit, net liability, ROE, liability/equity, p/e, p/b, p/s, gross dividend, dividend yield, )
 
 -- Table: indexes
 CREATE TABLE indexes (
@@ -20,6 +30,7 @@ CREATE TABLE indexes (
 CREATE TABLE index_members (
     index_isin CHAR(12) NOT NULL,
     stock_isin CHAR(12) NOT NULL,
+    weight NUMERIC(6, 4),  -- e.g., 12.3456%, can go up to 9999.9999 if needed
     PRIMARY KEY (index_isin, stock_isin),
     FOREIGN KEY (index_isin) REFERENCES indexes(isin) ON DELETE CASCADE,
     FOREIGN KEY (stock_isin) REFERENCES stocks(isin) ON DELETE CASCADE

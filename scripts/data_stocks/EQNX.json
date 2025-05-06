@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:24.409865+02:00",
+  "timestamp": "2025-05-06T18:52:33.274231+02:00",
   "mic": "XLJU",
   "symbol": "EQNX",
   "isin": "SI0031117813",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "57.50",
+      "high_price": "57.50",
+      "low_price": "57.50",
+      "last_price": "57.50",
+      "vwap_price": "57.500000000000",
+      "change_prev_close_percentage": "0.00",
+      "num_trades": 1,
+      "volume": "100.00000",
+      "turnover": "5750.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

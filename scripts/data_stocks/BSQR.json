@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:25.953808+02:00",
+  "timestamp": "2025-05-06T18:52:36.901033+02:00",
   "mic": "XZAG",
   "symbol": "BSQR",
   "isin": "HRMRULRA0009",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "230.00",
+      "high_price": "230.00",
+      "low_price": "230.00",
+      "last_price": "230.00",
+      "vwap_price": "230.00000000000",
+      "change_prev_close_percentage": "0.88",
+      "num_trades": 2,
+      "volume": "20.00000",
+      "turnover": "4600.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

@@ -7,26 +7,57 @@ async function main() {
     const connection = await mysql.createConnection(DB_OPTIONS);
 
     const stocksDir = path.join(__dirname, 'data_stocks');
+    const metadataDir = path.join(__dirname, 'metadata_stocks');
     const files = await fs.readdir(stocksDir);
 
     for (const file of files) {
         if (!file.endsWith('.json')) continue;
 
-        const filePath = path.join(stocksDir, file);
-        const content = await fs.readFile(filePath, 'utf-8');
-        const data = JSON.parse(content);
+        const filePathHistory = path.join(stocksDir, file);
+        const contentHistory = await fs.readFile(filePathHistory, 'utf-8');
+        const { isin, mic, symbol, history } = JSON.parse(contentHistory);
 
-        const { isin, mic, symbol, name = null, history } = data;
+        const filePathMetadata = path.join(metadataDir, file);
+        const contentMetadata = await fs.readFile(filePathMetadata, 'utf-8');
+        const { name, logo, nace, sectorId, sectorName, firstDay, quantity, description, url } = JSON.parse(contentMetadata);
+
+
 
         try {
             await connection.beginTransaction();
 
             // Insert into stocks table
             await connection.execute(`
-                INSERT INTO stocks (isin, mic, symbol, name)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO stocks (
+                    isin,
+                    mic,
+                    symbol,
+                    name,
+                    nace,
+                    sector_id,
+                    sector_name,
+                    first_trading_date,
+                    quantity,
+                    description,
+                    logo_url,
+                    website_url
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE mic = VALUES(mic), symbol = VALUES(symbol), name = VALUES(name)
-            `, [isin, mic, symbol, name]);
+            `, [
+                isin,
+                mic,
+                symbol,
+                name,
+                nace,
+                sectorId,
+                sectorName,
+                firstDay,
+                quantity,
+                description,
+                logo,
+                url
+            ]);
 
             // Insert each daily price
             for (const record of history) {

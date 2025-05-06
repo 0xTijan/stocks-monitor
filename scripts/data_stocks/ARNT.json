@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:24.826403+02:00",
+  "timestamp": "2025-05-06T18:52:34.015411+02:00",
   "mic": "XZAG",
   "symbol": "ARNT",
   "isin": "HRARNTRA0004",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "35.40",
+      "high_price": "35.40",
+      "low_price": "35.40",
+      "last_price": "35.40",
+      "vwap_price": "35.400000000000",
+      "change_prev_close_percentage": "0.00",
+      "num_trades": 3,
+      "volume": "54.00000",
+      "turnover": "1911.60",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

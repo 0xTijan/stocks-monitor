@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:27.455991+02:00",
+  "timestamp": "2025-05-06T18:52:40.515354+02:00",
   "mic": "XZAG",
   "symbol": "JDGT",
   "isin": "HRJDGTRA0000",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "274.00",
+      "high_price": "274.00",
+      "low_price": "272.00",
+      "last_price": "272.00",
+      "vwap_price": "272.26086956522",
+      "change_prev_close_percentage": "-0.73",
+      "num_trades": 4,
+      "volume": "46.00000",
+      "turnover": "12524.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

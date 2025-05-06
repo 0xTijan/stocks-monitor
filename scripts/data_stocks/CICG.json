@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:23.162948+02:00",
+  "timestamp": "2025-05-06T18:52:30.756216+02:00",
   "mic": "XLJU",
   "symbol": "CICG",
   "isin": "SI0031103805",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "31.90",
+      "high_price": "31.90",
+      "low_price": "31.70",
+      "last_price": "31.70",
+      "vwap_price": "31.736038514443",
+      "change_prev_close_percentage": "-0.63",
+      "num_trades": 6,
+      "volume": "727.00000",
+      "turnover": "23072.10",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-05T17:56:28.626662+02:00",
+  "timestamp": "2025-05-06T18:52:43.728742+02:00",
   "mic": "XZAG",
   "symbol": "INGR",
   "isin": "HRINGRRA0001",
   "history": [
+    {
+      "date": "2025-05-06",
+      "trading_model_id": "CT",
+      "open_price": "2.08",
+      "high_price": "2.08",
+      "low_price": "2.06",
+      "last_price": "2.06",
+      "vwap_price": "2.0634482758621",
+      "change_prev_close_percentage": "-0.96",
+      "num_trades": 3,
+      "volume": "1450.00000",
+      "turnover": "2992.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",
