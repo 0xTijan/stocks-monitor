@@ -11,7 +11,7 @@ const getFormattedDate = () => {
     const dd = String(now.getDate()).padStart(2, '0');
     const mm = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
 
-    const formattedDate = `${yyyy}-${dd}-${mm}`;
+    const formattedDate = `${yyyy}-${mm}-${dd}`;
     return formattedDate;
 }
 
