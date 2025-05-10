@@ -1,9 +1,36 @@
 {
-  "timestamp": "2025-05-06T18:52:45.356148+02:00",
+  "timestamp": "2025-05-09T20:30:50.206191+02:00",
   "mic": "XLJU",
   "symbol": "SBITOP",
   "isin": "SI0026109882",
   "history": [
+    {
+      "date": "2025-05-09",
+      "open_value": "2038.67",
+      "high_value": "2049.49",
+      "low_value": "2038.67",
+      "last_value": "2040.59",
+      "change_prev_close_percentage": "0.19",
+      "turnover": "1877981.60"
+    },
+    {
+      "date": "2025-05-08",
+      "open_value": "2032.75",
+      "high_value": "2045.80",
+      "low_value": "2032.75",
+      "last_value": "2036.80",
+      "change_prev_close_percentage": "0.26",
+      "turnover": "1882767.80"
+    },
+    {
+      "date": "2025-05-07",
+      "open_value": "2020.07",
+      "high_value": "2031.55",
+      "low_value": "2020.07",
+      "last_value": "2031.43",
+      "change_prev_close_percentage": "0.56",
+      "turnover": "809825.90"
+    },
     {
       "date": "2025-05-06",
       "open_value": "2015.53",

@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-06T18:52:39.343942+02:00",
+  "timestamp": "2025-05-09T20:30:46.33017+02:00",
   "mic": "XZAG",
   "symbol": "LKPC",
   "isin": "HRLKPCRA0005",
   "history": [
+    {
+      "date": "2025-05-07",
+      "trading_model_id": "CT",
+      "open_price": "134.00",
+      "high_price": "134.00",
+      "low_price": "134.00",
+      "last_price": "134.00",
+      "vwap_price": "134.000000000000",
+      "change_prev_close_percentage": "1.52",
+      "num_trades": 1,
+      "volume": "4.00000",
+      "turnover": "536.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-04-30",
       "trading_model_id": "CT",

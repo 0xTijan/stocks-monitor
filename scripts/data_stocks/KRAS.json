@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-06T18:52:40.89663+02:00",
+  "timestamp": "2025-05-09T20:30:47.296938+02:00",
   "mic": "XZAG",
   "symbol": "KRAS",
   "isin": "HRKRASRA0008",
   "history": [
+    {
+      "date": "2025-05-07",
+      "trading_model_id": "CT",
+      "open_price": "90.00",
+      "high_price": "90.00",
+      "low_price": "90.00",
+      "last_price": "90.00",
+      "vwap_price": "90.000000000000",
+      "change_prev_close_percentage": "6.51",
+      "num_trades": 1,
+      "volume": "7.00000",
+      "turnover": "630.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-05",
       "trading_model_id": "CT",

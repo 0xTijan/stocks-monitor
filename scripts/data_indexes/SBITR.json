@@ -1,9 +1,36 @@
 {
-  "timestamp": "2025-05-06T18:52:45.546473+02:00",
+  "timestamp": "2025-05-09T20:30:50.347163+02:00",
   "mic": "XLJU",
   "symbol": "SBITR",
   "isin": "SI0028409892",
   "history": [
+    {
+      "date": "2025-05-09",
+      "open_value": "2924.33",
+      "high_value": "2939.85",
+      "low_value": "2924.33",
+      "last_value": "2927.08",
+      "change_prev_close_percentage": "0.19",
+      "turnover": "1877981.60"
+    },
+    {
+      "date": "2025-05-08",
+      "open_value": "2915.84",
+      "high_value": "2934.55",
+      "low_value": "2915.84",
+      "last_value": "2921.64",
+      "change_prev_close_percentage": "0.26",
+      "turnover": "1882767.80"
+    },
+    {
+      "date": "2025-05-07",
+      "open_value": "2897.64",
+      "high_value": "2914.12",
+      "low_value": "2897.64",
+      "last_value": "2913.94",
+      "change_prev_close_percentage": "0.56",
+      "turnover": "809825.90"
+    },
     {
       "date": "2025-05-06",
       "open_value": "2891.13",

@@ -1,9 +1,39 @@
 {
-  "timestamp": "2025-05-06T18:52:39.717345+02:00",
+  "timestamp": "2025-05-09T20:30:46.562371+02:00",
   "mic": "XZAG",
   "symbol": "VLEN",
   "isin": "HRVLENRB0001",
   "history": [
+    {
+      "date": "2025-05-09",
+      "trading_model_id": "CT",
+      "open_price": "3.84",
+      "high_price": "3.84",
+      "low_price": "3.76",
+      "last_price": "3.76",
+      "vwap_price": "3.7982608695652",
+      "change_prev_close_percentage": "2.17",
+      "num_trades": 2,
+      "volume": "575.00000",
+      "turnover": "2184.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
+    {
+      "date": "2025-05-07",
+      "trading_model_id": "CT",
+      "open_price": "3.88",
+      "high_price": "3.88",
+      "low_price": "3.68",
+      "last_price": "3.68",
+      "vwap_price": "3.7186960167715",
+      "change_prev_close_percentage": "-5.64",
+      "num_trades": 15,
+      "volume": "4770.00000",
+      "turnover": "17738.18",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-06",
       "trading_model_id": "CT",

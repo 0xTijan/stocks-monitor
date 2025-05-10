@@ -1,9 +1,36 @@
 {
-  "timestamp": "2025-05-06T18:52:46.620652+02:00",
+  "timestamp": "2025-05-09T20:30:52.187548+02:00",
   "mic": "XZAG",
   "symbol": "CBXPR",
   "isin": "HRZB00ICBPR4",
   "history": [
+    {
+      "date": "2025-05-09",
+      "open_value": "1875.66",
+      "high_value": "1883.60",
+      "low_value": "1874.30",
+      "last_value": "1881.82",
+      "change_prev_close_percentage": "0.40",
+      "turnover": "462284.12"
+    },
+    {
+      "date": "2025-05-08",
+      "open_value": "1865.99",
+      "high_value": "1875.89",
+      "low_value": "1864.69",
+      "last_value": "1874.30",
+      "change_prev_close_percentage": "0.45",
+      "turnover": "200308.74"
+    },
+    {
+      "date": "2025-05-07",
+      "open_value": "1851.28",
+      "high_value": "1865.99",
+      "low_value": "1847.39",
+      "last_value": "1865.99",
+      "change_prev_close_percentage": "0.87",
+      "turnover": "481868.90"
+    },
     {
       "date": "2025-05-06",
       "open_value": "1847.38",

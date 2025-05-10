@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-06T18:52:38.194556+02:00",
+  "timestamp": "2025-05-09T20:30:44.05199+02:00",
   "mic": "XZAG",
   "symbol": "MDKA",
   "isin": "HRMDKARA0000",
   "history": [
+    {
+      "date": "2025-05-08",
+      "trading_model_id": "CT",
+      "open_price": "5050.00",
+      "high_price": "5100.00",
+      "low_price": "5050.00",
+      "last_price": "5100.00",
+      "vwap_price": "5087.5000000000",
+      "change_prev_close_percentage": "-5.56",
+      "num_trades": 3,
+      "volume": "4.00000",
+      "turnover": "20350.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-06",
       "trading_model_id": "CT",

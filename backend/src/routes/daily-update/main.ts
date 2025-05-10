@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { getConnection } from "../config";
-import { sendErrorEmail, sendSuccessEmail } from './send_email';
 import { RowDataPacket } from 'mysql2';
+import { getConnection } from '../../config/db';
+import { sendErrorEmail, sendSuccessEmail } from '../../helpers/email';
 
 const getFormattedDate = (n: number) => {
   const now = new Date();
@@ -14,6 +14,7 @@ const getFormattedDate = (n: number) => {
 }
 
 export const updatePrices = async() => {
+    console.log('Starting daily update task...');
     try {
         const conn = await getConnection();
 
@@ -22,7 +23,7 @@ export const updatePrices = async() => {
             
         for (const stock of stockRows) {
             const DATE_TILL = getFormattedDate(0);
-            const DATE_FROM = getFormattedDate(1);
+            const DATE_FROM = getFormattedDate(0);
             const isin = stock.isin;
 
             const url = isin.startsWith('HR')
