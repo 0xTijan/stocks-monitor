@@ -1,23 +1,23 @@
 import { getConnection } from "../config/db";
 
-export const fetchAllStocks = async () => {
+export const fetchAllIndexes = async () => {
     const connection = await getConnection();
-    const [rows] = await connection.query('SELECT * FROM stocks');
+    const [rows] = await connection.query('SELECT * FROM indexes');
     await connection.end();
     return rows;
 };
 
-export const fetchAllStockIds = async () => {
+export const fetchAllIndexIds = async () => {
     const connection = await getConnection();
-    const [rows] = await connection.query('SELECT isin FROM stocks');
+    const [rows] = await connection.query('SELECT isin FROM indexes');
     await connection.end();
     return rows;
 };
 
-export const fetchStockPrices = async (stockId: string, from?: string, until?: string) => {
+export const fetchIndexPrices = async (indexId: string, from?: string, until?: string) => {
     const connection = await getConnection();
-    const params: any[] = [stockId];
-    let query = `SELECT * FROM daily_prices WHERE stock_isin = ?`;
+    const params: any[] = [indexId];
+    let query = `SELECT * FROM index_values WHERE index_isin = ?`;
 
     if (from) {
         query += ' AND date >= ?';
@@ -37,7 +37,7 @@ export const fetchStockPrices = async (stockId: string, from?: string, until?: s
 export const fetchAllPriceHistories = async (from?: string, until?: string) => {
     const connection = await getConnection();
     const params: any[] = [];
-    let query = `SELECT * FROM daily_prices WHERE 1=1`;
+    let query = `SELECT * FROM index_values WHERE 1=1`;
 
     if (from) {
         query += ' AND date >= ?';
@@ -48,17 +48,17 @@ export const fetchAllPriceHistories = async (from?: string, until?: string) => {
         params.push(until);
     }
 
-    query += ' ORDER BY stock_isin, date ASC';
+    query += ' ORDER BY index_isin, date ASC';
     const [rows] = await connection.query(query, params);
     await connection.end();
 
-    // Group rows by stock_isin
+    // Group rows by index_isin
     const grouped: Record<string, any[]> = {};
     for (const row of rows as any[]) {
-        if (!grouped[row.stock_isin]) {
-            grouped[row.stock_isin] = [];
+        if (!grouped[row.index_isin]) {
+            grouped[row.index_isin] = [];
         }
-        grouped[row.stock_isin].push(row);
+        grouped[row.index_isin].push(row);
     }
 
     return grouped;

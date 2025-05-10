@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import {
-  getAllStocks,
-  getAllStockIds,
-  getStockPriceHistory,
-  getAllPriceHistories
+    getAllStocks,
+    getAllStockIds,
+    getStockPriceHistory,
+    getAllPriceHistories
 } from '../../controllers/stocksController';
 
 const router = Router();
