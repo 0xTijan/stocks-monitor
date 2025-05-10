@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { RowDataPacket } from 'mysql2';
-import { getConnection } from '../../config/db';
-import { sendErrorEmail, sendSuccessEmail } from '../../helpers/email';
+import { getConnection } from '../config/db';
+import { sendErrorEmail, sendSuccessEmail } from '../helpers/email';
 
 const getFormattedDate = (n: number) => {
   const now = new Date();
