@@ -8,29 +8,38 @@ import {
   type CandlestickData,
   CandlestickSeries,
   CrosshairMode,
-  AreaSeries,
-  LineData,
-  LineStyle,
+  HistogramSeries,
 } from 'lightweight-charts';
-import { DailyPrice } from '@/types/types';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
 
+export interface Data {
+    low: number;
+    high: number;
+    open: number;
+    last: number;
+    volume: number;
+    date: string;
+}
 
-export default function CandlestickChart(props: { data: DailyPrice[]}) {
-    const { data } = props;
+
+
+export default function CandlestickChart(props: { data: Data[], index?: boolean}) {
+    const { data, index=false } = props;
 
     const formattedData: CandlestickData[] = data.map((price) => ({
         time: price.date.split("T")[0] as Time,
-        open: Number(price.open_price) || Number(price.low_price),
-        high: Number(price.high_price) || 0,
-        low: Number(price.low_price) || 0,
-        close: Number(price.last_price) || 0,
+        open: Number(price.open) || Number(price.low),
+        high: Number(price.high) || 0,
+        low: Number(price.low) || 0,
+        close: Number(price.last) || 0,
     }));
 
-    const lineData: LineData[] = data.map((price) => ({
+    const volumeData = data.map((price) => ({
         time: price.date.split("T")[0] as Time,
-        value: Number(price.last_price) || 0,
+        value: Number(price.volume) || 0,
+        color: Number(price.open) > Number(price.last) ? 'rgb(225, 50, 85)' : 'rgb(54, 116, 217)',
     }));
+
 
     const chartContainerRef = useRef<HTMLDivElement>(null);
 
@@ -70,6 +79,21 @@ export default function CandlestickChart(props: { data: DailyPrice[]}) {
             borderVisible: false,
         });
 
+        const volumeSeries = chart.addSeries(HistogramSeries, {
+            color: '#26a69a',
+            priceFormat: {
+                type: 'volume',
+            },
+            priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+            // set the positioning of the volume series
+        });
+        volumeSeries.priceScale().applyOptions({
+            scaleMargins: {
+                top: 0.7, // highest point of the series will be 70% away from the top
+                bottom: 0,
+            },
+        });
+
         /*const areaSeries = chart.addSeries(AreaSeries, {
             lastValueVisible: false, // hide the last value marker for this series
             crosshairMarkerVisible: false, // hide the crosshair marker for this series
@@ -91,11 +115,11 @@ export default function CandlestickChart(props: { data: DailyPrice[]}) {
                 mode: CrosshairMode.Normal,
         
                 vertLine: {
-                    width: 8, 
-                    color: '#C3BCDB44',
-                    style: LineStyle.Solid,
+                    //width: 8, 
+                    color: '#9B7DFF',
+                    //style: LineStyle.Solid,
                     labelBackgroundColor: '#9B7DFF',
-                },
+                    },
 
                 // Horizontal crosshair line (showing Price in Label)
                 horzLine: {
@@ -112,7 +136,9 @@ export default function CandlestickChart(props: { data: DailyPrice[]}) {
             autoScale: false,
         });
         chart.timeScale().scrollToRealTime();
-
+        if (!index) {
+            volumeSeries.setData(volumeData);
+        }
         // Cleanup on unmount
         return () => chart.remove();
     }, []);

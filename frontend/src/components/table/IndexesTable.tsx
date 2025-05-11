@@ -3,22 +3,20 @@
 import Link from "next/link";
 import { useState, useMemo } from "react";
 
-interface Stock {
+interface Index {
   isin: string;
   symbol: string;
-  name: string;
   country: string; // Assuming country is part of the stock data
-  logo_url?: string; // Optional logo URL
 }
 
 interface Props {
-  initialStocks: Stock[];
+  initialStocks: Index[];
 }
 
-type SortKey = "name" | "symbol" | "country";
+type SortKey = "isin" | "symbol" | "country";
 type SortDirection = "asc" | "desc";
 
-export default function StockTable({ initialStocks }: Props) {
+export default function IndexesTable({ initialStocks }: Props) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("country");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -47,7 +45,7 @@ export default function StockTable({ initialStocks }: Props) {
 
   const filteredAndSortedStocks = useMemo(() => {
     const filtered = initialStocks.filter((stock) =>
-      [stock.name, stock.symbol, stock.isin]
+      [stock.country, stock.symbol, stock.isin]
         .join(" ")
         .toLowerCase()
         .includes(search.toLowerCase())
@@ -88,7 +86,7 @@ export default function StockTable({ initialStocks }: Props) {
     <div className="space-y-4 max-w-7xl mx-auto px-4">
         <input
             type="text"
-            placeholder="Search stocks..."
+            placeholder="Search indexes..."
             className="w-full p-2 rounded bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -98,20 +96,18 @@ export default function StockTable({ initialStocks }: Props) {
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr className="text-left text-gray-400 bg-gray-950">
-              <th className="px-4 py-2">Logo</th>
-              <th
-                className="cursor-pointer px-4 py-2"
-                onClick={() => toggleSort("name")}
-              >
-                Name {sortKey === "name" && (sortDirection === "asc" ? "↑" : "↓")}
-              </th>
               <th
                 className="cursor-pointer px-4 py-2"
                 onClick={() => toggleSort("symbol")}
               >
                 Symbol {sortKey === "symbol" && (sortDirection === "asc" ? "↑" : "↓")}
               </th>
-              <th className="px-4 py-2">ISIN</th>
+              <th
+                className="cursor-pointer px-4 py-2"
+                onClick={() => toggleSort("isin")}
+              >
+                ISIN {sortKey === "isin" && (sortDirection === "asc" ? "↑" : "↓")}
+              </th>
               <th
                 className="cursor-pointer px-4 py-2"
                 onClick={() => toggleSort("country")}
@@ -128,20 +124,10 @@ export default function StockTable({ initialStocks }: Props) {
                 className="border-b border-gray-800 hover:bg-gray-900"
               >
                 <td className="px-4 py-2">
-                  {stock.logo_url && (
-                    <img
-                      src={stock.logo_url}
-                      alt={`${stock.name} logo`}
-                      className="h-6"
-                    />
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  <Link href={`/stocks/${stock.isin}`} className="text-white hover:underline">
-                    {stock.name}
+                  <Link href={`/indexes/${stock.isin}`} className="text-white hover:underline">
+                    {stock.symbol}
                   </Link>
                 </td>
-                <td className="px-4 py-2">{stock.symbol}</td>
                 <td className="px-4 py-2 text-gray-400">{stock.isin}</td>
                 <td className="px-4 py-2">{getCountryFlag(stock.isin)}</td>
               </tr>

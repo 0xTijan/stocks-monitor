@@ -1,8 +1,20 @@
+import { Data } from '@/components/chart/Chart';
 import ClientOnlyCandlestickChart from '@/components/chart/ClientChart';
 import { DailyPrice, Stock } from '@/types/types';
 import Link from 'next/link';
 
-export default async function StockDetailPage({ params }: { params: { isin: string } }) {
+function formatDate(date: Date) {
+    const d = date.getDate();
+    const m = date.getMonth() + 1; // Months are zero-indexed
+    const y = date.getFullYear();
+    return `${d}. ${m}. ${y}`;
+}  
+
+function formatNumber(num: number) {
+    return num.toLocaleString('fr-FR').replace(/\u00A0/g, ' ');
+}
+
+export default async function StockDetailPage({ params }: { params: Promise<{ isin: string }> }) {
     const { isin } = await params;
 
     const [stockRes, priceRes, watchlistRes] = await Promise.all([
@@ -22,6 +34,14 @@ export default async function StockDetailPage({ params }: { params: { isin: stri
         if (aLogo != null && bLogo != null) return aLogo.localeCompare(bLogo);
         return 0;
     });
+    const chartPrices: Data[] = prices.map((price) => ({
+        date: price.date,
+        volume: 0,
+        open: price.open_price || price.low_price || 0,
+        high: price.high_price || 0,
+        low: price.low_price || 0,
+        last: price.last_price || 0,
+    }));
 
     return (
         <div className="flex h-screen bg-black text-white overflow-hidden">
@@ -46,16 +66,16 @@ export default async function StockDetailPage({ params }: { params: { isin: stri
             <div className="flex flex-col w-8/12 bg-black p-4">
                 <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center">
-                        <img src={stock.logo_url} alt={stock.name} className="h-10 mr-6" />
+                        {stock.logo_url ? <img src={stock.logo_url} alt={stock.name} className="h-10 mr-6" /> : null}
                         <div>
-                            <h2 className="text-2xl font-semibold">{stock.name}</h2>
-                            <p className="text-sm text-gray-400">{stock.symbol}</p>
+                            <h2 className="text-2xl font-semibold">{stock.symbol}</h2>
+                            <p className="text-sm text-gray-400">{stock.name}</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex-grow mb-4">
-                    <ClientOnlyCandlestickChart data={prices.reverse()} />
+                    <ClientOnlyCandlestickChart data={chartPrices.reverse()} />
                 </div>
 
                 <div className="flex justify-between text-sm text-gray-400">
@@ -66,17 +86,18 @@ export default async function StockDetailPage({ params }: { params: { isin: stri
             {/* Stock Details (toggle visibility) */}
             <div id="stock-details" className="w-2/12 bg-black p-4 overflow-y-auto transition-all duration-300">
                 <div className="flex flex-col items-center">
-                    <img src={stock.logo_url} alt={stock.name} className="h-20 mb-4 mt-6" />
-                    <h3 className="text-xl font-semibold">{stock.name}</h3>
-                    <p className="text-sm text-gray-400">{stock.symbol}</p>
+                    {stock.logo_url ? <img src={stock.logo_url} alt={stock.name} className="h-20 mb-4 mt-6" /> : null}
+                    <h3 className="text-xl font-semibold">{stock.symbol}</h3>
+                    <p className="text-sm text-gray-400">{stock.name}</p>
                 </div>
 
                 <div className="text-sm space-y-2 mt-4">
                     <p className='text-4xl font-extrabold text-center'>{prices.at(-1)?.last_price}€</p>
-                    <p className='text-xl text-center mt-8'>{isin.startsWith("SI") ? "Slovenia" : "Croatia"}</p>
-                    <p>{stock.sector_name}</p>
-                    <p><strong>Since:</strong> {stock.first_trading_date || 'N/A'}</p>
-                    <p>{stock.description || 'N/A'}</p>
+                    <p className='text-lg text-center mt-8'>{isin.startsWith("SI") ? "Slovenia" : "Croatia"}</p>
+                    <p className='text-lg mt-2'><center><strong>{stock.sector_name}</strong></center></p>
+                    <p className='text-xl mt-2'>MC: {formatNumber(((stock.quantity || 0)*(prices.at(-1)?.last_price ||0)))} €</p>
+                    <p><strong>First Day:</strong> {formatDate(new Date(stock.first_trading_date || "")) || 'N/A'}</p>
+                    <p className='mt-4'>{stock.description || 'N/A'}</p>
                     {stock.website_url && (
                         <a href={stock.website_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                             Visit Website
