@@ -14,6 +14,13 @@ export const fetchAllIndexIds = async () => {
     return rows;
 };
 
+export const fetchIndexById = async (indexId: string) => {
+    const connection = await getConnection();
+    const [rows]: any = await connection.query('SELECT * FROM indexes WHERE isin = ?', [indexId]);
+    await connection.end();
+    return rows[0];
+}
+
 export const fetchIndexPrices = async (indexId: string, from?: string, until?: string) => {
     const connection = await getConnection();
     const params: any[] = [indexId];

@@ -14,6 +14,13 @@ export const fetchAllStockIds = async () => {
     return rows;
 };
 
+export const fetchStockById = async (stockId: string) => {
+    const connection = await getConnection();
+    const [rows]: any = await connection.query('SELECT * FROM stocks WHERE isin = ?', [stockId]);
+    await connection.end();
+    return rows[0];
+};
+
 export const fetchStockPrices = async (stockId: string, from?: string, until?: string) => {
     const connection = await getConnection();
     const params: any[] = [stockId];
