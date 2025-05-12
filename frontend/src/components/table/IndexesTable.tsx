@@ -7,19 +7,21 @@ interface Index {
   isin: string;
   symbol: string;
   country: string; // Assuming country is part of the stock data
+  last_value: number;
+  change_prev_close_percentage: number; // e.g., +1.23 or -0.45
 }
 
 interface Props {
   initialStocks: Index[];
 }
 
-type SortKey = "isin" | "symbol" | "country";
+type SortKey = "isin" | "symbol" | "country" | "last_value" | "change_prev_close_percentage";
 type SortDirection = "asc" | "desc";
 
 export default function IndexesTable({ initialStocks }: Props) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("country");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Function to determine the country flag based on ISIN
   const getCountryFlag = (isin: string) => {
@@ -62,7 +64,7 @@ export default function IndexesTable({ initialStocks }: Props) {
 
       if (typeof valA === "string") {
         valA = valA.toLowerCase();
-        valB = valB.toLowerCase();
+        valB = valB.toString().toLowerCase();
       }
 
       if (valA < valB) return sortDirection === "asc" ? -1 : 1;
@@ -81,6 +83,9 @@ export default function IndexesTable({ initialStocks }: Props) {
       setSortDirection("asc");
     }
   };
+  
+  const formatCurrency = (value: number) =>
+    `€${value.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto px-4">
@@ -102,17 +107,23 @@ export default function IndexesTable({ initialStocks }: Props) {
               >
                 Symbol {sortKey === "symbol" && (sortDirection === "asc" ? "↑" : "↓")}
               </th>
-              <th
-                className="cursor-pointer px-4 py-2"
-                onClick={() => toggleSort("isin")}
-              >
-                ISIN {sortKey === "isin" && (sortDirection === "asc" ? "↑" : "↓")}
+              <th className="cursor-pointer px-4 py-2" onClick={() => toggleSort("last_value")}>
+                Price {sortKey === "last_value" && (sortDirection === "asc" ? "↑" : "↓")}
+              </th>
+              <th className="cursor-pointer px-4 py-2" onClick={() => toggleSort("change_prev_close_percentage")}>
+                Change {sortKey === "change_prev_close_percentage" && (sortDirection === "asc" ? "↑" : "↓")}
               </th>
               <th
                 className="cursor-pointer px-4 py-2"
                 onClick={() => toggleSort("country")}
               >
                 Country {sortKey === "country" && (sortDirection === "asc" ? "↑" : "↓")}
+              </th>
+              <th
+                className="cursor-pointer px-4 py-2"
+                onClick={() => toggleSort("isin")}
+              >
+                ISIN {sortKey === "isin" && (sortDirection === "asc" ? "↑" : "↓")}
               </th>
             </tr>
           </thead>
@@ -128,8 +139,21 @@ export default function IndexesTable({ initialStocks }: Props) {
                     {stock.symbol}
                   </Link>
                 </td>
-                <td className="px-4 py-2 text-gray-400">{stock.isin}</td>
+                <td className="px-4 py-2">{formatCurrency(stock.last_value)}</td>
+                <td
+                  className={`px-4 py-2 ${
+                    stock.change_prev_close_percentage > 0
+                      ? "text-green-400"
+                      : stock.change_prev_close_percentage < 0
+                      ? "text-red-400"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {stock.change_prev_close_percentage > 0 ? "▲" : stock.change_prev_close_percentage < 0 ? "▼" : "–"}{" "}
+                  {Math.abs(stock.change_prev_close_percentage)}
+                </td>
                 <td className="px-4 py-2">{getCountryFlag(stock.isin)}</td>
+                <td className="px-4 py-2 text-gray-400">{stock.isin}</td>
               </tr>
             ))}
             {filteredAndSortedStocks.length === 0 && (

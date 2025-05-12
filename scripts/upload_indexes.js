@@ -23,10 +23,10 @@ async function main() {
 
             // Insert into indexes table
             await connection.execute(`
-                INSERT INTO indexes (isin, mic, symbol, name)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO indexes (isin, mic, symbol, name, last_value, change_prev_close_percentage)
+                VALUES (?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE mic = VALUES(mic), symbol = VALUES(symbol), name = VALUES(name)
-            `, [isin, mic, symbol, name]);
+            `, [isin, mic, symbol, name, history[0].last_value, history[0].change_prev_close_percentage]);
 
             // Insert each daily price
             for (const record of history) {

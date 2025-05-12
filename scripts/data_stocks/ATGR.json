@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:41.127361+02:00",
+  "timestamp": "2025-05-12T17:31:10.137415+02:00",
   "mic": "XZAG",
   "symbol": "ATGR",
   "isin": "HRATGRRA0003",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "43.60",
+      "high_price": "44.00",
+      "low_price": "43.60",
+      "last_price": "44.00",
+      "vwap_price": "43.993333333333",
+      "change_prev_close_percentage": "0.92",
+      "num_trades": 5,
+      "volume": "300.00000",
+      "turnover": "13198.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

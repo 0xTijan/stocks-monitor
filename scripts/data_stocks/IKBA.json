@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:49.535245+02:00",
+  "timestamp": "2025-05-12T17:31:15.578833+02:00",
   "mic": "XZAG",
   "symbol": "IKBA",
   "isin": "HRIKBARA0008",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "492.00",
+      "high_price": "505.00",
+      "low_price": "492.00",
+      "last_price": "505.00",
+      "vwap_price": "500.96000000000",
+      "change_prev_close_percentage": "1.00",
+      "num_trades": 6,
+      "volume": "150.00000",
+      "turnover": "75144.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-07",
       "trading_model_id": "CT",

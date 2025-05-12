@@ -1,9 +1,18 @@
 {
-  "timestamp": "2025-05-09T20:30:52.449458+02:00",
+  "timestamp": "2025-05-12T17:31:17.068177+02:00",
   "mic": "XZAG",
   "symbol": "ADRPR",
   "isin": "HRZB00IADPR4",
   "history": [
+    {
+      "date": "2025-05-12",
+      "open_value": "2512.52",
+      "high_value": "2534.63",
+      "low_value": "2512.52",
+      "last_value": "2528.80",
+      "change_prev_close_percentage": "0.87",
+      "turnover": null
+    },
     {
       "date": "2025-05-09",
       "open_value": "2502.22",

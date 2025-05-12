@@ -11,6 +11,8 @@ export interface Stock {
     description?: string;
     logo_url?: string;
     website_url?: string;
+    last_price?: number;
+    change_prev_close_percentage?: number;
 }
   
 export interface Index {
@@ -18,6 +20,8 @@ export interface Index {
     mic: string;
     symbol: string;
     name?: string;
+    last_value?: number;
+    change_prev_close_percentage?: number;
 }
   
 export interface IndexMember {

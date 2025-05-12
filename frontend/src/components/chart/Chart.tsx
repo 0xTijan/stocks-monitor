@@ -37,7 +37,7 @@ export default function CandlestickChart(props: { data: Data[], index?: boolean}
     const volumeData = data.map((price) => ({
         time: price.date.split("T")[0] as Time,
         value: Number(price.volume) || 0,
-        color: Number(price.open) > Number(price.last) ? 'rgb(225, 50, 85)' : 'rgb(54, 116, 217)',
+        color: Number(price.open) > Number(price.last) ? 'red' : 'green',
     }));
 
 
@@ -72,15 +72,14 @@ export default function CandlestickChart(props: { data: Data[], index?: boolean}
 
         const chart: IChartApi = createChart(chartContainerRef.current, chartOptions);
         const series = chart.addSeries(CandlestickSeries, {
-            wickUpColor: 'rgb(54, 116, 217)',
-            upColor: 'rgb(54, 116, 217)',
-            wickDownColor: 'rgb(225, 50, 85)',
-            downColor: 'rgb(225, 50, 85)',
+            wickUpColor: 'green',
+            upColor: 'green',
+            wickDownColor: 'red',
+            downColor: 'red',
             borderVisible: false,
         });
 
         const volumeSeries = chart.addSeries(HistogramSeries, {
-            color: '#26a69a',
             priceFormat: {
                 type: 'volume',
             },
@@ -115,16 +114,17 @@ export default function CandlestickChart(props: { data: Data[], index?: boolean}
                 mode: CrosshairMode.Normal,
         
                 vertLine: {
-                    //width: 8, 
-                    color: '#9B7DFF',
+                    width: 2, 
+                    color: 'grey',
                     //style: LineStyle.Solid,
-                    labelBackgroundColor: '#9B7DFF',
+                    labelBackgroundColor: 'grey',
                     },
 
                 // Horizontal crosshair line (showing Price in Label)
                 horzLine: {
-                    color: '#9B7DFF',
-                    labelBackgroundColor: '#9B7DFF',
+                    width:2,
+                    color: 'grey',
+                    labelBackgroundColor: 'grey',
                 },
             },
         });

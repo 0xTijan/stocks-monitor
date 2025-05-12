@@ -38,9 +38,11 @@ async function main() {
                     quantity,
                     description,
                     logo_url,
-                    website_url
+                    website_url,
+                    last_price,
+                    change_prev_close_percentage
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE mic = VALUES(mic), symbol = VALUES(symbol), name = VALUES(name)
             `, [
                 isin,
@@ -54,7 +56,9 @@ async function main() {
                 quantity,
                 description,
                 logo,
-                url
+                url,
+                history[0].last_price,
+                history[0].change_prev_close_percentage
             ]);
 
             // Insert each daily price

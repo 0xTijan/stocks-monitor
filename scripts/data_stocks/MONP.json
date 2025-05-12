@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:50.070455+02:00",
+  "timestamp": "2025-05-12T17:31:16.048169+02:00",
   "mic": "XZAG",
   "symbol": "MONP",
   "isin": "HRMONPRA0007",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "6.55",
+      "high_price": "6.80",
+      "low_price": "6.55",
+      "last_price": "6.80",
+      "vwap_price": "6.6385474860335",
+      "change_prev_close_percentage": "7.94",
+      "num_trades": 4,
+      "volume": "179.00000",
+      "turnover": "1188.30",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-07",
       "trading_model_id": "CT",

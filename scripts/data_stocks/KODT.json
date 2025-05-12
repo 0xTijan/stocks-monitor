@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:47.707903+02:00",
+  "timestamp": "2025-05-12T17:31:13.778459+02:00",
   "mic": "XZAG",
   "symbol": "KODT",
   "isin": "HRKODTRA0007",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "2610.00",
+      "high_price": "2680.00",
+      "low_price": "2600.00",
+      "last_price": "2680.00",
+      "vwap_price": "2644.61538461540",
+      "change_prev_close_percentage": "2.68",
+      "num_trades": 48,
+      "volume": "130.00000",
+      "turnover": "343800.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

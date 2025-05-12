@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:46.078566+02:00",
+  "timestamp": "2025-05-12T17:31:12.298254+02:00",
   "mic": "XZAG",
   "symbol": "IGH",
   "isin": "HRIGH0RA0006",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "16.40",
+      "high_price": "16.40",
+      "low_price": "16.40",
+      "last_price": "16.40",
+      "vwap_price": "16.4000000000000",
+      "change_prev_close_percentage": "1.23",
+      "num_trades": 1,
+      "volume": "10.00000",
+      "turnover": "164.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

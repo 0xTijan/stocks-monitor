@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:39.576896+02:00",
+  "timestamp": "2025-05-12T17:31:09.101053+02:00",
   "mic": "XLJU",
   "symbol": "POSR",
   "isin": "SI0021110513",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "49.40",
+      "high_price": "49.60",
+      "low_price": "49.00",
+      "last_price": "49.60",
+      "vwap_price": "49.427705627706",
+      "change_prev_close_percentage": "1.22",
+      "num_trades": 10,
+      "volume": "924.00000",
+      "turnover": "45671.20",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

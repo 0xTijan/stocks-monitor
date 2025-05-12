@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:42.858622+02:00",
+  "timestamp": "2025-05-12T17:31:11.083445+02:00",
   "mic": "XZAG",
   "symbol": "LKRI",
   "isin": "HRLKRIRA0007",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "9.05",
+      "high_price": "9.05",
+      "low_price": "9.00",
+      "last_price": "9.00",
+      "vwap_price": "9.0015283842795",
+      "change_prev_close_percentage": "6.51",
+      "num_trades": 4,
+      "volume": "687.00000",
+      "turnover": "6184.05",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-08",
       "trading_model_id": "CT",

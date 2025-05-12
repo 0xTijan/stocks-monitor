@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:48.764435+02:00",
+  "timestamp": "2025-05-12T17:31:14.921187+02:00",
   "mic": "XZAG",
   "symbol": "DDJH",
   "isin": "HRDDJHRA0007",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "43.400",
+      "high_price": "43.400",
+      "low_price": "40.200",
+      "last_price": "40.600",
+      "vwap_price": "41.1655773420480",
+      "change_prev_close_percentage": "-6.02",
+      "num_trades": 14,
+      "volume": "459.00000",
+      "turnover": "18895.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

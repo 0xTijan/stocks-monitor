@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:39.144557+02:00",
+  "timestamp": "2025-05-12T17:31:08.7584+02:00",
   "mic": "XLJU",
   "symbol": "LKPG",
   "isin": "SI0031101346",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "45.00",
+      "high_price": "45.80",
+      "low_price": "45.00",
+      "last_price": "45.00",
+      "vwap_price": "45.185663082437",
+      "change_prev_close_percentage": "0.00",
+      "num_trades": 16,
+      "volume": "1674.00000",
+      "turnover": "75640.80",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

@@ -11,6 +11,8 @@ export interface Stock {
     description?: string;
     logo_url?: string;
     website_url?: string;
+    last_price?: number;
+    change_prev_close_percentage?: number;
 }
   
 export interface Index {
@@ -18,6 +20,8 @@ export interface Index {
     mic: string;
     symbol: string;
     name?: string;
+    last_value?: number;
+    change_prev_close_percentage?: number;
 }
   
 export interface IndexMember {
@@ -30,12 +34,12 @@ export interface DailyPrice {
     id: number;
     stock_isin: string;
     date: string;
-    trading_model_id: string;
-    open_price: number;
-    high_price: number;
-    low_price: number;
-    last_price: number;
-    vwap_price: number;
+    trading_model_id?: string;
+    open_price?: number;
+    high_price?: number;
+    low_price?: number;
+    last_price?: number;
+    vwap_price?: number;
     change_prev_close_percentage?: number;
     num_trades?: number;
     volume?: number;

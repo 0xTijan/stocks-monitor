@@ -12,6 +12,8 @@ CREATE TABLE stocks (
     description TEXT,
     logo_url TEXT,
     website_url TEXT,
+    last_price NUMERIC(10, 2),
+    change_prev_close_percentage NUMERIC(6, 2),
     CONSTRAINT unique_stock UNIQUE (mic, symbol)
 );
 
@@ -23,6 +25,8 @@ CREATE TABLE indexes (
     mic VARCHAR(10) NOT NULL,
     symbol VARCHAR(10) NOT NULL,
     name TEXT,
+    last_value NUMERIC(10, 2),
+    change_prev_close_percentage NUMERIC(6, 2),
     CONSTRAINT unique_index UNIQUE (mic, symbol)
 );
 

@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:44.232144+02:00",
+  "timestamp": "2025-05-12T17:31:12.051975+02:00",
   "mic": "XZAG",
   "symbol": "GRNL",
   "isin": "HRGRNLRA0006",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "9.20",
+      "high_price": "9.40",
+      "low_price": "9.20",
+      "last_price": "9.40",
+      "vwap_price": "9.3173333333333",
+      "change_prev_close_percentage": "0.53",
+      "num_trades": 5,
+      "volume": "300.00000",
+      "turnover": "2795.20",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-07",
       "trading_model_id": "CT",

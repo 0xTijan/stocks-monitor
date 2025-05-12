@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:43.752061+02:00",
+  "timestamp": "2025-05-12T17:31:11.710463+02:00",
   "mic": "XZAG",
   "symbol": "DLKV",
   "isin": "HRDLKVRA0006",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "4.42",
+      "high_price": "4.700",
+      "low_price": "4.42",
+      "last_price": "4.56",
+      "vwap_price": "4.54405283885790",
+      "change_prev_close_percentage": "2.93",
+      "num_trades": 82,
+      "volume": "30470.00000",
+      "turnover": "138457.29",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

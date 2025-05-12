@@ -4,7 +4,7 @@
     {
       "isin": "SI0031103805",
       "freeFloatFactor": "0.55",
-      "weight": "3.26 %"
+      "weight": "3.22 %"
     },
     {
       "isin": "SI0031117813",
@@ -14,17 +14,17 @@
     {
       "isin": "SI0031102120",
       "freeFloatFactor": "0.67",
-      "weight": "30.14 %"
+      "weight": "30.24 %"
     },
     {
       "isin": "SI0031101346",
       "freeFloatFactor": "0.38",
-      "weight": "5.63 %"
+      "weight": "5.41 %"
     },
     {
       "isin": "SI0021117344",
       "freeFloatFactor": "0.40",
-      "weight": "19.16 %"
+      "weight": "19.50 %"
     },
     {
       "isin": "SI0031102153",
@@ -34,17 +34,17 @@
     {
       "isin": "SI0021110513",
       "freeFloatFactor": "0.41",
-      "weight": "7.84 %"
+      "weight": "7.92 %"
     },
     {
       "isin": "SI0031104290",
       "freeFloatFactor": "0.32",
-      "weight": "4.28 %"
+      "weight": "4.26 %"
     },
     {
       "isin": "SI0021111651",
       "freeFloatFactor": "0.36",
-      "weight": "8.91 %"
+      "weight": "8.66 %"
     }
   ],
   "id": "SI0026109882"

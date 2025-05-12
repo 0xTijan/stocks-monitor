@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-05-09T20:30:40.29361+02:00",
+  "timestamp": "2025-05-12T17:31:09.717643+02:00",
   "mic": "XZAG",
   "symbol": "ADPL",
   "isin": "HRADPLRA0006",
   "history": [
+    {
+      "date": "2025-05-12",
+      "trading_model_id": "CT",
+      "open_price": "10.90",
+      "high_price": "11.00",
+      "low_price": "10.90",
+      "last_price": "10.90",
+      "vwap_price": "10.9555396916050",
+      "change_prev_close_percentage": "1.87",
+      "num_trades": 19,
+      "volume": "1751.00000",
+      "turnover": "19183.15",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-05-09",
       "trading_model_id": "CT",

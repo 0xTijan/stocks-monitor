@@ -8,16 +8,18 @@ Tracking:
 - initial scripts that have to be run to set up the project and initially fill out the database
 
 `/backend`
-- ...
+- backend server
+- APIs
+- daily updates
+
+`/frontend`
+- NextJS app
 
 `/screener`
 - ...
 
 `/sql`
 - schema
-- ...
-
-`/docs`
 - ...
 
 `/analysis`

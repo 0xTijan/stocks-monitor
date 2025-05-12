@@ -36,6 +36,7 @@ export const updatePrices = async() => {
 
                 if (record) {
                     console.log(`Saving data for ISIN: ${isin}`);
+                    // insert or update daily prices
                     await conn.execute(`
                         INSERT INTO daily_prices (
                             stock_isin, date, trading_model_id, open_price, high_price,
@@ -60,6 +61,17 @@ export const updatePrices = async() => {
                         record.vwap_price, record.change_prev_close_percentage,
                         record.num_trades, record.volume, record.turnover,
                         record.price_currency, record.turnover_currency
+                    ]);
+
+                    // update price in stocks table               
+                    await conn.execute(`
+                        UPDATE stocks
+                        SET 
+                            last_price = ?, 
+                            change_prev_close_percentage = ?
+                        WHERE isin = ?
+                    `, [
+                        record.last_price, record.change_prev_close_percentage, isin
                     ]);
                 }
             } catch (error) {
@@ -87,6 +99,7 @@ export const updatePrices = async() => {
 
                 if (record) {
                     console.log(`Saving data for ISIN: ${isin}`);
+                    // insert or update daily prices
                     await conn.execute(`
                         INSERT INTO index_values (
                             index_isin, date, open_value, high_value, low_value,
@@ -103,6 +116,17 @@ export const updatePrices = async() => {
                         isin, record.date, record.open_value, record.high_value,
                         record.low_value, record.last_value,
                         record.change_prev_close_percentage, record.turnover
+                    ]);
+
+                    // update price in indexes table
+                    await conn.execute(`
+                        UPDATE indexes
+                        SET 
+                            last_value = ?, 
+                            change_prev_close_percentage = ?
+                        WHERE isin = ?
+                    `, [
+                        record.last_value, record.change_prev_close_percentage, isin
                     ]);
                 }
             } catch (error) {
