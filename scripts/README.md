@@ -14,4 +14,18 @@ Or do it manually:
 5. Run script `upload_index_members.js` to upload final data to database.
 
 
+**At the end run this in sql to fix croatian currency change!!!**
+```
+UPDATE daily_prices
+SET
+    open_price = open_price / 7.5,
+    high_price = high_price / 7.5,
+    low_price = low_price / 7.5,
+    last_price = last_price / 7.5
+WHERE
+    stock_isin LIKE 'HR%' AND
+    date < '2023-01-01';
+
+```
+
 SQL schema after which the scripts are formulated is in `/sql`.
