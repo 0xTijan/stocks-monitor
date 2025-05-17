@@ -81,6 +81,15 @@ export const updatePrices = async() => {
                 } else {
                     console.error(`Error for ISIN ${isin}:`, err);
                 }
+                // update change_prev_close_percentage to null - since we don't have new data              
+                await conn.execute(`
+                    UPDATE stocks
+                    SET 
+                        change_prev_close_percentage = ?
+                    WHERE isin = ?
+                `, [
+                    0, isin
+                ]);
             }
         }
 
@@ -136,6 +145,15 @@ export const updatePrices = async() => {
                 } else {
                     console.error(`Error for ISIN ${isin}:`, err);
                 }
+                // update change_prev_close_percentage to null - since we don't have new data
+                await conn.execute(`
+                    UPDATE indexes
+                    SET 
+                        change_prev_close_percentage = ?
+                    WHERE isin = ?
+                `, [
+                    0, isin
+                ]);
             }
         }
 
