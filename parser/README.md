@@ -31,7 +31,7 @@ FILTER(items=[stocks], condition=[CROSSES(MA(36), MA(58), up)]) & SORT(property=
 BACKTEST(items=[KRKA], entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & PLOT
 
 // backtests krka entry is only when SBITOP is in uptrend and rsi below 30, exit only on rsi above 70 or sbitop in downtrend, and plots 
-BACKTEST(items=[KRKA], entry=[(RSI(14) < 30) AND (MA(36, SBITOP) > MA(58, SBITOP))], exit=[((MA(36, SBITOP) < MA(58, SBITOP)) or (RSI(14) > 70))], size=1000, fee=0.05) & PLOT
+BACKTEST(items=[KRKA], entry=[RSI(14) < 30 AND MA(36, SBITOP) > MA(58, SBITOP)], exit=[(MA(36, SBITOP) < MA(58, SBITOP)) OR RSI(14) > 70], size=1000, fee=0.05) & PLOT
 ```
 
 #### Defaults:

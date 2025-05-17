@@ -97,7 +97,8 @@ export default async function IndexDetailedPage({ params }: { params: Promise<{ 
         <div className="flex h-screen bg-black text-white overflow-hidden">
             {/* Watchlist */}
             <div className="w-2/12 bg-black p-4 overflow-y-auto">
-                <h2 className="text-xl font-semibold mb-2"><Link href="/indexes">&lt;&lt; INDEXES</Link></h2>
+                <h2 className="text-xl font-semibold"><Link href="/indexes">&lt;&lt; INDEXES</Link></h2>
+                <h2 className="text-xl font-semibold mb-2"><Link href="/playground">&lt;&lt; Playground</Link></h2>
                 <div className='mb-6'><Link className='mb-6 font-lg font-semibold' href={`/indexes/${isin[0] == "S" ? "HRZB00ICBEX6" : "SI0026109882"}`}>Switch to: {isin[0] == "S" ? "Croatian" : "Slovenian"}</Link></div>
                 {watchlist.map((item, idx) => (
                     <Link  key={idx} href={`/indexes/${item.isin}`}>

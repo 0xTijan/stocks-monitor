@@ -21,12 +21,21 @@ export default async function Page() {
     return (
         <main className="min-h-screen bg-black text-white p-6">
             <h1 className="text-3xl font-semibold">Indexes Directory</h1>
-            <p className="text-xl font-semibold mt-2 mb-8">
+
+            <p className="text-xl font-semibold mt-2">
                 <Link href="/stocks/">&lt;&lt; Stocks Directory</Link>
             </p>
+            <p className="text-xl font-semibold mb-8">
+                <Link href="/playground/">&lt;&lt; Playground</Link>
+            </p>
+
             <IndexesTable initialStocks={stocks} />
+
             <p className="text-xl font-semibold mt-6 text-center">
                 <Link href="/stocks/">&lt;&lt; Stocks Directory</Link>
+            </p>
+            <p className="text-xl font-semibold mb-8 text-center">
+                <Link href="/playground/">&lt;&lt; Playground</Link>
             </p>
         </main>
     );

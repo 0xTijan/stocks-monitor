@@ -109,7 +109,8 @@ export default async function StockDetailPage({ params }: { params: Promise<{ is
         <div className="flex h-screen bg-black text-white overflow-hidden">
             {/* Watchlist */}
             <div className="w-2/12 bg-black p-4 overflow-y-auto">
-                <h2 className="text-xl font-semibold mb-2"><Link href="/stocks">&lt;&lt; STOCKS</Link></h2>
+                <h2 className="text-xl font-semibold"><Link href="/stocks">&lt;&lt; STOCKS</Link></h2>
+                <h2 className="text-xl font-semibold mb-2"><Link href="/playground">&lt;&lt; Playground</Link></h2>
                 <div className='mb-6'><Link className='mb-6 font-lg font-semibold' href={`/stocks/${isin[0] == "S" ? "HRADPLRA0006" : "SI0031103805"}`}>Switch to: {isin[0] == "S" ? "Croatian" : "Slovenian"}</Link></div>
                 {watchlist.map((item, idx) => (
                     <Link  key={idx} href={`/stocks/${item.isin}`}>

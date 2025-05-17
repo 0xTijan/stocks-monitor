@@ -12,7 +12,7 @@ backtest_cmd = { "BACKTEST" ~ "(" ~ named_args ~ ")" }
 named_args = { named_arg ~ ("," ~ named_arg)* }
 named_arg = { ident ~ "=" ~ value }
 
-value = { arithmetic_expr | expression | list | string | number | ident }
+value = { logical_block | date | duration | keyword | number | ident | arithmetic_expr | list | string }
 
 list = { "[" ~ list_items? ~ "]" }
 list_items = { value ~ ("," ~ value)* }
@@ -33,6 +33,8 @@ tuple_expr = { "(" ~ tuple_items ~ ")" }
 tuple_items = { value ~ ("," ~ value)* }
 
 expression = { logical_expr }
+
+logical_block = { "[" ~ logical_expr ~ "]" }
 
 logical_expr = {
     logical_expr_inner ~ (LOGICAL_OP ~ logical_expr_inner)*
@@ -61,6 +63,10 @@ argument = { ident | number | string }
 comparator = { ">=" | "<=" | ">" | "<" | "=" }
 LOGICAL_OP = { "AND" | "OR" }
 
+keyword = @{ "today" }
+
 number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 ident = @{ (ASCII_ALPHANUMERIC | "_")+ }
 string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+date = @{ ASCII_DIGIT{4} ~ "-" ~ ASCII_DIGIT{2} ~ "-" ~ ASCII_DIGIT{2} }
+duration = @{ ASCII_DIGIT+ ~ ( "d" | "w" | "m" | "y" ) }

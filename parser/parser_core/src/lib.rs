@@ -13,11 +13,6 @@ pub fn parse_script(input: &str) -> Result<(), pest::error::Error<crate::Rule>> 
     Ok(())
 }
 
-
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
