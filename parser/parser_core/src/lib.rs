@@ -5,11 +5,19 @@ use pest_derive::Parser;
 #[grammar = "grammar.pest"]
 pub struct ScriptParser;
 
+pub mod ast;
+pub mod parser;
+
+use parser::parse_pairs;
+
+
 pub fn parse_script(input: &str) -> Result<(), pest::error::Error<crate::Rule>> {
-    let pairs = ScriptParser::parse(Rule::program, input)?;
-    for pair in pairs {
-        println!("{:#?}", pair);
-    }
+    let pairs = ScriptParser::parse(Rule::program, input)
+        .expect("unsuccessful parse")
+        .next().unwrap();
+
+    parse_pairs(pairs);
+    
     Ok(())
 }
 

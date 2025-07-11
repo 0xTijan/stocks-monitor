@@ -44,6 +44,7 @@ export default function PlaygroundHome() {
           id="query"
           placeholder="Enter query code here..."
           value={query}
+          wrap="off"
           onChange={(e) => setQuery(e.target.value)}
           className="w-full h-50 p-4 bg-black text-white rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-white resize-none shadow-md font-mono text-md leading-snug"
         />
@@ -67,7 +68,7 @@ export default function PlaygroundHome() {
               <div className="flex justify-between items-center mb-2">
                 <div>
                   <h3 className="text-xl font-semibold">{preset.title}</h3>
-                  <p className="text-sm text-zinc-400">{preset.description}</p>
+                  <p className="text-sm text-zinc-400 whitespace-nowrap overflow-x-auto">{preset.description}</p>
                 </div>
                 <button
                   onClick={() => handleExecute(preset.code)}
