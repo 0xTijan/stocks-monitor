@@ -22,7 +22,7 @@ PLOT(items=[(AAPL + MSFT + GOOG + AMZN) / 4], from=2010-01-01, to=today, timefra
 PLOT(items=[AAPL / MSFT, RSI(14, SPY)], ...) // plots ratio of aapl and msft and rsi for spy
 
 // filters all stocks and backtests all slovenian stocks with entry condition (ma crossed above other ma) and exit condition, tests with size 1000 and fee 0.05% and plots these slovenian stocks on chart (as well as mas)
-FILTER(items=[stocks], conditions=[country=si]) & BACKTEST(entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05%) & PLOT
+FILTER(items=[stocks], conditions=[country=si]) & BACKTEST(entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & PLOT
 
 // gets all stocks that have mas crossed on (this day!) and sorts them by market cap
 FILTER(items=[stocks], condition=[CROSSES(MA(36), MA(58), up)]) & SORT(property=market_cap, dir=desc)

@@ -18,7 +18,7 @@ list = { "[" ~ list_items? ~ "]" }
 list_items = { value ~ ("," ~ value)* }
 
 arithmetic_expr = {
-    arithmetic_term ~ ( ("/" | "+") ~ arithmetic_term )*
+    arithmetic_term ~ ( operation ~ arithmetic_term )*
 }
 
 arithmetic_term = {
@@ -28,6 +28,8 @@ arithmetic_term = {
     | tuple_expr
     | "(" ~ arithmetic_expr ~ ")"
 }
+
+operation = { "/" | "+" }
 
 tuple_expr = { "(" ~ tuple_items ~ ")" }
 tuple_items = { value ~ ("," ~ value)* }

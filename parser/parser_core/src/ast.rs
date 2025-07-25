@@ -41,7 +41,6 @@ pub enum Value {
     ArithmeticExpr(Expr),
     LogicalExpr(LogicalExpr),
     List(Vec<Value>),
-    Tuple(Vec<Value>),
     FunctionCall(FunctionCall),
 }
 
