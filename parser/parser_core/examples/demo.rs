@@ -7,7 +7,7 @@ fn main() {
 
     let input = if let Some(arg) = args.first() {
         if arg.ends_with(".txt") {
-            match fs::read_to_string(arg) {
+            match fs::read_to_string("examples/".to_owned() + arg) {
                 Ok(content) => content,
                 Err(e) => {
                     eprintln!("Failed to read file '{}': {}", arg, e);

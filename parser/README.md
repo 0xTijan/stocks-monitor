@@ -1,8 +1,8 @@
 # Custom Scripting Language
 
 ### Structure:
-- `/parser-core`: core parser and lexer
-- `/interpreter-core`: core interpreter
+- `/parser_core`: core parser and lexer
+- `/interpreter_core`: core interpreter/evaluator
 
 #### Examples:
 ```js

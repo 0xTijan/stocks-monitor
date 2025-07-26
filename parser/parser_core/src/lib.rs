@@ -8,7 +8,7 @@ pub struct ScriptParser;
 pub mod ast;
 pub mod parser;
 
-use ast::Program;
+use ast::{Program, Command};
 use parser::parse_pairs;
 
 
@@ -34,7 +34,13 @@ pub fn parse_script(input: &str) -> Result<Program, pest::error::Error<crate::Ru
             program.commands.push(res.commands[0].clone());
         } else {
             // it is just a command without args
-            println!("Command without args: {}", command);
+            match command {
+                "FILTER" => program.commands.push(Command::Filter(Vec::new())),
+                "SORT" => program.commands.push(Command::Sort(Vec::new())),
+                "PLOT" => program.commands.push(Command::Plot(Vec::new())),
+                "BACKTEST" => program.commands.push(Command::Backtest(Vec::new())),
+                _ => panic!("Unknown command: {}", command),
+            }
         }
     }
     
