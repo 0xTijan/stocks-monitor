@@ -1,236 +1,220 @@
-//use crate::ast::;
 use pest::iterators::Pair;
 use crate::Rule;
+use crate::ast::*;
 
-pub fn parse_pairs(pair: Pair<Rule>) {
+/// Entry point for parsing
+pub fn parse_pairs(pair: Pair<Rule>) -> Program {
+    let mut commands = Vec::new();
     for command_pair in pair.into_inner() {
-        println!("Command: {:?}", command_pair.as_str());
         for inner_pair in command_pair.into_inner() {
-            match inner_pair.as_rule() {
-                Rule::plot_cmd => {
-                    parse_command(inner_pair);
-                }
-                Rule::filter_cmd => {
-                    parse_command(inner_pair);
-                }
-                Rule::sort_cmd => {
-                    parse_command(inner_pair);
-                }
-                Rule::backtest_cmd => {
-                    parse_command(inner_pair);
-                }
-                _ => {
-                    println!("Other command: {:?}", inner_pair.as_str());
-                }
-            }
+            let cmd = match inner_pair.as_rule() {
+                Rule::plot_cmd => Command::Plot(parse_command(inner_pair)),
+                Rule::filter_cmd => Command::Filter(parse_command(inner_pair)),
+                Rule::sort_cmd => Command::Sort(parse_command(inner_pair)),
+                Rule::backtest_cmd => Command::Backtest(parse_command(inner_pair)),
+                _ => continue,
+            };
+            commands.push(cmd);
         }
     }
+    Program { commands }
 }
 
-fn parse_command(pair: Pair<Rule>) {
-    println!("Command Type: {:?}", pair.as_rule());
-    let args = pair.into_inner().next().unwrap();
-    for inner_pair in args.into_inner() {
-        parse_argument(inner_pair);
-    }
+fn parse_command(pair: Pair<Rule>) -> Vec<NamedArg> {
+    let args = pair.into_inner().next().unwrap(); // assumes `args` is inside
+    args.into_inner()
+        .map(parse_argument)
+        .collect()
 }
 
-fn parse_argument(pair: Pair<Rule>) {
+fn parse_argument(pair: Pair<Rule>) -> NamedArg {
     let mut name = "";
-    let mut value = "";
+    let mut value_pair = None;
+
     for inner_pair in pair.into_inner() {
         match inner_pair.as_rule() {
-            Rule::ident => {
-                name = inner_pair.as_str();
-            }
-            Rule::value => {
-                value = inner_pair.as_str();
-                parse_arg_value(inner_pair);
-            }
-            _ => {
-                println!("Unexpected argument part: {:?}", inner_pair.as_str());
-            }
+            Rule::ident => name = inner_pair.as_str(),
+            Rule::value => value_pair = Some(inner_pair),
+            _ => {}
         }
     }
-    println!("Arg. Name: {}, Value: {}", name, value);
+
+    let value = value_pair.map(parse_arg_value).unwrap();
+    NamedArg {
+        name: name.to_string(),
+        value,
+    }
 }
 
-fn parse_arg_value(pair: Pair<Rule>) {
-    for inner_pair in pair.into_inner() {
-        match inner_pair.as_rule() {
-            Rule::number => {
-                println!("Number: {}", inner_pair.as_str());
-            }
-            Rule::string => {
-                println!("String: {}", inner_pair.as_str());
-            }
-            Rule::ident => {
-                println!("Identifier: {}", inner_pair.as_str());
-            }
-            Rule::keyword => {
-                println!("Keyword: {}", inner_pair.as_str());
-            }
-            Rule::date => {
-                println!("Date: {}", inner_pair.as_str());
-            }
-            Rule::duration => {
-                println!("Duration: {}", inner_pair.as_str());
-            }
-            Rule::arithmetic_expr => {
-                parse_arithmetic_expr(inner_pair);
-            }
-            Rule::logical_block => {
-                parse_logical_block(inner_pair);
-            }
-            Rule::list => {
-                parse_list(inner_pair);
-            }
-            Rule::function_call => {
-                parse_function_call(inner_pair);
-            }
-            _ => {
-                println!("Unknown value type: {:?}", inner_pair.as_rule());
-            }
-        }
+fn parse_arg_value(pair: Pair<Rule>) -> Value {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::number => Value::Number(inner.as_str().parse::<f64>().unwrap()),
+        Rule::string => Value::String(inner.as_str().to_string()),
+        Rule::ident => Value::Ident(inner.as_str().to_string()),
+        Rule::keyword => Value::Keyword(match inner.as_str() {
+            "today" => Keyword::Today,
+            "stocks" => Keyword::Stocks,
+            "indexes" => Keyword::Indexes,
+            _ => panic!("Unknown keyword"),
+        }),
+        Rule::date => Value::Date(inner.as_str().to_string()),
+        Rule::duration => Value::Duration(inner.as_str().to_string()),
+        Rule::arithmetic_expr => Value::ArithmeticExpr(parse_arithmetic_expr(inner)),
+        Rule::logical_block => Value::LogicalExpr(parse_logical_block(inner)),
+        Rule::list => Value::List(parse_list(inner)),
+        Rule::function_call => Value::FunctionCall(parse_function_call(inner)),
+        _ => panic!("Unknown value type: {:?}", inner.as_rule()),
     }
 }
 
 //-- ARITHMETIC EXPRESSION PARSING --
-fn parse_arithmetic_expr(pair: Pair<Rule>) {
+fn parse_arithmetic_expr(pair: Pair<Rule>) -> Expr {
+    let mut expr = None;
+    let mut op = None;
+
     for inner_pair in pair.into_inner() {
         match inner_pair.as_rule() {
             Rule::arithmetic_term => {
-                for term in inner_pair.into_inner() {
-                    match term.as_rule() {
-                        Rule::function_call => parse_function_call(term),
-                        Rule::ident => println!("    Identifier: {}", term.as_str()),
-                        Rule::number => println!("    Number: {}", term.as_str()),
-                        Rule::tuple_expr => println!("    Tuple Expression: {}", term.as_str()), // or recursively parse if needed
-                        Rule::arithmetic_expr => parse_arithmetic_expr(term), // handle nested
-                        _ => println!("    Unknown arithmetic term: {:?}", term.as_rule()),
-                    }
+                let term_expr = parse_arithmetic_term(inner_pair);
+                if expr.is_none() {
+                    expr = Some(term_expr);
+                } else {
+                    expr = Some(Expr::BinaryOp {
+                        left: Box::new(expr.unwrap()),
+                        op: op.take().unwrap(),
+                        right: Box::new(term_expr),
+                    });
                 }
             }
             Rule::operation => {
-                println!("  Operation: {}", inner_pair.as_str());
+                op = Some(match inner_pair.as_str() {
+                    "+" => ArithmeticOp::Add,
+                    "/" => ArithmeticOp::Div,
+                    _ => panic!("Unknown arithmetic op"),
+                });
             }
-            _ => {
-                println!("  Operator or Unexpected: {}", inner_pair.as_str());
-            }
+            _ => {}
         }
+    }
+
+    expr.unwrap()
+}
+
+fn parse_arithmetic_term(pair: Pair<Rule>) -> Expr {
+    let term = pair.into_inner().next().unwrap();
+    match term.as_rule() {
+        Rule::function_call => Expr::FunctionCall(parse_function_call(term)),
+        Rule::ident => Expr::Ident(term.as_str().to_string()),
+        Rule::number => Expr::Number(term.as_str().parse::<f64>().unwrap()),
+        Rule::tuple_expr => {
+            let values = term.into_inner().map(parse_arg_value).collect();
+            Expr::Tuple(values)
+        }
+        Rule::arithmetic_expr => Expr::Group(Box::new(parse_arithmetic_expr(term))),
+        _ => panic!("Unknown arithmetic term: {:?}", term.as_rule()),
     }
 }
 
 //-- LOGICAL BLOCK PARSING --
-fn parse_logical_block(pair: Pair<Rule>) {
+fn parse_logical_block(pair: Pair<Rule>) -> LogicalExpr {
     for inner_pair in pair.into_inner() {
-        match inner_pair.as_rule() {
-            Rule::logical_expr => parse_logical_expr(inner_pair),
-            _ => println!("  Unexpected in logical block: {:?}", inner_pair.as_rule()),
+        if inner_pair.as_rule() == Rule::logical_expr {
+            return parse_logical_expr(inner_pair);
         }
     }
+    panic!("Expected logical_expr in block");
 }
 
-fn parse_logical_expr(pair: Pair<Rule>) {
+fn parse_logical_expr(pair: Pair<Rule>) -> LogicalExpr {
+    let mut expr = None;
+    let mut op = None;
+
     for inner_pair in pair.into_inner() {
         match inner_pair.as_rule() {
             Rule::logical_expr_inner => {
-                parse_logical_expr_inner(inner_pair);
+                let inner = parse_logical_expr_inner(inner_pair);
+                if expr.is_none() {
+                    expr = Some(inner);
+                } else {
+                    expr = Some(LogicalExpr::BinaryOp {
+                        left: Box::new(expr.unwrap()),
+                        op: op.take().unwrap(),
+                        right: Box::new(inner),
+                    });
+                }
             }
             Rule::LOGICAL_OP => {
-                println!("    Logical Operator: {}", inner_pair.as_str());
+                op = Some(match inner_pair.as_str() {
+                    "AND" => LogicalOp::And,
+                    "OR" => LogicalOp::Or,
+                    _ => panic!("Unknown logical op"),
+                });
             }
-            _ => {
-                println!("    Unknown logical_expr component: {:?}", inner_pair.as_rule());
-            }
+            _ => {}
         }
+    }
+
+    expr.unwrap()
+}
+
+fn parse_logical_expr_inner(pair: Pair<Rule>) -> LogicalExpr {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::comparison => parse_comparison(inner),
+        Rule::logical_expr => LogicalExpr::Group(Box::new(parse_logical_expr(inner))),
+        _ => panic!("Unknown logical_expr_inner: {:?}", inner.as_rule()),
     }
 }
 
-fn parse_logical_expr_inner(pair: Pair<Rule>) {
-    for inner in pair.into_inner() {
-        match inner.as_rule() {
-            Rule::comparison => {
-                parse_comparison(inner);
-            }
-            Rule::logical_expr => {
-                parse_logical_expr(inner); // handle nested expressions
-            }
-            _ => {
-                println!("      Unknown logical_expr_inner: {:?}", inner.as_rule());
-            }
-        }
-    }
-}
-
-fn parse_comparison(pair: Pair<Rule>) {
+fn parse_comparison(pair: Pair<Rule>) -> LogicalExpr {
     let mut parts = pair.into_inner();
+    let lhs = parse_operand(parts.next().unwrap());
+    let cmp = match parts.next().unwrap().as_str() {
+        ">" => Comparator::Gt,
+        ">=" => Comparator::Gte,
+        "<" => Comparator::Lt,
+        "<=" => Comparator::Lte,
+        "==" => Comparator::Eq,
+        _ => panic!("Unknown comparator"),
+    };
+    let rhs = parse_operand(parts.next().unwrap());
 
-    let lhs = parts.next().unwrap();
-    let cmp = parts.next().unwrap();
-    let rhs = parts.next().unwrap();
-
-    println!("    Comparison:");
-    println!("      LHS:");
-    parse_operand(lhs);
-    println!("      Comparator: {}", cmp.as_str());
-    println!("      RHS:");
-    parse_operand(rhs);
+    LogicalExpr::Comparison {
+        left: lhs,
+        op: cmp,
+        right: rhs,
+    }
 }
 
-fn parse_operand(pair: Pair<Rule>) {
-    println!("      Operand: {:?}", pair.as_rule());
-    for inner in pair.into_inner() {
-        match inner.as_rule() {
-            Rule::function_call => {
-                parse_function_call(inner);
-            }
-            Rule::ident => {
-                println!("        Identifier: {}", inner.as_str());
-            }
-            Rule::number => {
-                println!("        Number: {}", inner.as_str());
-            }
-            Rule::logical_expr => {
-                parse_logical_expr(inner);
-            }
-            _ => {
-                println!("        Unknown operand inner: {:?}", inner.as_rule());
-            }
-        }
+fn parse_operand(pair: Pair<Rule>) -> Operand {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::function_call => Operand::FunctionCall(parse_function_call(inner)),
+        Rule::ident => Operand::Ident(inner.as_str().to_string()),
+        Rule::number => Operand::Number(inner.as_str().parse::<f64>().unwrap()),
+        Rule::logical_expr => Operand::LogicalExpr(Box::new(parse_logical_expr(inner))),
+        _ => panic!("Unknown operand inner: {:?}", inner.as_rule()),
     }
 }
 
 //-- LIST PARSING --
-fn parse_list(pair: Pair<Rule>) {
+fn parse_list(pair: Pair<Rule>) -> Vec<Value> {
     let mut items = Vec::new();
     for inner_pair in pair.into_inner() {
-        match inner_pair.as_rule() {
-            Rule::list_items => {
-                for item in inner_pair.into_inner() {
-                    match item.as_rule() {
-                        Rule::value => {
-                            println!("  List item: {}", item.as_str());
-                            // PARSER FURTHER
-                            items.push(item.as_str().to_string());
-                            parse_arg_value(item);
-                        }
-                        _ => {
-                            println!("  Unexpected in list: {:?}", item.as_rule());
-                        }
-                    }
+        if inner_pair.as_rule() == Rule::list_items {
+            for item in inner_pair.into_inner() {
+                if item.as_rule() == Rule::value {
+                    items.push(parse_arg_value(item));
                 }
-            }
-            _ => {
-                println!("Unexpected list part: {:?}", inner_pair.as_rule());
             }
         }
     }
-    println!("List Items: {:?}", items);
+    items
 }
 
 //-- FUNCTION CALL PARSING --
-fn parse_function_call(pair: Pair<Rule>) {
+fn parse_function_call(pair: Pair<Rule>) -> FunctionCall {
     let mut name = "";
     let mut args = Vec::new();
 
@@ -242,21 +226,20 @@ fn parse_function_call(pair: Pair<Rule>) {
     if let Some(args_pair) = inner_pairs.next() {
         if args_pair.as_rule() == Rule::arguments {
             for arg in args_pair.into_inner() {
-                println!("  Argument: {:?}", arg.as_str());
-                // Dig into the actual value inside the `argument` wrapper
                 for actual in arg.into_inner() {
-                    args.push(actual.as_str().to_string());
-
                     match actual.as_rule() {
-                        Rule::ident => println!("    Arg Ident: {}", actual.as_str()),
-                        Rule::number => println!("    Arg Number: {}", actual.as_str()),
-                        Rule::string => println!("    Arg String: {}", actual.as_str()),
-                        _ => println!("    Unknown function arg: {:?}", actual.as_rule()),
+                        Rule::ident => args.push(FunctionArg::Ident(actual.as_str().to_string())),
+                        Rule::number => args.push(FunctionArg::Number(actual.as_str().parse::<f64>().unwrap())),
+                        Rule::string => args.push(FunctionArg::String(actual.as_str().to_string())),
+                        _ => panic!("Unknown function arg"),
                     }
                 }
             }
         }
     }
 
-    println!("Function Call: {}({})", name, args.join(", "));
+    FunctionCall {
+        name: name.to_string(),
+        args,
+    }
 }

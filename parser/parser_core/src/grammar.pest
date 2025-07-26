@@ -12,7 +12,7 @@ backtest_cmd = { "BACKTEST" ~ "(" ~ named_args ~ ")" }
 named_args = { named_arg ~ ("," ~ named_arg)* }
 named_arg = { ident ~ "=" ~ value }
 
-value = { logical_block | date | duration | keyword | number | ident | arithmetic_expr | list | string }
+value = { function_call | logical_block | date | duration | keyword | number | ident | arithmetic_expr | list | string }
 
 list = { "[" ~ list_items? ~ "]" }
 list_items = { value ~ ("," ~ value)* }
@@ -60,7 +60,7 @@ operand = {
 
 function_call = { ident ~ "(" ~ arguments? ~ ")" }
 arguments = { argument ~ ("," ~ argument)* }
-argument = { ident | number | string }
+argument = { number | ident | string }
 
 comparator = { ">=" | "<=" | ">" | "<" | "=" }
 LOGICAL_OP = { "AND" | "OR" }

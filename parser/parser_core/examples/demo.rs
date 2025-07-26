@@ -1,17 +1,31 @@
 use std::env;
+use std::fs;
 use parser_core::parse_script;
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     let input = if let Some(arg) = args.first() {
-        arg.as_str()
+        if arg.ends_with(".txt") {
+            match fs::read_to_string(arg) {
+                Ok(content) => content,
+                Err(e) => {
+                    eprintln!("Failed to read file '{}': {}", arg, e);
+                    return;
+                }
+            }
+        } else {
+            arg.clone()
+        }
     } else {
-        "PLOT(items=[(TRGV / PZVS)], from=2015-01-01, to=today)"
+        // Default command if no args
+        "PLOT(items=[(TRGV / PZVS)], from=2015-01-01, to=today)".to_string()
     };
 
-    match parse_script(input) {
-        Ok(_) => println!("Parsed successfully!"),
+    match parse_script(&input) {
+        Ok(ast) => {
+            println!("Parsed successfully!\n{:#?}", ast);
+        }
         Err(e) => eprintln!("Parse error:\n{}", e),
     }
 }

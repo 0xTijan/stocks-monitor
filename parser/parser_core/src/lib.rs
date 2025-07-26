@@ -12,7 +12,9 @@ use ast::Program;
 use parser::parse_pairs;
 
 
-pub fn parse_script(input: &str) -> Result<(), pest::error::Error<crate::Rule>> {
+pub fn parse_script(input: &str) -> Result<Program, pest::error::Error<crate::Rule>> {
+    println!("Parsing script: {}", input);
+    
     let mut program: Program = Program{
         commands: Vec::new()
     };
@@ -28,15 +30,15 @@ pub fn parse_script(input: &str) -> Result<(), pest::error::Error<crate::Rule>> 
                 .expect("unsuccessful parse")
                 .next().unwrap();
         
-            parse_pairs(pairs);
-            // push res to program.commands
+            let res = parse_pairs(pairs);
+            program.commands.push(res.commands[0].clone());
         } else {
             // it is just a command without args
             println!("Command without args: {}", command);
         }
     }
     
-    Ok(())
+    Ok(program)
 }
 
 
