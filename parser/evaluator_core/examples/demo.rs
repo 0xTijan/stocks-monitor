@@ -19,7 +19,7 @@ fn main() {
         }
     } else {
         // Default command if no args
-        "PLOT(items=[(AAPL / MSFT), RSI(14, SPY)], from=2015-01-01, to=today)".to_string()
+        "PLOT(items=[(SBITOP / CBX) , RSI(14, SPY)], from=2025-07-01, to=today)".to_string()
     };
 
     evaluate_script(&input);

@@ -62,6 +62,7 @@ pub enum Expr {
 pub enum ArithmeticOp {
     Add,
     Div,
+    Sub,
 }
 
 #[derive(Debug, Clone)]

@@ -19,3 +19,12 @@ export const getSymbolPrices = async (req: Request, res: Response) => {
     const prices = await fetchSymbolPrices(symbol, from as string, until as string);
     res.json(prices);
 };
+
+export const getSymbolAll = async (req: Request, res: Response) => {
+    const { symbol } = req.params;
+    const { from, until } = req.query;
+    const prices = await fetchSymbolPrices(symbol, from as string, until as string);
+    const info = await fetchSymbolInfo(symbol);
+    const type = info.quantity ? 'Stock' : 'Index';
+    res.json({type: type, prices, info});
+};

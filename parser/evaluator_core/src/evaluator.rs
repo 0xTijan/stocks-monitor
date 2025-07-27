@@ -3,83 +3,62 @@ use crate::response::{TrackedItem, Item};
 use std::collections::HashMap;
 use crate::types::{Stock, Index};
 use crate::helpers::get_today;
+use chrono::NaiveDate;
+use crate::context::*;
+use std::pin::Pin;
+use std::future::Future;
 
 
-#[derive(Debug)]
-struct EvalContext {
-    // === Raw Market Data ===
-    stocks: HashMap<String, Stock>,          // e.g. "AAPL" → Stock struct
-    indexes: HashMap<String, Index>,         // e.g. "S&P500"
-
-    // === Time Series ===
-    price_series: HashMap<String, Vec<f64>>, // e.g. "AAPL" → [150.0, 151.2, ...]
-    index_series: HashMap<String, Vec<f64>>,
-
-    // === Derived Series ===
-    derived_series: HashMap<String, Vec<f64>>, // e.g. "my_custom_avg" → [123.4, ...]
-
-    /*// === Function Registry ===
-    functions: HashMap<String, fn(&EvalContext, Vec<String>) -> Vec<f64>>,*/
-
-    // === Metadata / Settings ===
-    date_range: (String, String),
-    tracked_items: Vec<TrackedItem>,
-}
-
-
-pub fn evaluate_input(program: &Program) {
-    let mut isFirst = true;
+/// Entry point: make this async to support async calls inside
+pub async fn evaluate_input(program: &Program) {
+    let mut is_first = true;
     let mut context = EvalContext {
         stocks: HashMap::new(),
         indexes: HashMap::new(),
         price_series: HashMap::new(),
         index_series: HashMap::new(),
         derived_series: HashMap::new(),
-        // functions: HashMap::new(),
         date_range: ("2019-01-01".to_string(), get_today()),
         tracked_items: Vec::new(),
     };
 
-    for command in program.commands.iter() {
+    for command in &program.commands {
         match command {
-            Command::Filter(args) => evaluate_filter(&mut context, args, isFirst),
-            Command::Sort(args) => evaluate_sort(&mut context, args, isFirst),
-            Command::Backtest(args) => evaluate_backtest(&mut context, args, isFirst),
-            Command::Plot(args) => evaluate_plot(&mut context, args, isFirst),
+            Command::Filter(args) => evaluate_filter(&mut context, args, is_first).await,
+            Command::Sort(args) => evaluate_sort(&mut context, args, is_first).await,
+            Command::Backtest(args) => evaluate_backtest(&mut context, args, is_first).await,
+            Command::Plot(args) => evaluate_plot(&mut context, args, is_first).await,
         }
-        isFirst = false;
+        is_first = false;
     }
 }
 
-fn evaluate_plot(ctx: &mut EvalContext, args: &Vec<NamedArg>, isFirst: bool) {
-    // Implement plot evaluation logic here
-    if isFirst {
-        evaluate_first(ctx, args);
+// All these need to be async so they can await `evaluate_first`
+async fn evaluate_plot(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
+    if is_first {
+        evaluate_first(ctx, args).await;
     }
 }
 
-fn evaluate_filter(ctx: &mut EvalContext, args: &Vec<NamedArg>, isFirst: bool) {
-    // Implement filter evaluation logic here
-    if isFirst {
-        evaluate_first(ctx, args);
-    }
-} 
-
-fn evaluate_sort(ctx: &mut EvalContext, args: &Vec<NamedArg>, isFirst: bool) {
-    // Implement sort evaluation logic here
-    if isFirst {
-        evaluate_first(ctx, args);
+async fn evaluate_filter(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
+    if is_first {
+        evaluate_first(ctx, args).await;
     }
 }
 
-fn evaluate_backtest(ctx: &mut EvalContext, args: &Vec<NamedArg>, isFirst: bool) {
-    // Implement backtest evaluation logic here
-    if isFirst {
-        evaluate_first(ctx, args);
+async fn evaluate_sort(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
+    if is_first {
+        evaluate_first(ctx, args).await;
     }
 }
 
-fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
+async fn evaluate_backtest(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
+    if is_first {
+        evaluate_first(ctx, args).await;
+    }
+}
+
+async fn evaluate_date_range(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     for arg in args {
         println!("Evaluating argument: {:?}", arg);
         match arg.name.as_str() {
@@ -96,8 +75,7 @@ fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                 } else if let Value::Keyword(keyword) = &arg.value {
                     match keyword {
                         Keyword::Today => {
-                            let today = get_today();
-                            ctx.date_range.1 = today;
+                            ctx.date_range.1 = get_today();
                         }
                         _ => panic!("Expected 'today' or a Date for 'to', got {:?}", arg.value),
                     }
@@ -105,15 +83,30 @@ fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                     panic!("Expected a Date for 'to', got {:?}", arg.value);
                 }
             }
+            _ => {}
+        }
+    }
+}
+
+async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
+    evaluate_date_range(ctx, args).await;
+    for arg in args {
+        println!("Evaluating argument: {:?}", arg);
+        match arg.name.as_str() {
             "items" => {
                 match &arg.value {
                     Value::List(items) => {
                         for item in items {
                             match item {
                                 Value::FunctionCall(func_call) => {
-                                    // Handle function calls like RSI, MACD, etc.
                                     println!("Function call: {:?}", func_call);
-                                    // Here you would evaluate the function call
+                                    // async evaluate function call if needed:
+                                    evaluate_function_call(ctx, func_call).await;
+                                }
+                                Value::ArithmeticExpr(expr) => {
+                                    // Await async computation of expression series
+                                    let series = compute_expr_series(ctx, expr).await;
+                                    println!("Computed series for expression: {:?}", series);
                                 }
                                 _ => println!("Unhandled item in 'items': {:?}", item),
                             }
@@ -122,26 +115,27 @@ fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                     _ => panic!("Expected a List for 'items', got {:?}", arg.value),
                 }
             }
-            &_ => {
-                // Handle other arguments as needed
+            _ => {
                 println!("Unhandled argument: {:?}", arg);
             }
         }
     }
 }
 
-fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) {
+// Make evaluate_function_call async so it can await inside if needed
+async fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) {
     let name = &func_call.name;
     let args = &func_call.args;
 
     match name.as_str() {
         "RSI" => {
-            // Implement RSI calculation logic here
             println!("Calculating RSI with args: {:?}", args);
+            // Async RSI calculation logic here, e.g.
+            // let result = some_async_rsi_calculation(ctx, args).await;
         }
         "MACD" => {
-            // Implement MACD calculation logic here
             println!("Calculating MACD with args: {:?}", args);
+            // Async MACD calculation logic here
         }
         _ => {
             eprintln!("Unknown function call: {}", name);
@@ -149,30 +143,64 @@ fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) {
     }
 }
 
-fn get_item_prices(ctx: &EvalContext, item_id: &str) -> Option<Vec<f64>> {
-    if let Some(ctx_stock_prices) = ctx.price_series.get(item_id) {
-        return Some(ctx_stock_prices.clone());
-    }
-    if let Some(ctx_index_prices) = ctx.index_series.get(item_id) {
-        return Some(ctx_index_prices.clone());
-    }
-    None
-
-    // get id from symbol
-    // fetch prices and item info and store in context
-    // return the prices
+fn compute_expr_series<'a>(
+    ctx: &'a mut EvalContext,
+    expr: &'a Expr,
+) -> Pin<Box<dyn Future<Output = Vec<f64>> + 'a>> {
+    Box::pin(async move {
+        match expr {
+            Expr::Number(val) => {
+                vec![*val; ctx.date_range_len()]
+            }
+            Expr::Ident(symbol) => {
+                if let Some(series) = ctx.get_item_prices(symbol).await {
+                    series.clone()
+                } else {
+                    panic!("No series found for symbol {}", symbol);
+                }
+            }
+            Expr::FunctionCall(func_call) => {
+                evaluate_function_call(ctx, func_call).await;
+                vec![]
+            }
+            Expr::BinaryOp { left, op, right } => {
+                let left_series = compute_expr_series(ctx, left).await;
+                let right_series = compute_expr_series(ctx, right).await;
+                apply_arithmetic_op(&left_series, &right_series, op)
+            }
+            Expr::Group(inner) => compute_expr_series(ctx, inner).await,
+            Expr::Tuple(_) => {
+                panic!("Tuples are not directly evaluable as numeric series");
+            }
+        }
+    })
 }
 
-fn get_item_data(ctx: &EvalContext, item_id: &str) -> Option<Item> {
-    if let Some(stock) = ctx.stocks.get(item_id) {
-        return Some(Item::Stock(stock.clone()));
+fn apply_arithmetic_op(left: &Vec<f64>, right: &Vec<f64>, op: &ArithmeticOp) -> Vec<f64> {
+    let left_len = left.len();
+    let right_len = right.len();
+    let len = left_len.min(right_len);
+
+    let mut result = Vec::with_capacity(len);
+
+    for i in 0..len {
+        // Calculate indices aligned to the newest data (end of arrays)
+        let left_idx = left_len - len + i;
+        let right_idx = right_len - len + i;
+
+        let v = match op {
+            ArithmeticOp::Add => left[left_idx] + right[right_idx],
+            ArithmeticOp::Sub => left[left_idx] - right[right_idx],
+            ArithmeticOp::Div => {
+                if right[right_idx] != 0.0 {
+                    left[left_idx] / right[right_idx]
+                } else {
+                    f64::NAN
+                }
+            }
+        };
+        result.push(v);
     }
-    if let Some(index) = ctx.indexes.get(item_id) {
-        return Some(Item::Index(index.clone()));
-    }
-    None
-       
-    // get id from symbol
-    // fetch prices and item info and store in context
-    // return the data
+
+    result
 }

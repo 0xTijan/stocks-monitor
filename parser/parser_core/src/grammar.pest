@@ -23,8 +23,8 @@ arithmetic_expr = {
 
 arithmetic_term = {
     function_call
-    | ident
     | number
+    | ident
     | tuple_expr
     | "(" ~ arithmetic_expr ~ ")"
 }
