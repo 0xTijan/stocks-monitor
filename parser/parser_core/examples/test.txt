@@ -1,1 +1,1 @@
-FILTER(items=stocks, conditions=[MA(36) > MA(58) AND market_cap < 100000000]) & SORT(item=RSI(14), dir=asc, limit=5) & PLOT
+FILTER( items=[stocks],    conditions=[        MA(50) > MA(200) AND         RSI(14) < 60 AND         volume > 500000 AND         market_cap > 1000000000    ]) & SORT(item=RSI(14), dir=asc, limit=50) & SORT(item=MA(20) - MA(50), dir=desc, limit=10)

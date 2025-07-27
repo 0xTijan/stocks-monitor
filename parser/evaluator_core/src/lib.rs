@@ -3,6 +3,8 @@ use parser_core::parse_script;
 
 pub mod evaluator;
 pub mod response;
+pub mod types;
+pub mod helpers;
 
 use evaluator::evaluate_input;
 
@@ -21,6 +23,7 @@ pub fn evaluate_ast(ast: &Program) {
     println!("Evaluating AST: {:#?}", ast);
     evaluate_input(&ast);
 }
+
 
 #[cfg(test)]
 mod tests {

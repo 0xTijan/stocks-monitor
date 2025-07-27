@@ -2,7 +2,7 @@
 
 ### Structure:
 - `/parser_core`: core parser and lexer
-- `/interpreter_core`: core interpreter/evaluator
+- `/evaluator_core`: core evaluator
 
 #### Examples:
 ```js

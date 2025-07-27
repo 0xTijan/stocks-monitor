@@ -12,7 +12,7 @@ use ast::{Program, Command};
 use parser::parse_pairs;
 
 
-pub fn parse_script(input: &str) -> Result<Program, pest::error::Error<crate::Rule>> {
+pub fn parse_script(input: &str) -> Result<Program, &'static str> {
     println!("Parsing script: {}", input);
     
     let mut program: Program = Program{
@@ -28,10 +28,18 @@ pub fn parse_script(input: &str) -> Result<Program, pest::error::Error<crate::Ru
         if command.contains("(") {
             let pairs = ScriptParser::parse(Rule::program, command)
                 .expect("unsuccessful parse")
-                .next().unwrap();
-        
-            let res = parse_pairs(pairs);
-            program.commands.push(res.commands[0].clone());
+                .next();
+
+            match pairs {
+                Some(pairs) => {
+                    if pairs.as_rule() != Rule::program {
+                        return Err("Expected a program rule");
+                    }
+                    let res = parse_pairs(pairs);
+                    program.commands.push(res.commands[0].clone());
+                },
+                None => return Err("No pairs found"),
+            }
         } else {
             // it is just a command without args
             match command {

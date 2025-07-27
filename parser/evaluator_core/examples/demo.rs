@@ -19,7 +19,7 @@ fn main() {
         }
     } else {
         // Default command if no args
-        "PLOT(items=[(TRGV / PZVS)], from=2015-01-01, to=today)".to_string()
+        "PLOT(items=[(AAPL / MSFT), RSI(14, SPY)], from=2015-01-01, to=today)".to_string()
     };
 
     evaluate_script(&input);
