@@ -1,12 +1,13 @@
 use parser_core::ast::*;
-use crate::response::{TrackedItem, Item};
+use crate::response::{TrackedItem, Item, ItemType};
 use std::collections::HashMap;
 use crate::types::{Stock, Index};
-use crate::helpers::get_today;
+use crate::helpers::{get_today, all_stocks_symbols, all_indexes_symbols, expr_to_id};
 use chrono::NaiveDate;
 use crate::context::*;
 use std::pin::Pin;
 use std::future::Future;
+use crate::functions::handle_calculate_function;
 
 
 /// Entry point: make this async to support async calls inside
@@ -31,6 +32,8 @@ pub async fn evaluate_input(program: &Program) {
         }
         is_first = false;
     }
+
+    println!("Final tracked items: {:#?}", context);
 }
 
 // All these need to be async so they can await `evaluate_first`
@@ -106,9 +109,43 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                                 Value::ArithmeticExpr(expr) => {
                                     // Await async computation of expression series
                                     let series = compute_expr_series(ctx, expr).await;
-                                    println!("Computed series for expression: {:?}", series);
+                                    let id = expr_to_id(expr);
+                                    ctx.tracked_items.push(TrackedItem {
+                                        id: id.clone(),
+                                        item_type: ItemType::Derived,
+                                    });
+                                    ctx.derived_series.insert(id, series);
                                 }
-                                _ => println!("Unhandled item in 'items': {:?}", item),
+                                Value::Ident(symbol) => {
+                                    println!("Ident found: {}", symbol);
+                                    match symbol.as_str() {
+                                        "stocks" => {
+                                            let stocks = all_stocks_symbols();
+                                            for s in stocks {
+                                                ctx.tracked_items.push(TrackedItem {
+                                                    id: s.to_string(),
+                                                    item_type: ItemType::Stock,
+                                                });
+                                            }
+                                        },
+                                        "indexes" => {
+                                            let indexes = all_indexes_symbols();
+                                            for s in indexes {
+                                                ctx.tracked_items.push(TrackedItem {
+                                                    id: s.to_string(),
+                                                    item_type: ItemType::Index,
+                                                });
+                                            }
+                                        },
+                                        _ => {
+                                            ctx.tracked_items.push(TrackedItem {
+                                                id: symbol.to_string(),
+                                                item_type: ItemType::Derived,
+                                            });
+                                        }
+                                    }
+                                }
+                                _ => {},
                             }
                         }
                     }
@@ -126,21 +163,8 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
 async fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) {
     let name = &func_call.name;
     let args = &func_call.args;
-
-    match name.as_str() {
-        "RSI" => {
-            println!("Calculating RSI with args: {:?}", args);
-            // Async RSI calculation logic here, e.g.
-            // let result = some_async_rsi_calculation(ctx, args).await;
-        }
-        "MACD" => {
-            println!("Calculating MACD with args: {:?}", args);
-            // Async MACD calculation logic here
-        }
-        _ => {
-            eprintln!("Unknown function call: {}", name);
-        }
-    }
+    
+    handle_calculate_function(ctx, args, &name).await;
 }
 
 fn compute_expr_series<'a>(

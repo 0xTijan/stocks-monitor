@@ -1,5 +1,5 @@
 use parser_core::ast::*;
-use crate::response::{TrackedItem, Item, ItemPrice};
+use crate::response::{TrackedItem, Item, ItemPrice, ItemType};
 use std::collections::HashMap;
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -64,6 +64,10 @@ impl EvalContext {
                             .collect();
                         self.derived_series.insert(item_id.to_string(), prices.clone());
                         self.derived_series.insert(format!("{}_volume", item_id), volumes);
+                        self.tracked_items.push(TrackedItem {
+                            id: item_id.to_string(),
+                            item_type: ItemType::Stock,
+                        });
                         Some(prices)
                     },
                     ApiResponse::Index(index_res) => {
@@ -75,6 +79,10 @@ impl EvalContext {
                             .filter_map(|p| p.last_value)
                             .collect();
                         self.derived_series.insert(item_id.to_string(), prices.clone());
+                        self.tracked_items.push(TrackedItem {
+                            id: item_id.to_string(),
+                            item_type: ItemType::Index,
+                        });
                         Some(prices)
                     },
                 }
