@@ -62,7 +62,7 @@ function_call = { ident ~ "(" ~ arguments? ~ ")" }
 arguments = { argument ~ ("," ~ argument)* }
 argument = { number | ident | string }
 
-comparator = { ">=" | "<=" | ">" | "<" | "=" }
+comparator = { "=" | ">=" | "<=" | ">" | "<" }
 LOGICAL_OP = { "AND" | "OR" }
 
 keyword = @{ "today" }

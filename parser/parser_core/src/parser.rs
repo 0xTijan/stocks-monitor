@@ -175,7 +175,8 @@ fn parse_comparison(pair: Pair<Rule>) -> LogicalExpr {
         ">=" => Comparator::Gte,
         "<" => Comparator::Lt,
         "<=" => Comparator::Lte,
-        "==" => Comparator::Eq,
+        "=" => Comparator::Eq,
+        "!=" => Comparator::Neq,
         _ => panic!("Unknown comparator"),
     };
     let rhs = parse_operand(parts.next().unwrap());

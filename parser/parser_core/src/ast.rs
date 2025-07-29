@@ -101,6 +101,7 @@ pub enum Comparator {
     Lt,
     Lte,
     Eq,
+    Neq
 }
 
 #[derive(Debug, Clone)]

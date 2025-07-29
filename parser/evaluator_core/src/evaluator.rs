@@ -1,7 +1,7 @@
 use parser_core::ast::*;
-use crate::response::{TrackedItem, ItemType, Item};
+use crate::eval_filter::filter_eval;
+use crate::response::{TrackedItem, ItemType};
 use std::collections::{HashMap, HashSet};
-use crate::types::{Direction, Index, Stock};
 use crate::helpers::{get_today, expr_to_id, create_function_id};
 use crate::context::*;
 use std::pin::Pin;
@@ -18,7 +18,7 @@ pub async fn evaluate_input(program: &Program) {
         price_series: HashMap::new(),
         index_series: HashMap::new(),
         derived_series: HashMap::new(),
-        date_range: ("2025-05-01".to_string(), get_today()),
+        date_range: ("2025-01-01".to_string(), get_today()),
         tracked_items: Vec::new(),
         tracked_ids: HashSet::new(),
     };
@@ -33,7 +33,7 @@ pub async fn evaluate_input(program: &Program) {
         is_first = false;
     }
 
-    // println!("Final tracked items: {:?}", context);
+    println!("Final tracked items: {:#?}", context.tracked_items);
 }
 
 // All these need to be async so they can await `evaluate_first`
@@ -47,6 +47,7 @@ async fn evaluate_filter(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: 
     if is_first {
         evaluate_first(ctx, args).await;
     }
+    filter_eval(ctx, args).await;
 }
 
 async fn evaluate_sort(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
@@ -211,7 +212,7 @@ pub fn compute_expr_series<'a>(
     })
 }
 
-fn apply_arithmetic_op(left: &Vec<f64>, right: &Vec<f64>, op: &ArithmeticOp) -> Vec<f64> {
+pub fn apply_arithmetic_op(left: &Vec<f64>, right: &Vec<f64>, op: &ArithmeticOp) -> Vec<f64> {
     let left_len = left.len();
     let right_len = right.len();
     let len = left_len.min(right_len);

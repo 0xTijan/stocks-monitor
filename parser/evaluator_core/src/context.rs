@@ -1,4 +1,4 @@
-use crate::{helpers::{all_indexes_symbols, all_stocks_symbols}, response::{Item, ItemType, TrackedItem}};
+use crate::{response::{Item, ItemType, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;

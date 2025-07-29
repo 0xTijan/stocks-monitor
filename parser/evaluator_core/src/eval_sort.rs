@@ -14,7 +14,7 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
 
     for arg in args {
         match arg.name.as_str() {
-            "item" => {
+            "property" => {
                 match &arg.value {
                     Value::Ident(f) => {
                         match f.as_str() {
@@ -22,7 +22,7 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                             "price" => field = Some("price".to_string()),
                             "quantity" => field = Some("quantity".to_string()),
                             "sector_id" => field = Some("sector_id".to_string()),
-                            "change_prev_close_percentage" => field = Some("change_prev_close_percentage".to_string()),
+                            "change" => field = Some("change_prev_close_percentage".to_string()),
                             "mic" => field = Some("mic".to_string()),
                             "country" => field = Some("country".to_string()),
                             "symbol" => field = Some("symbol".to_string()),

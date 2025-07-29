@@ -9,6 +9,7 @@ pub mod context;
 pub mod apis;
 pub mod functions;
 pub mod eval_sort;
+pub mod eval_filter;
 
 use evaluator::evaluate_input;
 

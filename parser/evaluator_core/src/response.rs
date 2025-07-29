@@ -82,7 +82,7 @@ pub struct Chart {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-enum ChartType {
+pub enum ChartType {
     Volume,
     Price,
     Indicator,
