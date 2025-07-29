@@ -102,3 +102,9 @@ pub struct IndexValue {
     #[serde(deserialize_with = "str_to_f64")]
     pub turnover: Option<f64>,
 }
+
+#[derive(Debug)]
+pub enum Direction {
+    Asc,
+    Desc,
+}

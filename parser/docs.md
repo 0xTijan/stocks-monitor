@@ -174,6 +174,33 @@ Operators:
 | asc   | Run strategy tests    |
 | desc   | Run strategy tests    |
 
+| market_cap     | Select instruments    |
+| quantity       | Order results         |
+| indexes       | Visualize data        |
+| asc   | Run strategy tests    |
+| desc   | Run strategy tests    |
+
+---
+
+### 3.5 Functions
+| Keyword    | Purpose               |
+|------------|----------------------|
+| RSI     | Select instruments    |
+| RSI_MA     | Select instruments    |
+| MACD       | Order results         |
+| STOCH_D       | Visualize data        |
+| STOCH_K       | Visualize data        |
+| MA   | Run strategy tests    |
+| EMA   | Run strategy tests    |
+| BB_UPPER   | Run strategy tests    |
+| BB_LOWER   | Run strategy tests    |
+| BB_MIDDLE   | Run strategy tests    |
+| ADX   | Run strategy tests    |
+| TENKANSEN   | Run strategy tests    |
+| KIJUNSEN   | Run strategy tests    |
+| BBWP     | Select instruments    |
+| BBWP_MA     | Select instruments    |
+
 ---
 
 ## 4. Defaults

@@ -19,7 +19,7 @@ fn main() {
         }
     } else {
         // Default command if no args
-        "PLOT(items=[(SBITOP / CBX), RSI(14)], from=2025-06-01, to=today)".to_string()
+        "PLOT(items=[ZVTG], from=2025-06-01, to=today)".to_string()
     };
 
     evaluate_script(&input);

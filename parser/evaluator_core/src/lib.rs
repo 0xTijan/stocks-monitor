@@ -8,6 +8,7 @@ pub mod helpers;
 pub mod context;
 pub mod apis;
 pub mod functions;
+pub mod eval_sort;
 
 use evaluator::evaluate_input;
 

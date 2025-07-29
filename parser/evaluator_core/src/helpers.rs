@@ -1,5 +1,7 @@
 use chrono::Local;
 use parser_core::ast::{FunctionArg, Expr, ArithmeticOp};
+use crate::response::TrackedItem;
+
 
 pub fn get_today() -> String {
     Local::now().format("%Y-%m-%d").to_string()
@@ -82,15 +84,15 @@ pub fn create_function_id(name: &String, args: &Vec<FunctionArg>, item: &String)
     format!("{}_{}_{}", name, args_str.join(","), item)
 }
 
-pub fn expr_to_id(expr: &Expr) -> String {
+pub fn expr_to_id(expr: &Expr, tracked_item: Option<&TrackedItem>) -> String {
     match expr {
         Expr::Number(n) => n.to_string(),
         Expr::Ident(s) => s.clone(),
-        Expr::Group(inner) => expr_to_id(inner),
+        Expr::Group(inner) => expr_to_id(inner, tracked_item),
 
         Expr::BinaryOp { left, op, right } => {
-            let left_id = expr_to_id(left);
-            let right_id = expr_to_id(right);
+            let left_id = expr_to_id(left, tracked_item);
+            let right_id = expr_to_id(right, tracked_item);
             let op_str = match op {
                 ArithmeticOp::Add => "+",
                 ArithmeticOp::Sub => "-",
@@ -104,7 +106,11 @@ pub fn expr_to_id(expr: &Expr) -> String {
                 if let FunctionArg::Ident(ident) = arg {
                     Some(ident.clone())
                 } else {
-                    None
+                    if let Some(tracked_item) = tracked_item {
+                        Some(tracked_item.id.clone())
+                    } else {
+                        None
+                    }
                 }
             }).collect::<Vec<String>>();
             create_function_id(&func_call.name, &func_call.args, ids.first().unwrap_or(&"".to_string()))

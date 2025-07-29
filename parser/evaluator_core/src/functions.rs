@@ -43,6 +43,27 @@ pub async fn handle_calculate_function(ctx: &mut EvalContext, args: &Vec<Functio
                             };
                             rsi(&prices, len)
                         }
+                        "MA" => {
+                            let len: u64 = match args[0] {
+                                FunctionArg::Number(n) => n as u64,
+                                _ => 14,
+                            };
+                            sma(&prices, len)
+                        }
+                        "EMA" => {
+                            let len: u64 = match args[0] {
+                                FunctionArg::Number(n) => n as u64,
+                                _ => 14,
+                            };
+                            ema(&prices, len)
+                        }
+                        "WMA" => {
+                            let len: u64 = match args[0] {
+                                FunctionArg::Number(n) => n as u64,
+                                _ => 14,
+                            };
+                            wma(&prices, len)
+                        }
                         _ => {
                             println!("Unknown function: {}", name);
                             continue;
@@ -111,7 +132,63 @@ fn rsi(prices: &Vec<f64>, len: u64) -> Vec<f64> {
     rsis
 }
 
-pub fn macd() -> Vec<f64> {
-    // Placeholder for RSI calculation logic
-    vec![0.0; 14] // Example: returning a vector of zeros
+pub fn sma(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+    let len = len as usize;
+    if prices.len() < len {
+        return vec![];
+    }
+
+    let mut result = Vec::with_capacity(prices.len() - len + 1);
+    let mut sum: f64 = prices[..len].iter().sum();
+
+    result.push(sum / len as f64);
+
+    for i in len..prices.len() {
+        sum = sum - prices[i - len] + prices[i];
+        result.push(sum / len as f64);
+    }
+
+    result
+}
+
+pub fn ema(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+    let len = len as usize;
+    if prices.len() < len {
+        return vec![];
+    }
+
+    let alpha = 2.0 / (len as f64 + 1.0);
+    let mut result = Vec::with_capacity(prices.len() - len + 1);
+
+    // Start EMA with SMA of first `len` prices
+    let mut ema_prev = prices[..len].iter().sum::<f64>() / len as f64;
+    result.push(ema_prev);
+
+    for i in len..prices.len() {
+        let ema = alpha * prices[i] + (1.0 - alpha) * ema_prev;
+        result.push(ema);
+        ema_prev = ema;
+    }
+
+    result
+}
+
+pub fn wma(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+    let len = len as usize;
+    if prices.len() < len {
+        return vec![];
+    }
+
+    let mut result = Vec::with_capacity(prices.len() - len + 1);
+    let denominator = (len * (len + 1) / 2) as f64;
+
+    for i in (len - 1)..prices.len() {
+        let mut weighted_sum = 0.0;
+        for j in 0..len {
+            weighted_sum += prices[i - j] * (len - j) as f64;
+        }
+        result.push(weighted_sum / denominator);
+    }
+
+    result
 }

@@ -1,14 +1,13 @@
 use parser_core::ast::*;
-use crate::response::{TrackedItem, Item, ItemType};
-use std::collections::HashMap;
-use crate::types::{Stock, Index};
-use crate::helpers::{get_today, all_stocks_symbols, all_indexes_symbols, expr_to_id};
-use chrono::NaiveDate;
+use crate::response::{TrackedItem, ItemType, Item};
+use std::collections::{HashMap, HashSet};
+use crate::types::{Direction, Index, Stock};
+use crate::helpers::{get_today, expr_to_id, create_function_id};
 use crate::context::*;
 use std::pin::Pin;
 use std::future::Future;
 use crate::functions::handle_calculate_function;
-
+use crate::eval_sort::sort_eval;
 
 /// Entry point: make this async to support async calls inside
 pub async fn evaluate_input(program: &Program) {
@@ -19,8 +18,9 @@ pub async fn evaluate_input(program: &Program) {
         price_series: HashMap::new(),
         index_series: HashMap::new(),
         derived_series: HashMap::new(),
-        date_range: ("2019-01-01".to_string(), get_today()),
+        date_range: ("2025-05-01".to_string(), get_today()),
         tracked_items: Vec::new(),
+        tracked_ids: HashSet::new(),
     };
 
     for command in &program.commands {
@@ -33,7 +33,7 @@ pub async fn evaluate_input(program: &Program) {
         is_first = false;
     }
 
-    println!("Final tracked items: {:#?}", context);
+    // println!("Final tracked items: {:?}", context);
 }
 
 // All these need to be async so they can await `evaluate_first`
@@ -53,6 +53,7 @@ async fn evaluate_sort(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bo
     if is_first {
         evaluate_first(ctx, args).await;
     }
+    sort_eval(ctx, args).await;
 }
 
 async fn evaluate_backtest(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
@@ -102,14 +103,12 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         for item in items {
                             match item {
                                 Value::FunctionCall(func_call) => {
-                                    println!("Function call: {:?}", func_call);
-                                    // async evaluate function call if needed:
                                     evaluate_function_call(ctx, func_call).await;
                                 }
                                 Value::ArithmeticExpr(expr) => {
                                     // Await async computation of expression series
-                                    let series = compute_expr_series(ctx, expr).await;
-                                    let id = expr_to_id(expr);
+                                    let series = compute_expr_series(ctx, expr, None).await;
+                                    let id = expr_to_id(expr, None);
                                     ctx.tracked_items.push(TrackedItem {
                                         id: id.clone(),
                                         item_type: ItemType::Derived,
@@ -120,28 +119,17 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                                     println!("Ident found: {}", symbol);
                                     match symbol.as_str() {
                                         "stocks" => {
-                                            let stocks = all_stocks_symbols();
-                                            for s in stocks {
-                                                ctx.tracked_items.push(TrackedItem {
-                                                    id: s.to_string(),
-                                                    item_type: ItemType::Stock,
-                                                });
-                                            }
+                                            ctx.add_all_stocks_to_tracked().await;
                                         },
                                         "indexes" => {
-                                            let indexes = all_indexes_symbols();
-                                            for s in indexes {
-                                                ctx.tracked_items.push(TrackedItem {
-                                                    id: s.to_string(),
-                                                    item_type: ItemType::Index,
-                                                });
-                                            }
+                                            ctx.add_all_indexes_to_tracked().await;
+                                        },
+                                        "all" => {
+                                            ctx.add_all_stocks_to_tracked().await;
+                                            ctx.add_all_indexes_to_tracked().await;
                                         },
                                         _ => {
-                                            ctx.tracked_items.push(TrackedItem {
-                                                id: symbol.to_string(),
-                                                item_type: ItemType::Derived,
-                                            });
+                                            ctx.get_item_prices(symbol).await;
                                         }
                                     }
                                 }
@@ -159,17 +147,31 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     }
 }
 
-// Make evaluate_function_call async so it can await inside if needed
-async fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) {
+// by default it checks if function has an argument for item, if not it will calculate the function for all tracked items and return id (RSI_14_)
+pub async fn evaluate_function_call(ctx: &mut EvalContext, func_call: &FunctionCall) -> String {
     let name = &func_call.name;
     let args = &func_call.args;
     
     handle_calculate_function(ctx, args, &name).await;
+
+    let args_item: Vec<String> = args
+        .iter()
+        .filter_map(|arg| {
+            if let FunctionArg::Ident(item_id) = arg {
+                Some(item_id.to_string())
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    create_function_id(name, args, &args_item.first().unwrap_or(&"".to_string()))
 }
 
-fn compute_expr_series<'a>(
+pub fn compute_expr_series<'a>(
     ctx: &'a mut EvalContext,
     expr: &'a Expr,
+    tracked_item: Option<&'a TrackedItem>,
 ) -> Pin<Box<dyn Future<Output = Vec<f64>> + 'a>> {
     Box::pin(async move {
         match expr {
@@ -184,15 +186,24 @@ fn compute_expr_series<'a>(
                 }
             }
             Expr::FunctionCall(func_call) => {
-                evaluate_function_call(ctx, func_call).await;
-                vec![]
+                let id_res = evaluate_function_call(ctx, func_call).await;
+                let id = if let Some(tracked_item) = tracked_item {
+                    id_res + &tracked_item.id
+                } else {
+                    id_res
+                };
+                if let Some(series) = ctx.derived_series.get(&id) {
+                    series.clone()
+                } else {
+                    panic!("No series found for function call {}", id);
+                }
             }
             Expr::BinaryOp { left, op, right } => {
-                let left_series = compute_expr_series(ctx, left).await;
-                let right_series = compute_expr_series(ctx, right).await;
+                let left_series = compute_expr_series(ctx, left, tracked_item).await;
+                let right_series = compute_expr_series(ctx, right, tracked_item).await;
                 apply_arithmetic_op(&left_series, &right_series, op)
             }
-            Expr::Group(inner) => compute_expr_series(ctx, inner).await,
+            Expr::Group(inner) => compute_expr_series(ctx, inner, tracked_item).await,
             Expr::Tuple(_) => {
                 panic!("Tuples are not directly evaluable as numeric series");
             }

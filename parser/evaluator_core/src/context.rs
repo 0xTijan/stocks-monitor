@@ -1,9 +1,8 @@
-use parser_core::ast::*;
-use crate::response::{TrackedItem, Item, ItemPrice, ItemType};
-use std::collections::HashMap;
+use crate::{helpers::{all_indexes_symbols, all_stocks_symbols}, response::{Item, ItemType, TrackedItem}};
+use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
-use crate::apis::{fetch_api_data_async, ApiResponse};
+use crate::apis::*;
 
 
 #[derive(Debug)]
@@ -25,6 +24,7 @@ pub struct EvalContext {
     // === Metadata / Settings ===
     pub date_range: (String, String),
     pub tracked_items: Vec<TrackedItem>,
+    pub tracked_ids: HashSet<String>,
 }
 
 
@@ -56,18 +56,20 @@ impl EvalContext {
                             .iter()
                             .filter_map(|p| p.last_price)
                             .collect();
-                        let volumes: Vec<f64> = stock_res
+                        /*let volumes: Vec<f64> = stock_res
                             .prices
                             .iter()
                             .filter_map(|p| p.volume)
                             .map(|v| v as f64)
-                            .collect();
+                            .collect();*/
                         self.derived_series.insert(item_id.to_string(), prices.clone());
-                        self.derived_series.insert(format!("{}_volume", item_id), volumes);
-                        self.tracked_items.push(TrackedItem {
-                            id: item_id.to_string(),
-                            item_type: ItemType::Stock,
-                        });
+                        //self.derived_series.insert(format!("{}_volume", item_id), volumes);
+                        if self.tracked_ids.insert(item_id.to_string()) {
+                            self.tracked_items.push(TrackedItem {
+                                id: item_id.to_string(),
+                                item_type: ItemType::Stock,
+                            });
+                        }
                         Some(prices)
                     },
                     ApiResponse::Index(index_res) => {
@@ -79,10 +81,12 @@ impl EvalContext {
                             .filter_map(|p| p.last_value)
                             .collect();
                         self.derived_series.insert(item_id.to_string(), prices.clone());
-                        self.tracked_items.push(TrackedItem {
-                            id: item_id.to_string(),
-                            item_type: ItemType::Index,
-                        });
+                        if self.tracked_ids.insert(item_id.to_string()) {
+                            self.tracked_items.push(TrackedItem {
+                                id: item_id.to_string(),
+                                item_type: ItemType::Index,
+                            });
+                        }
                         Some(prices)
                     },
                 }
@@ -106,5 +110,45 @@ impl EvalContext {
         // get id from symbol
         // fetch prices and item info and store in context
         // return the data
+    }
+
+    pub async fn add_all_indexes_to_tracked(&mut self) {
+        let res = fetch_all_indexes().await;
+        match res {
+            Ok(indexes) => {
+                for s in indexes {
+                    if self.tracked_ids.insert(s.symbol.to_string()) {
+                        self.tracked_items.push(TrackedItem {
+                            id: s.symbol.to_string(),
+                            item_type: ItemType::Index,
+                        });
+                    }
+                    self.indexes.insert(s.symbol.to_string(), s);
+                }
+            },
+            Err(err) => {
+                eprintln!("Failed to fetch all indexes: {}", err);
+            }
+        }
+    }
+
+    pub async fn add_all_stocks_to_tracked(&mut self) {
+        let res = fetch_all_stocks().await;
+        match res {
+            Ok(stocks) => {
+                for s in stocks {
+                    if self.tracked_ids.insert(s.symbol.to_string()) {
+                        self.tracked_items.push(TrackedItem {
+                            id: s.symbol.to_string(),
+                            item_type: ItemType::Stock,
+                        });
+                    }
+                    self.stocks.insert(s.symbol.to_string(), s);
+                }
+            },
+            Err(err) => {
+                eprintln!("Failed to fetch all stocks: {}", err);
+            }
+        }
     }
 }
