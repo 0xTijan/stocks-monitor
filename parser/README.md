@@ -44,3 +44,28 @@ timeframe=1d
 
 #### Rules:
 - SORT can only come AFTER FILTER
+
+
+### Response Examples
+```js
+FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
+    & SORT(property=RSI(14), dir=asc, limit=10)
+    & PLOT(from=2024-01-01, to=today)
+
+// response
+{
+    // sorted and filtered (Stock | Index)[]
+    "matching_items": [
+        Stock {}, Stock {}, ...
+    ],
+    // because of plot this is added
+    "charts": {
+        "{stock_1_id}": {x, y}[],   
+        "{stock_1_volume}": {x, y}[],
+        "{stock_1_ma_36}": {x, y}[],
+        "{stock_1_ma_58}": {x, y}[],
+        "{stock_1_rsi_14}": {x, y}[],
+        ... // for each stock
+    }
+}
+```

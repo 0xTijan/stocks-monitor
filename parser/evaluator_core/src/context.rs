@@ -1,4 +1,4 @@
-use crate::{response::{Item, ItemType, TrackedItem}};
+use crate::{helpers::get_today, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -29,6 +29,19 @@ pub struct EvalContext {
 
 
 impl EvalContext {
+    pub fn init() -> Self {
+        Self {
+            stocks: HashMap::new(),
+            indexes: HashMap::new(),
+            price_series: HashMap::new(),
+            index_series: HashMap::new(),
+            derived_series: HashMap::new(),
+            date_range: ("2024-01-01".to_string(), get_today()),
+            tracked_items: Vec::new(),
+            tracked_ids: HashSet::new(),
+        }
+    }
+
     pub fn date_range_len(&self) -> usize {
         let start = NaiveDate::parse_from_str(&self.date_range.0, "%Y-%m-%d")
             .expect("Invalid start date format");
@@ -37,7 +50,7 @@ impl EvalContext {
         (end - start).num_days().try_into().unwrap()
     }
 
-    pub async fn get_item_prices(&mut self, item_id: &str) -> Option<Vec<f64>> {
+    pub async fn get_item_prices(&mut self, item_id: &str, add_to_tracked: bool) -> Option<Vec<f64>> {
         if let Some(ctx_prices) = self.derived_series.get(item_id) {
             return Some(ctx_prices.clone());
         }
@@ -64,11 +77,19 @@ impl EvalContext {
                             .collect();*/
                         self.derived_series.insert(item_id.to_string(), prices.clone());
                         //self.derived_series.insert(format!("{}_volume", item_id), volumes);
-                        if self.tracked_ids.insert(item_id.to_string()) {
-                            self.tracked_items.push(TrackedItem {
-                                id: item_id.to_string(),
-                                item_type: ItemType::Stock,
-                            });
+                        /*if let Some(parent) = parent_id {
+                            self.id_to_supporting_ids
+                                .entry(parent)
+                                .or_insert_with(HashSet::new)
+                                .insert(item_id.to_string());
+                        } else {*/
+                        if add_to_tracked  {    
+                            if self.tracked_ids.insert(item_id.to_string()) {
+                                self.tracked_items.push(TrackedItem {
+                                    id: item_id.to_string(),
+                                    item_type: ItemType::Stock,
+                                });
+                            }
                         }
                         Some(prices)
                     },
@@ -81,11 +102,19 @@ impl EvalContext {
                             .filter_map(|p| p.last_value)
                             .collect();
                         self.derived_series.insert(item_id.to_string(), prices.clone());
-                        if self.tracked_ids.insert(item_id.to_string()) {
-                            self.tracked_items.push(TrackedItem {
-                                id: item_id.to_string(),
-                                item_type: ItemType::Index,
-                            });
+                        /*if let Some(parent) = parent_id {
+                            self.id_to_supporting_ids
+                                .entry(parent)
+                                .or_insert_with(HashSet::new)
+                                .insert(item_id.to_string());
+                        } else {*/
+                        if add_to_tracked {
+                            if self.tracked_ids.insert(item_id.to_string()) {
+                                self.tracked_items.push(TrackedItem {
+                                    id: item_id.to_string(),
+                                    item_type: ItemType::Index,
+                                });
+                            }
                         }
                         Some(prices)
                     },
@@ -150,5 +179,101 @@ impl EvalContext {
                 eprintln!("Failed to fetch all stocks: {}", err);
             }
         }
+    }
+
+    pub fn create_response(&mut self, has_plot: bool, has_backtest: bool) -> Response {
+        let mut response = Response {
+            matching_items: Some(Vec::new()),
+            charts: None,
+            backtest: None,
+        };
+
+        let tracked_items = self.tracked_items.clone();
+        for tracked_item in tracked_items {
+            // add to matching items
+            let data = self.get_item_data(&tracked_item.id);
+            match data {
+                Some(d) => {
+                    let obj: ResponseItem = match d {
+                        Item::Index(index) => ResponseItem::Index(index),
+                        Item::Stock(stock) => ResponseItem::Stock(stock),
+                    };
+                    response
+                        .matching_items
+                        .as_mut()
+                        .expect("Expected matching_items to be Some")
+                        .push(obj);
+                }
+                None => {
+                    // derived item
+                    response
+                        .matching_items
+                        .as_mut()
+                        .expect("Expected matching_items to be Some")
+                        .push(ResponseItem::Derived(Derived {id: tracked_item.id}));
+                }
+            }
+        }
+
+        if has_plot {
+            // add charts
+            if let Some(items) = &response.matching_items {  
+                for item in items {
+                    // create chart {} for all ids in derived series hashmap that include item id and push to charts
+                    let id = match item {
+                        ResponseItem::Derived(d) => &d.id,
+                        ResponseItem::Index(i) => &i.symbol,
+                        ResponseItem::Stock(s) => &s.symbol
+                    };
+
+                    let matches = self.get_matching_values_from_derived(id);
+
+                    // add all prices that are in derived
+                    for vec in matches {
+                        let mut chart_type = ChartType::Price;
+                        if id.contains("_") {
+                            chart_type = ChartType::Indicator;
+                        }
+                        let mut chart = Chart {
+                            id: id.to_string(),
+                            chart_type: chart_type,
+                            panel_id: 0,
+                            data: Vec::new()
+                        };
+                    }
+
+                    // add volume - if stock - 4 letter id
+                    if id.chars().count() == 4 {
+                        let volume_data = self.get_volume_for_stock(id);
+                        let volume_chart = Chart {
+                            id: id.to_string() + " - Volume",
+                            chart_type: ChartType::Volume,
+                            panel_id: 0,
+                            data: Vec::new()
+                        };
+                    } 
+                }
+            }
+        }
+
+        if has_backtest {
+            // add backtest
+        }
+
+        response
+    }
+
+    pub fn get_matching_values_from_derived<'a>(
+        &'a self,
+        x: &str,
+    ) -> Vec<&'a Vec<f64>> {
+        self.derived_series.iter()
+            .filter(|(key, _)| key.contains(x))
+            .map(|(_, vec)| vec)
+            .collect()
+    }
+
+    pub fn get_volume_for_stock(&self, id: &String) -> Vec<f64> {
+        vec![]
     }
 }

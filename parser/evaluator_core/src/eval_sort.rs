@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use parser_core::ast::{NamedArg, Value};
-use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::expr_to_id, response::Item, types::{Direction}};
+use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::expr_to_id, response_types::Item, types::{Direction}};
 
 pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     let mut direction: Direction = Direction::Asc;
@@ -77,7 +77,6 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     // if funcId is Some check derived_series (for each id in tracked items - append to funcId)
     // rearrange tracked_items based on sorting criteria (and cut if limit)
     let mut sorted_items = ctx.tracked_items.clone();
-    println!("Before sorting: {:#?}", sorted_items);
     if field.is_none() && expr_id.is_none() && func_id.is_some() {
         // FUNCTION
         // loop through tracked items, get derived series for each id (func_id + id (RSI_14_ + id)) and compare
@@ -271,6 +270,6 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     if let Some(limit) = limit {
         sorted_items.truncate(limit as usize);
     }
-    println!("After sorting: {:#?}", sorted_items);
+
     ctx.tracked_items = sorted_items;
 }

@@ -1,7 +1,7 @@
 use crate::context::EvalContext;
 use crate::helpers::{create_function_id};
 use parser_core::ast::FunctionArg;
-use crate::response::ItemType;
+use crate::response_types::ItemType;
 
 pub async fn handle_calculate_function(ctx: &mut EvalContext, args: &Vec<FunctionArg>, name: &String) {
     // get ids that need to be calculated
@@ -31,7 +31,7 @@ pub async fn handle_calculate_function(ctx: &mut EvalContext, args: &Vec<Functio
         if ctx.derived_series.contains_key(&key) {
             continue;
         } else {
-            let prices = ctx.get_item_prices(&id).await;
+            let prices = ctx.get_item_prices(&id, true).await;
             match prices {
                 Some(prices) => {
                     // calculate the function

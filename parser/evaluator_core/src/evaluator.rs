@@ -1,7 +1,7 @@
 use parser_core::ast::*;
 use crate::eval_filter::filter_eval;
-use crate::response::{TrackedItem, ItemType};
-use std::collections::{HashMap, HashSet};
+use crate::eval_plot::plot_eval;
+use crate::response_types::{ItemType, Response, TrackedItem};
 use crate::helpers::{get_today, expr_to_id, create_function_id};
 use crate::context::*;
 use std::pin::Pin;
@@ -9,19 +9,24 @@ use std::future::Future;
 use crate::functions::handle_calculate_function;
 use crate::eval_sort::sort_eval;
 
-/// Entry point: make this async to support async calls inside
-pub async fn evaluate_input(program: &Program) {
+
+pub async fn evaluate_input(program: &Program) -> Response {
     let mut is_first = true;
-    let mut context = EvalContext {
-        stocks: HashMap::new(),
-        indexes: HashMap::new(),
-        price_series: HashMap::new(),
-        index_series: HashMap::new(),
-        derived_series: HashMap::new(),
-        date_range: ("2025-01-01".to_string(), get_today()),
-        tracked_items: Vec::new(),
-        tracked_ids: HashSet::new(),
-    };
+    let mut context = EvalContext::init();
+    let mut has_plot = false;
+    let mut has_backtest = false;
+
+    // set date range first
+    for command in &program.commands {
+        match command {
+            Command::Plot(args) => {
+                evaluate_date_range(&mut context, args);
+                has_plot = true;
+            },
+            Command::Backtest(_) => has_backtest = true,
+            _ => {}
+        }
+    }
 
     for command in &program.commands {
         match command {
@@ -33,14 +38,16 @@ pub async fn evaluate_input(program: &Program) {
         is_first = false;
     }
 
-    println!("Final tracked items: {:#?}", context.tracked_items);
+    //println!("Final tracked items: {:#?}", context);
+    println!("has plot {:?}", has_plot);
+    context.create_response(has_plot, has_backtest)
 }
 
-// All these need to be async so they can await `evaluate_first`
 async fn evaluate_plot(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
     if is_first {
         evaluate_first(ctx, args).await;
     }
+    plot_eval(ctx, args);
 }
 
 async fn evaluate_filter(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
@@ -63,7 +70,7 @@ async fn evaluate_backtest(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first
     }
 }
 
-async fn evaluate_date_range(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
+fn evaluate_date_range(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     for arg in args {
         println!("Evaluating argument: {:?}", arg);
         match arg.name.as_str() {
@@ -94,7 +101,7 @@ async fn evaluate_date_range(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
 }
 
 async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
-    evaluate_date_range(ctx, args).await;
+    evaluate_date_range(ctx, args);
     for arg in args {
         println!("Evaluating argument: {:?}", arg);
         match arg.name.as_str() {
@@ -130,7 +137,7 @@ async fn evaluate_first(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                                             ctx.add_all_indexes_to_tracked().await;
                                         },
                                         _ => {
-                                            ctx.get_item_prices(symbol).await;
+                                            ctx.get_item_prices(symbol, true).await;
                                         }
                                     }
                                 }
@@ -180,7 +187,7 @@ pub fn compute_expr_series<'a>(
                 vec![*val; ctx.date_range_len()]
             }
             Expr::Ident(symbol) => {
-                if let Some(series) = ctx.get_item_prices(symbol).await {
+                if let Some(series) = ctx.get_item_prices(symbol, false).await {
                     series.clone()
                 } else {
                     panic!("No series found for symbol {}", symbol);

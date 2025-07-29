@@ -8,37 +8,24 @@ use crate::types::{IndexValue, DailyPrice};
 // MAIN RESPONSE STRUCT
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Response {
-    pub plot: Option<PlotResponse>,
-    pub filter: Option<FilterResponse>,
-    pub sort: Option<SortResponse>,
-    pub backtest: Option<BacktestResponse>,
-}
-
-// PLOT RESPONSE
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PlotResponse {
-    pub charts: Vec<Chart>,
-}
-
-// FILTER RESPONSE
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FilterResponse {
-    pub items: Vec<FilterSortItem>,
-}
-
-// SORT RESPONSE
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SortResponse {
-    pub items: Vec<FilterSortItem>,
-}
-
-// BACKTEST RESPONSE
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct BacktestResponse {
-    pub backtests: Vec<Backtest>,
+    pub charts: Option<Vec<Chart>>,
+    pub matching_items: Option<Vec<ResponseItem>>,
+    pub backtest: Option<Vec<Backtest>>,
 }
 
 // TYPES
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ResponseItem {
+    Stock(Stock),
+    Index(Index),
+    Derived(Derived)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Derived {
+    pub id: String
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Backtest {
     pub item: Item,
@@ -75,7 +62,7 @@ pub struct FilterSortItem {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Chart {
-    pub item: Item,
+    pub id: String,
     pub data: Vec<ChartData>,
     pub chart_type: ChartType,
     pub panel_id: i32,
@@ -86,7 +73,6 @@ pub enum ChartType {
     Volume,
     Price,
     Indicator,
-    IndicatorPanel
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
