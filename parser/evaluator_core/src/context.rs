@@ -1,4 +1,4 @@
-use crate::{helpers::get_today, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
+use crate::{helpers::{enum_to_chart_data, get_today}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -16,7 +16,7 @@ pub struct EvalContext {
     pub index_series: HashMap<String, Vec<IndexValue>>,
 
     // === Derived Series ===
-    pub derived_series: HashMap<String, Vec<f64>>,
+    pub derived_series: HashMap<String, Vec<(String, f64)>>,
 
     /*// === Function Registry ===
     functions: HashMap<String, fn(&EvalContext, Vec<String>) -> Vec<f64>>,*/
@@ -50,7 +50,7 @@ impl EvalContext {
         (end - start).num_days().try_into().unwrap()
     }
 
-    pub async fn get_item_prices(&mut self, item_id: &str, add_to_tracked: bool) -> Option<Vec<f64>> {
+    pub async fn get_item_prices(&mut self, item_id: &str, add_to_tracked: bool) -> Option<Vec<(String, f64)>> {
         if let Some(ctx_prices) = self.derived_series.get(item_id) {
             return Some(ctx_prices.clone());
         }
@@ -64,11 +64,12 @@ impl EvalContext {
                     ApiResponse::Stock(stock_res) => {
                         self.stocks.insert(item_id.to_string(), stock_res.info);
                         self.price_series.insert(item_id.to_string(), stock_res.prices.clone());
-                        let prices: Vec<f64> = stock_res
+                        let prices: Vec<(String, f64)> = stock_res
                             .prices
                             .iter()
-                            .filter_map(|p| p.last_price)
+                            .filter_map(|p| Some((p.date.clone(), p.last_price.unwrap_or(0.0))))
                             .collect();
+
                         /*let volumes: Vec<f64> = stock_res
                             .prices
                             .iter()
@@ -96,11 +97,12 @@ impl EvalContext {
                     ApiResponse::Index(index_res) => {
                         self.indexes.insert(item_id.to_string(), index_res.info);
                         self.index_series.insert(item_id.to_string(), index_res.prices.clone());
-                        let prices: Vec<f64> = index_res
+                        let prices: Vec<(String, f64)> = index_res
                             .prices
                             .iter()
-                            .filter_map(|p| p.last_value)
+                            .filter_map(|p| Some((p.date.clone(), p.last_value.unwrap_or(0.0))))
                             .collect();
+
                         self.derived_series.insert(item_id.to_string(), prices.clone());
                         /*if let Some(parent) = parent_id {
                             self.id_to_supporting_ids
@@ -234,23 +236,31 @@ impl EvalContext {
                         if id.contains("_") {
                             chart_type = ChartType::Indicator;
                         }
-                        let mut chart = Chart {
+                        let chart_data = enum_to_chart_data(vec.clone());
+                        let chart = Chart {
                             id: id.to_string(),
                             chart_type: chart_type,
                             panel_id: 0,
-                            data: Vec::new()
+                            data: chart_data
                         };
+                        response.charts
+                            .get_or_insert_with(Vec::new)
+                            .push(chart);
                     }
 
                     // add volume - if stock - 4 letter id
                     if id.chars().count() == 4 {
                         let volume_data = self.get_volume_for_stock(id);
+                        let vol_data = enum_to_chart_data(volume_data);
                         let volume_chart = Chart {
                             id: id.to_string() + " - Volume",
                             chart_type: ChartType::Volume,
                             panel_id: 0,
-                            data: Vec::new()
+                            data: vol_data
                         };
+                        response.charts
+                            .get_or_insert_with(Vec::new)
+                            .push(volume_chart);
                     } 
                 }
             }
@@ -266,14 +276,25 @@ impl EvalContext {
     pub fn get_matching_values_from_derived<'a>(
         &'a self,
         x: &str,
-    ) -> Vec<&'a Vec<f64>> {
+    ) -> Vec<&'a Vec<(String, f64)>> {
         self.derived_series.iter()
             .filter(|(key, _)| key.contains(x))
             .map(|(_, vec)| vec)
             .collect()
     }
 
-    pub fn get_volume_for_stock(&self, id: &String) -> Vec<f64> {
-        vec![]
+    pub fn get_volume_for_stock(&self, id: &String) -> Vec<(String, f64)> {
+        let mut res = Vec::new();
+        let prices = self.price_series.get(id);
+        if let Some(prices) = prices {
+            for price in prices {
+                let volume: Option<f64> = price.volume;
+                let date = price.date.clone();
+                if let Some(vol) = volume {
+                    res.push((date, vol as f64));
+                }
+            }
+        }
+        res
     }
 }

@@ -21,7 +21,8 @@ pub enum Command {
     Filter(Vec<NamedArg>),
     Sort(Vec<NamedArg>),
     Backtest(Vec<NamedArg>),
-    Plot(Vec<NamedArg>)
+    Plot(Vec<NamedArg>),
+    Group(Vec<NamedArg>),
 }
 
 #[derive(Debug, Clone)]

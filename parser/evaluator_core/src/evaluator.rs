@@ -2,8 +2,9 @@ use parser_core::ast::*;
 use crate::eval_filter::filter_eval;
 use crate::eval_plot::plot_eval;
 use crate::response_types::{ItemType, Response, TrackedItem};
-use crate::helpers::{get_today, expr_to_id, create_function_id};
+use crate::helpers::{create_function_id, expr_to_id, get_today, number_series_with_dates};
 use crate::context::*;
+use std::collections::HashMap;
 use std::pin::Pin;
 use std::future::Future;
 use crate::functions::handle_calculate_function;
@@ -34,6 +35,7 @@ pub async fn evaluate_input(program: &Program) -> Response {
             Command::Sort(args) => evaluate_sort(&mut context, args, is_first).await,
             Command::Backtest(args) => evaluate_backtest(&mut context, args, is_first).await,
             Command::Plot(args) => evaluate_plot(&mut context, args, is_first).await,
+            Command::Group(args) => evaluate_group(&mut context, args, is_first).await,
         }
         is_first = false;
     }
@@ -41,6 +43,12 @@ pub async fn evaluate_input(program: &Program) -> Response {
     //println!("Final tracked items: {:#?}", context);
     println!("has plot {:?}", has_plot);
     context.create_response(has_plot, has_backtest)
+}
+
+async fn evaluate_group(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
+    if is_first {
+        evaluate_first(ctx, args).await;
+    }
 }
 
 async fn evaluate_plot(ctx: &mut EvalContext, args: &Vec<NamedArg>, is_first: bool) {
@@ -180,11 +188,13 @@ pub fn compute_expr_series<'a>(
     ctx: &'a mut EvalContext,
     expr: &'a Expr,
     tracked_item: Option<&'a TrackedItem>,
-) -> Pin<Box<dyn Future<Output = Vec<f64>> + 'a>> {
+) -> Pin<Box<dyn Future<Output = Vec<(String, f64)>> + 'a>> {
     Box::pin(async move {
         match expr {
             Expr::Number(val) => {
-                vec![*val; ctx.date_range_len()]
+                let from = &ctx.date_range.0;
+                let to = &ctx.date_range.1;
+                number_series_with_dates(from, to, *val)
             }
             Expr::Ident(symbol) => {
                 if let Some(series) = ctx.get_item_prices(symbol, false).await {
@@ -219,31 +229,34 @@ pub fn compute_expr_series<'a>(
     })
 }
 
-pub fn apply_arithmetic_op(left: &Vec<f64>, right: &Vec<f64>, op: &ArithmeticOp) -> Vec<f64> {
-    let left_len = left.len();
-    let right_len = right.len();
-    let len = left_len.min(right_len);
+pub fn apply_arithmetic_op(
+    left: &Vec<(String, f64)>,
+    right: &Vec<(String, f64)>,
+    op: &ArithmeticOp,
+) -> Vec<(String, f64)> {
+    let map_left: HashMap<&String, f64> = left.iter().map(|(d, v)| (d, *v)).collect();
+    let map_right: HashMap<&String, f64> = right.iter().map(|(d, v)| (d, *v)).collect();
 
-    let mut result = Vec::with_capacity(len);
+    let mut result = Vec::new();
 
-    for i in 0..len {
-        // Calculate indices aligned to the newest data (end of arrays)
-        let left_idx = left_len - len + i;
-        let right_idx = right_len - len + i;
-
-        let v = match op {
-            ArithmeticOp::Add => left[left_idx] + right[right_idx],
-            ArithmeticOp::Sub => left[left_idx] - right[right_idx],
-            ArithmeticOp::Div => {
-                if right[right_idx] != 0.0 {
-                    left[left_idx] / right[right_idx]
-                } else {
-                    f64::NAN
+    for date in map_left.keys() {
+        if let Some(val_right) = map_right.get(date) {
+            let val_left = map_left.get(date).unwrap();
+            let combined = match op {
+                ArithmeticOp::Add => val_left + val_right,
+                ArithmeticOp::Sub => val_left - val_right,
+                ArithmeticOp::Div => {
+                    if *val_right != 0.0 {
+                        val_left / val_right
+                    } else {
+                        f64::NAN
+                    }
                 }
-            }
-        };
-        result.push(v);
+            };
+            result.push(((*date).clone(), combined));
+        }
     }
 
+    result.sort_by(|a, b| a.0.cmp(&b.0)); // Optional: sort by date
     result
 }

@@ -79,18 +79,20 @@ pub async fn handle_calculate_function(ctx: &mut EvalContext, args: &Vec<Functio
     }
 }
 
-fn rsi(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+pub fn rsi(prices: &Vec<(String, f64)>, len: u64) -> Vec<(String, f64)> {
     let len = len as usize;
     if prices.len() <= len {
         return vec![];
     }
 
-    let mut gains = Vec::with_capacity(prices.len());
-    let mut losses = Vec::with_capacity(prices.len());
+    let values: Vec<f64> = prices.iter().map(|(_, v)| *v).collect();
+    let dates: Vec<String> = prices.iter().map(|(d, _)| d.clone()).collect();
 
-    // Calculate gains and losses
-    for i in 1..prices.len() {
-        let diff = prices[i] - prices[i - 1];
+    let mut gains = Vec::with_capacity(values.len());
+    let mut losses = Vec::with_capacity(values.len());
+
+    for i in 1..values.len() {
+        let diff = values[i] - values[i - 1];
         if diff > 0.0 {
             gains.push(diff);
             losses.push(0.0);
@@ -100,21 +102,20 @@ fn rsi(prices: &Vec<f64>, len: u64) -> Vec<f64> {
         }
     }
 
-    // Compute initial averages
     let mut avg_gain: f64 = gains[..len].iter().sum::<f64>() / len as f64;
     let mut avg_loss: f64 = losses[..len].iter().sum::<f64>() / len as f64;
 
-    let mut rsis = Vec::with_capacity(prices.len() - len);
+    let mut rsis = Vec::with_capacity(values.len() - len);
+    let mut date_offset = len + 1; // +1 because we lose one value due to diff
 
-    // First RSI
     let rs = if avg_loss == 0.0 {
         f64::INFINITY
     } else {
         avg_gain / avg_loss
     };
-    rsis.push(100.0 - (100.0 / (1.0 + rs)));
+    rsis.push((dates[date_offset].clone(), 100.0 - (100.0 / (1.0 + rs))));
+    date_offset += 1;
 
-    // Remaining RSIs
     for i in len..gains.len() {
         avg_gain = (avg_gain * (len as f64 - 1.0) + gains[i]) / len as f64;
         avg_loss = (avg_loss * (len as f64 - 1.0) + losses[i]) / len as f64;
@@ -124,70 +125,77 @@ fn rsi(prices: &Vec<f64>, len: u64) -> Vec<f64> {
         } else {
             avg_gain / avg_loss
         };
-
         let rsi = 100.0 - (100.0 / (1.0 + rs));
-        rsis.push(rsi);
+        rsis.push((dates[date_offset].clone(), rsi));
+        date_offset += 1;
     }
 
     rsis
 }
 
-pub fn sma(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+pub fn sma(prices: &Vec<(String, f64)>, len: u64) -> Vec<(String, f64)> {
     let len = len as usize;
     if prices.len() < len {
         return vec![];
     }
 
-    let mut result = Vec::with_capacity(prices.len() - len + 1);
-    let mut sum: f64 = prices[..len].iter().sum();
+    let values: Vec<f64> = prices.iter().map(|(_, v)| *v).collect();
+    let dates: Vec<String> = prices.iter().map(|(d, _)| d.clone()).collect();
 
-    result.push(sum / len as f64);
+    let mut result = Vec::with_capacity(values.len() - len + 1);
+    let mut sum: f64 = values[..len].iter().sum();
+    result.push((dates[len - 1].clone(), sum / len as f64));
 
-    for i in len..prices.len() {
-        sum = sum - prices[i - len] + prices[i];
-        result.push(sum / len as f64);
+    for i in len..values.len() {
+        sum = sum - values[i - len] + values[i];
+        result.push((dates[i].clone(), sum / len as f64));
     }
 
     result
 }
 
-pub fn ema(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+pub fn ema(prices: &Vec<(String, f64)>, len: u64) -> Vec<(String, f64)> {
     let len = len as usize;
     if prices.len() < len {
         return vec![];
     }
 
+    let values: Vec<f64> = prices.iter().map(|(_, v)| *v).collect();
+    let dates: Vec<String> = prices.iter().map(|(d, _)| d.clone()).collect();
+
     let alpha = 2.0 / (len as f64 + 1.0);
-    let mut result = Vec::with_capacity(prices.len() - len + 1);
+    let mut result = Vec::with_capacity(values.len() - len + 1);
 
-    // Start EMA with SMA of first `len` prices
-    let mut ema_prev = prices[..len].iter().sum::<f64>() / len as f64;
-    result.push(ema_prev);
+    let mut ema_prev = values[..len].iter().sum::<f64>() / len as f64;
+    result.push((dates[len - 1].clone(), ema_prev));
 
-    for i in len..prices.len() {
-        let ema = alpha * prices[i] + (1.0 - alpha) * ema_prev;
-        result.push(ema);
+    for i in len..values.len() {
+        let ema = alpha * values[i] + (1.0 - alpha) * ema_prev;
+        result.push((dates[i].clone(), ema));
         ema_prev = ema;
     }
 
     result
 }
 
-pub fn wma(prices: &Vec<f64>, len: u64) -> Vec<f64> {
+pub fn wma(prices: &Vec<(String, f64)>, len: u64) -> Vec<(String, f64)> {
     let len = len as usize;
     if prices.len() < len {
         return vec![];
     }
 
-    let mut result = Vec::with_capacity(prices.len() - len + 1);
+    let values: Vec<f64> = prices.iter().map(|(_, v)| *v).collect();
+    let dates: Vec<String> = prices.iter().map(|(d, _)| d.clone()).collect();
+
+    let mut result = Vec::with_capacity(values.len() - len + 1);
     let denominator = (len * (len + 1) / 2) as f64;
 
-    for i in (len - 1)..prices.len() {
+    for i in (len - 1)..values.len() {
         let mut weighted_sum = 0.0;
         for j in 0..len {
-            weighted_sum += prices[i - j] * (len - j) as f64;
+            weighted_sum += values[i - j] * (len - j) as f64;
         }
-        result.push(weighted_sum / denominator);
+        result.push((dates[i].clone(), weighted_sum / denominator));
     }
 
     result

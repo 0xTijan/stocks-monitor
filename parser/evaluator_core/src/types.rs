@@ -76,8 +76,8 @@ pub struct DailyPrice {
     #[serde(deserialize_with = "str_to_f64")]
     pub change_prev_close_percentage: Option<f64>,
     pub num_trades: Option<u64>,
-    #[serde(deserialize_with = "str_to_u64")]
-    pub volume: Option<u64>,
+    #[serde(deserialize_with = "str_to_f64")]
+    pub volume: Option<f64>,
     #[serde(deserialize_with = "str_to_f64")]
     pub turnover: Option<f64>,
     pub price_currency: Option<String>,

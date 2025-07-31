@@ -32,6 +32,13 @@ BACKTEST(items=[KRKA], entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=100
 
 // backtests krka entry is only when SBITOP is in uptrend and rsi below 30, exit only on rsi above 70 or sbitop in downtrend, and plots 
 BACKTEST(items=[KRKA], entry=[RSI(14) < 30 AND MA(36, SBITOP) > MA(58, SBITOP)], exit=[(MA(36, SBITOP) < MA(58, SBITOP)) OR RSI(14) > 70], size=1000, fee=0.05) & PLOT
+
+// takes only slovenian stocks with market cap under 1B, sorts them by volatility (desc) and groups them into 2 groups: bull and bear, and plots
+FILTER(items=[stocks], conditions=[country=si AND market_cap <= 1000000000])
+    & SORT(property=BBWP(), dir=asc)
+    & GROUP(conditions=[MA(36) > MA(58)], name="bull trend")
+    & GROUP(conditions=[MA(36) < MA(58)], name="bear trend")
+    & PLOT(from=2024-01-01, to=today)
 ```
 
 #### Defaults:

@@ -12,6 +12,7 @@ pub fn parse_pairs(pair: Pair<Rule>) -> Program {
                 Rule::filter_cmd => Command::Filter(parse_command(inner_pair)),
                 Rule::sort_cmd => Command::Sort(parse_command(inner_pair)),
                 Rule::backtest_cmd => Command::Backtest(parse_command(inner_pair)),
+                Rule::group_cmd => Command::Group(parse_command(inner_pair)),
                 _ => continue,
             };
             commands.push(cmd);

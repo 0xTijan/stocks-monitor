@@ -124,7 +124,7 @@ async fn evaluate_operand(ctx: &mut EvalContext, operand: &Operand, item: &Track
                 if series.is_empty() {
                     0.0
                 } else {
-                    series[series.len() - 1]
+                    series[series.len() - 1].1
                 }
             } else {
                 panic!("No series found for function call {}", id);
