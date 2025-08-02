@@ -14,18 +14,26 @@ pub mod eval_plot;
 use crate::response_types::Response;
 use evaluator::evaluate_input;
 
+use wasm_bindgen::prelude::*;
 
-pub async fn evaluate_script(input: &str) -> Option<Response> {
+#[wasm_bindgen]
+pub fn test_func() -> String {
+    "Hello from WASM".to_string()
+}
+
+#[wasm_bindgen]
+pub async fn evaluate_script(input: &str) -> Option<JsValue> {
     let res = parse_script(input);
     match res {
         Ok(ast) => {
             println!("Parsed successfully!\n{:#?}", ast);
-            let r = evaluate_ast(&ast).await;
-            return Some(r);
+            let response = evaluate_ast(&ast).await;
+            // serialize Response into JsValue
+            serde_wasm_bindgen::to_value(&response).ok()
         }
         Err(e) => {
             eprintln!("Parse error:\n{}", e);
-            return None;
+            None
         }
     }
 }

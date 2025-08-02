@@ -1,8 +1,7 @@
-use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+use gloo_net::http::Request;
 use crate::types::{Index, Stock, DailyPrice, IndexValue};
-
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(tag = "type")]
@@ -25,48 +24,56 @@ pub struct IndexResponse {
 
 pub async fn fetch_api_data_async(symbol: &str, from: &str, to: &str) -> Result<ApiResponse, Box<dyn Error>> {
     let url = format!("https://monitor-api.tijan.dev/api/general/{}?from={}&to={}", symbol, from, to);
-    let client = Client::new();
 
-    let text = client
-        .get(&url)
+    let text = Request::get(&url)
         .send()
-        .await?
-        .error_for_status()?
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
         .text()
-        .await?;
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
 
-    let response: ApiResponse = serde_json::from_str(&text)?;
+    let response: ApiResponse = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
     Ok(response)
 }
 
 pub async fn fetch_all_stocks() -> Result<Vec<Stock>, Box<dyn Error>> {
     let url = "https://monitor-api.tijan.dev/api/stocks";
-    let client = Client::new();
 
-    let text = client
-        .get(url)
+    let text = Request::get(url)
         .send()
-        .await?
-        .error_for_status()?
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
         .text()
-        .await?;
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
 
-    let stocks: Vec<Stock> = serde_json::from_str(&text)?;
+    let stocks: Vec<Stock> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
     Ok(stocks)
 }
 
 pub async fn fetch_all_indexes() -> Result<Vec<Index>, Box<dyn Error>> {
     let url = "https://monitor-api.tijan.dev/api/indexes";
-    let client = Client::new();
 
-    let text = client
-        .get(url)
+    let text = Request::get(url)
         .send()
-        .await?
-        .error_for_status()?
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
         .text()
-        .await?;
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
 
-    let indexes: Vec<Index> = serde_json::from_str(&text)?;
+    let indexes: Vec<Index> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
     Ok(indexes)
+}
+
+/// Helper to convert strings into Box<dyn Error>
+fn boxed(msg: &str) -> Box<dyn Error> {
+    msg.to_string().into()
 }

@@ -1,1 +1,3 @@
-FILTER(items=[stocks], conditions=[MA(36) < MA(58)]) & SORT(property=market_cap, dir=desc) & PLOT(from=2024-01-01, to=today)
+FILTER(items=[indexes], conditions=[MA(36) > MA(58)])
+    & SORT(property=RSI(14), dir=asc, limit=10)
+    & PLOT(from=2014-01-01, to=today)

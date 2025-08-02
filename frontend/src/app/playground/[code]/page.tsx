@@ -9,7 +9,7 @@ export default function PlaygroundQueryPage() {
   const [decodedQuery, setDecodedQuery] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editableText, setEditableText] = useState('')
-
+  
   useEffect(() => {
     if (typeof code === 'string') {
       const decoded = decodeURIComponent(code)
@@ -26,6 +26,21 @@ export default function PlaygroundQueryPage() {
     const encoded = encodeURIComponent(editableText)
     router.push(`/playground/${encoded}`)
   }
+
+  useEffect(() => {
+    async function loadWasm() {
+      const wasm = await import("../../../../public/wasm/evaluator_core.js");
+
+      await wasm.default();
+
+      const res1 = await wasm.evaluate_script(decodedQuery);
+      console.log(res1);
+    }
+
+    if (decodedQuery.length > 0) {
+      loadWasm();
+    }
+  }, [decodedQuery]);
 
   return (
     <main className="min-h-screen bg-black text-white p-6 flex flex-col items-center">
