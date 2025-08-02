@@ -11,24 +11,28 @@ pub mod functions;
 pub mod eval_sort;
 pub mod eval_filter;
 pub mod eval_plot;
-
+use crate::response_types::Response;
 use evaluator::evaluate_input;
 
 
-#[tokio::main]
-pub async fn evaluate_script(input: &str) {
+pub async fn evaluate_script(input: &str) -> Option<Response> {
     let res = parse_script(input);
     match res {
         Ok(ast) => {
             println!("Parsed successfully!\n{:#?}", ast);
-            evaluate_ast(&ast).await;
+            let r = evaluate_ast(&ast).await;
+            return Some(r);
         }
-        Err(e) => eprintln!("Parse error:\n{}", e),
+        Err(e) => {
+            eprintln!("Parse error:\n{}", e);
+            return None;
+        }
     }
 }
 
-pub async fn evaluate_ast(ast: &Program) {
+pub async fn evaluate_ast(ast: &Program) -> Response {
     println!("Evaluating AST: {:#?}", ast);
     let res = evaluate_input(&ast).await;
     println!("Final response: {:#?}", res);
+    res
 }

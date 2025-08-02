@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use parser_core::ast::{NamedArg, Value};
-use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::{expr_to_id, number_series_with_dates}, response_types::Item, types::Direction};
+use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::{expr_to_id}, response_types::Item, types::Direction};
 
 pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     let mut direction: Direction = Direction::Asc;

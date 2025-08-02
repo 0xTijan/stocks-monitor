@@ -1,1 +1,1 @@
-SORT(items=[stocks], item=sector_id, dir=asc)
+FILTER(items=[stocks], conditions=[MA(36) < MA(58)]) & SORT(property=market_cap, dir=desc) & PLOT(from=2024-01-01, to=today)
