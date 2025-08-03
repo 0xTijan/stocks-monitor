@@ -2,12 +2,14 @@
 
 import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+//import LoadingSpinner from "@components/ui/LoadingSpinner.jsx";
 
 export default function PlaygroundQueryPage() {
   const { code } = useParams()
   const router = useRouter()
   const [decodedQuery, setDecodedQuery] = useState('')
   const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [editableText, setEditableText] = useState('')
   
   useEffect(() => {
@@ -33,12 +35,14 @@ export default function PlaygroundQueryPage() {
 
       await wasm.default();
 
-      const res1 = await wasm.evaluate_script(decodedQuery);
+      const res1 = await wasm.evaluate_script_wasm(decodedQuery);
       console.log(res1);
     }
 
     if (decodedQuery.length > 0) {
+      setIsLoading(true);
       loadWasm();
+      setIsLoading(false);
     }
   }, [decodedQuery]);
 
@@ -84,6 +88,8 @@ export default function PlaygroundQueryPage() {
           )}
         </div>
       </div>
+
+      {isLoading ? <p>Loading</p> : null}
     </main>
   )
 }

@@ -232,13 +232,14 @@ impl EvalContext {
 
                     // add all prices that are in derived
                     for vec in matches {
+                        let chart_id = vec.0;
                         let mut chart_type = ChartType::Price;
-                        if id.contains("_") {
+                        if chart_id.contains("_") {
                             chart_type = ChartType::Indicator;
                         }
-                        let chart_data = enum_to_chart_data(vec.clone());
+                        let chart_data = enum_to_chart_data(vec.1.clone());
                         let chart = Chart {
-                            id: id.to_string(),
+                            id: chart_id.to_string(),
                             chart_type: chart_type,
                             panel_id: 0,
                             data: chart_data
@@ -273,13 +274,14 @@ impl EvalContext {
         response
     }
 
-    pub fn get_matching_values_from_derived<'a>(
-        &'a self,
+    pub fn get_matching_values_from_derived(
+        &self,
         x: &str,
-    ) -> Vec<&'a Vec<(String, f64)>> {
-        self.derived_series.iter()
+    ) -> Vec<(String, Vec<(String, f64)>)> {
+        self.derived_series
+            .iter()
             .filter(|(key, _)| key.contains(x))
-            .map(|(_, vec)| vec)
+            .map(|(key, vec)| (key.clone(), vec.clone()))
             .collect()
     }
 

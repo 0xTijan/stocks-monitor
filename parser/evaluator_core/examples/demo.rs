@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use evaluator_core::evaluate_script;
+use futures::executor::block_on;
 
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
@@ -22,5 +23,5 @@ fn main() {
         "PLOT(items=[ZVTG], from=2025-06-01, to=today)".to_string()
     };
 
-    evaluate_script(&input);
+    block_on(evaluate_script(&input));
 }

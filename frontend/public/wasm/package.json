@@ -1,0 +1,15 @@
+{
+  "name": "evaluator_core",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "evaluator_core_bg.wasm",
+    "evaluator_core.js",
+    "evaluator_core.d.ts"
+  ],
+  "main": "evaluator_core.js",
+  "types": "evaluator_core.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
