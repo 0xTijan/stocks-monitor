@@ -18,6 +18,7 @@ export default function PlaygroundQueryPage() {
   const [editableText, setEditableText] = useState("");
   const [response, setResponse] = useState<Response | null>(null);
   const [series, setSeries] = useState<GenericSeries[]>([]);
+  const [ogSeries, setOgSeries] = useState<GenericSeries[]>([]);
 
   useEffect(() => {
     if (typeof code === "string") {
@@ -61,14 +62,16 @@ export default function PlaygroundQueryPage() {
             chartSeries.push({
               id: chart.id,
               type: "volume",
-              data: volSeries
+              data: volSeries,
+              title: chart.id
             });
           } else if (chart.chart_type == "Price") {
             let priceSeries: CandlestickData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], close: x.value[0], open: x.value[1], high: x.value[2], low: x.value[3]})});
             chartSeries.push({
               id: chart.id,
               type: "candlestick",
-              data: priceSeries
+              data: priceSeries,
+              title: chart.id,
             });
           } else if (chart.chart_type == "Indicator") {
             let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
@@ -76,7 +79,8 @@ export default function PlaygroundQueryPage() {
               id: chart.id,
               type: "line",
               data: lineSeries,
-              color: stringToColor(chart.id)
+              color: stringToColor(chart.id),
+              title: chart.id,
             });
           } else if (chart.chart_type == "Rebase") {
             let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
@@ -91,12 +95,9 @@ export default function PlaygroundQueryPage() {
         }
       });
       setSeries(chartSeries);
+      setOgSeries(chartSeries);
     }
   }, [response]);
-
-  useEffect(() => {
-    console.log(series);
-  }, [series]);
 
   function stringToColor(str: string): string {
     let hash = 0;
@@ -116,67 +117,24 @@ export default function PlaygroundQueryPage() {
     return color;
   }
 
+  const toggleSeries = (id: string) => {
+    const exists = series.some(item => item.id === id);
+    if (exists) {
+      const updatedArray = series.filter(item => item.id !== id);
+      setSeries(updatedArray);
+    } else {
+      const item = ogSeries.find(x => x.id == id);
+      if (item) {
+        let s = [...series];
+        s.push(item);
+        setSeries(s);
+      }
+    }
+  }
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-black text-white overflow-hidden">
-        {/* Top section: Chart + Settings */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Chart */}
-          <div className="flex flex-col w-10/12 p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-2xl font-semibold">Query Results</h2>
-                <p className="text-sm text-gray-400">
-                  Your query response
-                </p>
-              </div>
-            </div>
-
-            <div className="flex-grow overflow-hidden mb-4">
-              {/* Replace with your chart component */}
-              <div className="w-full h-full bg-neutral-900 rounded-xl flex items-center justify-center">
-                <GenericChart series={series} />
-              </div>
-            </div>
-          </div>
-
-          {/* Settings */}
-          <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
-            <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
-            {/* Example toggle settings */}
-            <div className="space-y-3 text-sm">
-              <label className="flex items-center space-x-2">
-                <input type="checkbox" className="accent-blue-500" />
-                <span>Show Moving Average</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input type="checkbox" className="accent-blue-500" />
-                <span>Show Volume</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input type="checkbox" className="accent-blue-500" />
-                <span>Show Bollinger Bands</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full px-4 py-8 border-t border-neutral-800 max-h-4/12 overflow-y-auto">
-          {/* Replace with your table component if needed */}
-          <div className="w-full rounded-xl">
-            {response ? <MatchingItemsTable response={response} /> : null}
-          </div>
-        </div>
-
-        {/* Bottom section: Textarea + Buttons */}
-        <QueryInput
-          editableText={editableText}
-          decodedQuery={decodedQuery}
-          setEditableText={setEditableText}
-        />
-      </div>
-      <main className=" bg-black text-white px-6">
+      <main className=" bg-black text-white border-b border-neutral-800">
         <div className="flex justify-between font-bold py-3">
           <div className="flex">
             <p className="px-4">STOCKS &gt;&gt;</p>
@@ -207,6 +165,58 @@ export default function PlaygroundQueryPage() {
           </div>
         </div>
       </main>
+      <div className="flex flex-col min-h-screen bg-black text-white overflow-hidden">
+        {/* Top section: Chart + Settings */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Chart */}
+          <div className="flex flex-col w-10/12 p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-semibold">Query Results</h2>
+                <p className="text-sm text-gray-400">
+                  Your query response
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-grow overflow-hidden mb-4">
+              {/* Replace with your chart component */}
+              <div className="w-full h-full bg-neutral-900 rounded-xl flex items-center justify-center">
+                <GenericChart series={series} />
+              </div>
+            </div>
+          </div>
+
+          {/* Settings */}
+          <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
+            <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
+            <div className="space-y-3 text-sm ">
+              {ogSeries.map((x) => {
+                return(
+                  <label className="flex items-center space-x-2" key={x.id} onClick={() => toggleSeries(x.id)}>
+                    <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
+                    <span>{x.title}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full px-4 py-8 border-t border-neutral-800 max-h-4/12 overflow-y-auto">
+          {/* Replace with your table component if needed */}
+          <div className="w-full rounded-xl">
+            {response ? <MatchingItemsTable response={response} /> : null}
+          </div>
+        </div>
+
+        {/* Bottom section: Textarea + Buttons */}
+        <QueryInput
+          editableText={editableText}
+          decodedQuery={decodedQuery}
+          setEditableText={setEditableText}
+        />
+      </div>
     </>
   );
 }

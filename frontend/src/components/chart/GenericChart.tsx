@@ -52,7 +52,7 @@ interface GenericChartProps {
 
 export default function GenericChart({
   series,
-  heightRatio = 1,
+  heightRatio = 0.75,
 }: GenericChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const { height } = useWindowDimensions();
@@ -117,6 +117,7 @@ export default function GenericChart({
             wickDownColor: "red",
             downColor: "red",
             borderVisible: false,
+            title: s.title
           });
           candlestickSeries.setData(s.data);
           candlestickSeries.priceScale().applyOptions({
@@ -161,6 +162,6 @@ export default function GenericChart({
   }, [series, height, heightRatio]);
 
   return (
-    <div ref={chartContainerRef} style={{ width: "100%", height: "300px" }} />
+    <div ref={chartContainerRef} style={{ width: "100%", height: "100%" }} />
   );
 }

@@ -8,10 +8,28 @@ export type Preset = {
 
 export const presets: Preset[] = [
   {
-    id: "YTD-performance",
-    title: "YTD Performance",
+    id: "YTD-performance-stocks",
+    title: "YTD Performance Stocks",
     description: "Year-to-date performance of all tracked stocks.",
     code: `PLOT(items=[stocks], from=2025-01-01, to=today, rebase=100)`,
+  },
+  {
+    id: "YTD-performance-stocks-si",
+    title: "YTD Performance Stocks SI",
+    description: "Year-to-date performance of all SI stocks.",
+    code: `FILTER(items=[stocks], conditions=[country=si]) & PLOT(from=2025-01-01, to=today, rebase=100)`,
+  },
+    {
+    id: "YTD-performance-stocks-hr",
+    title: "YTD Performance Stocks HR",
+    description: "Year-to-date performance of all HR stocks.",
+    code: `FILTER(items=[stocks], conditions=[country=hr]) & PLOT(from=2025-01-01, to=today, rebase=100)`,
+  },
+  {
+    id: "YTD-performance-indexes",
+    title: "YTD Performance Indexes",
+    description: "Year-to-date performance of all tracked indxes.",
+    code: `PLOT(items=[indexes], from=2025-01-01, to=today, rebase=100)`,
   },
   {
     id: "3Y-performance",
