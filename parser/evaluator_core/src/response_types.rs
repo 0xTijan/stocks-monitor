@@ -91,7 +91,7 @@ pub enum ItemPrice {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChartData {
     pub date: String,
-    pub value: f64,
+    pub value: (f64, f64, f64, f64),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

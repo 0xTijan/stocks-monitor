@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use parser_core::ast::{NamedArg, Value};
-use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::{expr_to_id}, response_types::Item, types::Direction};
+use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::expr_to_id, response_types::{Item, TrackedItem}, types::Direction};
 
 pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     let mut direction: Direction = Direction::Asc;
@@ -37,7 +37,7 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                     }
                     Value::ArithmeticExpr(expr) => {
                         // for each tracked item do this
-                        let existing_items: Vec<_> = ctx.tracked_items.clone(); 
+                        let existing_items: Vec<TrackedItem> = ctx.tracked_items.clone(); 
                         for tracked_item in existing_items {
                             let id = expr_to_id(expr, Some(&tracked_item));
                             let series = compute_expr_series(ctx, expr, Some(&tracked_item)).await;
@@ -88,12 +88,12 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
             let a_val = ctx.derived_series.get(&a_id)
                 .and_then(|series| series.last())
                 .cloned()
-                .unwrap_or((to.clone(), f64::MIN));
+                .unwrap_or((to.clone(), (f64::MIN, f64::MIN, f64::MIN, f64::MIN)));
 
             let b_val = ctx.derived_series.get(&b_id)
                 .and_then(|series| series.last())
                 .cloned()
-                .unwrap_or((to.clone(), f64::MIN));
+                .unwrap_or((to.clone(), (f64::MIN, f64::MIN, f64::MIN, f64::MIN)));
 
             let ordering = a_val
                 .partial_cmp(&b_val)
@@ -113,14 +113,14 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                 .and_then(|d_id| ctx.derived_series.get(d_id))
                 .and_then(|series| series.last())
                 .cloned()
-                .unwrap_or((to.clone(), f64::MIN));
+                .unwrap_or((to.clone(), (f64::MIN, f64::MIN, f64::MIN, f64::MIN)));
 
             let b_val = id_hash_map
                 .get(&b.id)
                 .and_then(|d_id| ctx.derived_series.get(d_id))
                 .and_then(|series| series.last())
                 .cloned()
-                .unwrap_or((to.clone(), f64::MIN));
+                .unwrap_or((to.clone(), (f64::MIN, f64::MIN, f64::MIN, f64::MIN)));
 
             let ordering = a_val
                 .partial_cmp(&b_val)

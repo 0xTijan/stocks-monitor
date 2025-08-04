@@ -16,10 +16,10 @@ export const presets: Preset[] = [
     & PLOT(from=2019-01-01, to=today)`,
   },
   {
-    id: "undervalued-pe",
-    title: "Low P/E Ratio",
-    description: "Select stocks with P/E ratio under 15",
-    code: `filter stocks where pe_ratio < 15`,
+    id: "slo-hr-ratio",
+    title: "SI/HR Ratio",
+    description: "Ratio between top SI and HR indexes.",
+    code: `PLOT(items=[(SBITOP / CBX)], from=2019-01-01, to=today)`,
   },
   {
     id: "high-dividend",

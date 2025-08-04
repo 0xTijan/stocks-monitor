@@ -188,7 +188,7 @@ pub fn compute_expr_series<'a>(
     ctx: &'a mut EvalContext,
     expr: &'a Expr,
     tracked_item: Option<&'a TrackedItem>,
-) -> Pin<Box<dyn Future<Output = Vec<(String, f64)>> + 'a>> {
+) -> Pin<Box<dyn Future<Output = Vec<(String, (f64, f64, f64, f64))>> + 'a>> {
     Box::pin(async move {
         match expr {
             Expr::Number(val) => {
@@ -230,33 +230,54 @@ pub fn compute_expr_series<'a>(
 }
 
 pub fn apply_arithmetic_op(
-    left: &Vec<(String, f64)>,
-    right: &Vec<(String, f64)>,
+    left: &Vec<(String, (f64, f64, f64, f64))>,
+    right: &Vec<(String, (f64, f64, f64, f64))>,
     op: &ArithmeticOp,
-) -> Vec<(String, f64)> {
-    let map_left: HashMap<&String, f64> = left.iter().map(|(d, v)| (d, *v)).collect();
-    let map_right: HashMap<&String, f64> = right.iter().map(|(d, v)| (d, *v)).collect();
+) -> Vec<(String, (f64, f64, f64, f64))> {
+    let map_left: HashMap<&String, (f64, f64, f64, f64)> =
+        left.iter().map(|(d, v)| (d, *v)).collect();
+    let map_right: HashMap<&String, (f64, f64, f64, f64)> =
+        right.iter().map(|(d, v)| (d, *v)).collect();
 
     let mut result = Vec::new();
 
     for date in map_left.keys() {
         if let Some(val_right) = map_right.get(date) {
             let val_left = map_left.get(date).unwrap();
+
             let combined = match op {
-                ArithmeticOp::Add => val_left + val_right,
-                ArithmeticOp::Sub => val_left - val_right,
-                ArithmeticOp::Div => {
-                    if *val_right != 0.0 {
-                        val_left / val_right
-                    } else {
-                        f64::NAN
-                    }
-                }
+                ArithmeticOp::Add => (
+                    val_left.0 + val_right.0,
+                    val_left.1 + val_right.1,
+                    val_left.2 + val_right.2,
+                    val_left.3 + val_right.3,
+                ),
+                ArithmeticOp::Sub => (
+                    val_left.0 - val_right.0,
+                    val_left.1 - val_right.1,
+                    val_left.2 - val_right.2,
+                    val_left.3 - val_right.3,
+                ),
+                ArithmeticOp::Div => (
+                    safe_div(val_left.0, val_right.0),
+                    safe_div(val_left.1, val_right.1),
+                    safe_div(val_left.2, val_right.2),
+                    safe_div(val_left.3, val_right.3),
+                ),
             };
+
             result.push(((*date).clone(), combined));
         }
     }
 
-    result.sort_by(|a, b| a.0.cmp(&b.0)); // Optional: sort by date
+    result.sort_by(|a, b| a.0.cmp(&b.0));
     result
+}
+
+fn safe_div(a: f64, b: f64) -> f64 {
+    if b != 0.0 {
+        a / b
+    } else {
+        0.0
+    }
 }

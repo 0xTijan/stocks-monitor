@@ -59,4 +59,30 @@ export interface IndexValue {
     change_prev_close_percentage?: number;
     turnover?: number;
 }
-  
+
+export interface Response {
+    backtest?: null;
+    charts?: Chart[];
+    matching_items?: Item[];
+}
+
+export interface Chart {
+    id: string;
+    panel_id: number;
+    chart_type: string;
+    data: ChartData[];
+}
+
+export interface ChartData {
+    date: string;
+    value: number[];
+}
+
+export type Item = 
+    | { Derived: Derived }
+    | { Stock: Stock }
+    | { Index: Index}
+
+export interface Derived {
+    id: string;
+}

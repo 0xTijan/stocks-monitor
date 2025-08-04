@@ -73,7 +73,7 @@ export default function PlaygroundHome() {
                 <button
                   onClick={() => handleExecute(preset.code)}
                   title="Execute"
-                  className="text-blue-400 hover:text-blue-300 text-2xl"
+                  className="text-blue-400 hover:text-blue-300 text-2xl cursor-pointer"
                 >
                   ➤
                 </button>

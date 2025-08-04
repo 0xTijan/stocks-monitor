@@ -22,6 +22,9 @@ pub struct IndexResponse {
     pub prices: Vec<IndexValue>,
 }
 
+
+
+// WASM IMPLEMENTATION
 pub async fn fetch_api_data_async(symbol: &str, from: &str, to: &str) -> Result<ApiResponse, Box<dyn Error>> {
     let url = format!("https://monitor-api.tijan.dev/api/general/{}?from={}&to={}", symbol, from, to);
 
@@ -72,6 +75,62 @@ pub async fn fetch_all_indexes() -> Result<Vec<Index>, Box<dyn Error>> {
 
     Ok(indexes)
 }
+
+
+/*
+// NATIVE IMPLEMENTATION
+pub async fn fetch_api_data_async(symbol: &str, from: &str, to: &str) -> Result<ApiResponse, Box<dyn Error>> {
+    let url = format!("https://monitor-api.tijan.dev/api/general/{}?from={}&to={}", symbol, from, to);
+
+    let text = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
+        .text()
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
+
+    let response: ApiResponse = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
+    Ok(response)
+}
+
+pub async fn fetch_all_stocks() -> Result<Vec<Stock>, Box<dyn Error>> {
+    let url = "https://monitor-api.tijan.dev/api/stocks";
+
+    let text = Request::get(url)
+        .send()
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
+        .text()
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
+
+    let stocks: Vec<Stock> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
+    Ok(stocks)
+}
+
+pub async fn fetch_all_indexes() -> Result<Vec<Index>, Box<dyn Error>> {
+    let url = "https://monitor-api.tijan.dev/api/indexes";
+
+    let text = Request::get(url)
+        .send()
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
+        .text()
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
+
+    let indexes: Vec<Index> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
+    Ok(indexes)
+}
+*/
+
 
 /// Helper to convert strings into Box<dyn Error>
 fn boxed(msg: &str) -> Box<dyn Error> {

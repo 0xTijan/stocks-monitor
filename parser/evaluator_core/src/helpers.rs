@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use chrono::{Duration, Local, NaiveDate};
 use parser_core::ast::{FunctionArg, Expr, ArithmeticOp};
 use crate::response_types::{ChartData, TrackedItem};
@@ -124,7 +122,7 @@ pub fn expr_to_id(expr: &Expr, tracked_item: Option<&TrackedItem>) -> String {
     }
 }
 
-pub fn number_series_with_dates(from: &str, to: &str, value: f64) -> Vec<(String, f64)> {
+pub fn number_series_with_dates(from: &str, to: &str, value: f64) -> Vec<(String, (f64, f64, f64, f64))> {
     let start_date = NaiveDate::parse_from_str(from, "%Y-%m-%d").expect("Invalid start date");
     let end_date = NaiveDate::parse_from_str(to, "%Y-%m-%d").expect("Invalid end date");
 
@@ -132,15 +130,25 @@ pub fn number_series_with_dates(from: &str, to: &str, value: f64) -> Vec<(String
     let mut current = start_date;
 
     while current <= end_date {
-        result.push((current.to_string(), value));
+        result.push((current.to_string(), (value, value, value, value)));
         current += Duration::days(1);
     }
 
     result
 }
 
-pub fn enum_to_chart_data(series: Vec<(String, f64)>) -> Vec<ChartData> {
+pub fn enum_to_chart_data(series: Vec<(String, (f64, f64, f64, f64))>) -> Vec<ChartData> {
     series.into_iter()
         .map(|(date, value)| ChartData { date, value })
         .collect()
+}
+
+pub fn vol_to_chart_data(series: Vec<(String, f64)>) -> Vec<ChartData> {
+    series.into_iter()
+        .map(|(date, value)| ChartData { date, value: (value, 0.0, 0.0, 0.0) })
+        .collect()
+}
+
+pub fn indicator_to_panel_type() {
+    
 }
