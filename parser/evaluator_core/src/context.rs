@@ -1,4 +1,4 @@
-use crate::{helpers::{enum_to_chart_data, get_today, vol_to_chart_data}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
+use crate::{helpers::{enum_to_chart_data, get_today, rebase_data, vol_to_chart_data}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -25,6 +25,7 @@ pub struct EvalContext {
     pub date_range: (String, String),
     pub tracked_items: Vec<TrackedItem>,
     pub tracked_ids: HashSet<String>,
+    pub rebase: Option<f64>,
 }
 
 
@@ -39,6 +40,7 @@ impl EvalContext {
             date_range: ("2024-01-01".to_string(), get_today()),
             tracked_items: Vec::new(),
             tracked_ids: HashSet::new(),
+            rebase: None
         }
     }
 
@@ -75,21 +77,7 @@ impl EvalContext {
                                     p.low_price.unwrap_or(0.0)
                                 ))))
                             .collect();
-
-                        /*let volumes: Vec<f64> = stock_res
-                            .prices
-                            .iter()
-                            .filter_map(|p| p.volume)
-                            .map(|v| v as f64)
-                            .collect();*/
                         self.derived_series.insert(item_id.to_string(), prices.clone());
-                        //self.derived_series.insert(format!("{}_volume", item_id), volumes);
-                        /*if let Some(parent) = parent_id {
-                            self.id_to_supporting_ids
-                                .entry(parent)
-                                .or_insert_with(HashSet::new)
-                                .insert(item_id.to_string());
-                        } else {*/
                         if add_to_tracked  {    
                             if self.tracked_ids.insert(item_id.to_string()) {
                                 self.tracked_items.push(TrackedItem {
@@ -114,14 +102,7 @@ impl EvalContext {
                                     p.low_value.unwrap_or(0.0)
                                 ))))
                             .collect();
-
                         self.derived_series.insert(item_id.to_string(), prices.clone());
-                        /*if let Some(parent) = parent_id {
-                            self.id_to_supporting_ids
-                                .entry(parent)
-                                .or_insert_with(HashSet::new)
-                                .insert(item_id.to_string());
-                        } else {*/
                         if add_to_tracked {
                             if self.tracked_ids.insert(item_id.to_string()) {
                                 self.tracked_items.push(TrackedItem {
@@ -156,7 +137,16 @@ impl EvalContext {
     }
 
     pub async fn add_all_indexes_to_tracked(&mut self) {
+        let from = &self.date_range.0;
+        let to = &self.date_range.1;
         let res = fetch_all_indexes().await;
+        let res_prices = fetch_all_indexes_prices(from, to).await;
+
+        let all_prices = match &res_prices {
+            Ok(prices) => Some(prices),
+            Err(_) => None,
+        };
+
         match res {
             Ok(indexes) => {
                 for s in indexes {
@@ -166,7 +156,25 @@ impl EvalContext {
                             item_type: ItemType::Index,
                         });
                     }
-                    self.indexes.insert(s.symbol.to_string(), s);
+                    self.indexes.insert(s.symbol.to_string(), s.clone());
+
+                    // save prices
+                    if let Some(prices_map) = all_prices {
+                        if let Some(prices) = prices_map.get(&s.isin) {
+                            self.index_series.insert(s.symbol.to_string(), prices.clone());
+                            let prices: Vec<(String, (f64, f64, f64, f64))> = prices
+                                .iter()
+                                .filter_map(|p| Some(
+                                    (p.date.clone(), (
+                                        p.last_value.unwrap_or(0.0),
+                                        p.open_value.unwrap_or(0.0),
+                                        p.high_value.unwrap_or(0.0),
+                                        p.low_value.unwrap_or(0.0)
+                                    ))))
+                                    .collect();
+                            self.derived_series.insert(s.symbol.to_string(), prices.clone());
+                        }
+                    }
                 }
             },
             Err(err) => {
@@ -176,7 +184,16 @@ impl EvalContext {
     }
 
     pub async fn add_all_stocks_to_tracked(&mut self) {
+        let from = &self.date_range.0;
+        let to = &self.date_range.1;
         let res = fetch_all_stocks().await;
+        let res_prices = fetch_all_stocks_prices(from, to).await;
+
+        let all_prices = match &res_prices {
+            Ok(prices) => Some(prices),
+            Err(_) => None,
+        };
+
         match res {
             Ok(stocks) => {
                 for s in stocks {
@@ -186,7 +203,25 @@ impl EvalContext {
                             item_type: ItemType::Stock,
                         });
                     }
-                    self.stocks.insert(s.symbol.to_string(), s);
+                    self.stocks.insert(s.symbol.to_string(), s.clone());
+
+                    // save price
+                    if let Some(prices_map) = all_prices {
+                        if let Some(prices) = prices_map.get(&s.isin) {
+                            self.price_series.insert(s.symbol.to_string(), prices.clone());
+                            let prices: Vec<(String, (f64, f64, f64, f64))> = prices
+                                .iter()
+                                .filter_map(|p| Some(
+                                    (p.date.clone(), (
+                                        p.last_price.unwrap_or(0.0),
+                                        p.open_price.unwrap_or(p.last_price.unwrap_or(0.0)),
+                                        p.high_price.unwrap_or(0.0),
+                                        p.low_price.unwrap_or(0.0)
+                                    ))))
+                                .collect();
+                            self.derived_series.insert(s.symbol.to_string(), prices.clone());
+                        }
+                    }
                 }
             },
             Err(err) => {
@@ -196,6 +231,8 @@ impl EvalContext {
     }
 
     pub fn create_response(&mut self, has_plot: bool, has_backtest: bool) -> Response {
+        let rebase = self.rebase;
+
         let mut response = Response {
             matching_items: Some(Vec::new()),
             charts: None,
@@ -249,7 +286,11 @@ impl EvalContext {
                         if chart_id.contains("_") {
                             chart_type = ChartType::Indicator;
                         }
-                        let chart_data = enum_to_chart_data(vec.1.clone());
+                        let mut chart_data = enum_to_chart_data(vec.1.clone());
+                        if let Some(rebase) = rebase {
+                            chart_data = rebase_data(&chart_data, rebase);
+                            chart_type = ChartType::Rebase;
+                        }
                         let chart = Chart {
                             id: chart_id.to_string(),
                             chart_type: chart_type,
@@ -262,7 +303,7 @@ impl EvalContext {
                     }
 
                     // add volume - if stock - 4 letter id
-                    if id.chars().count() == 4 {
+                    if id.chars().count() == 4 && rebase == None{
                         let volume_data = self.get_volume_for_stock(id);
                         let vol_data = vol_to_chart_data(volume_data);
                         let volume_chart = Chart {
@@ -297,15 +338,16 @@ impl EvalContext {
             .collect()
     }
 
-    pub fn get_volume_for_stock(&self, id: &String) -> Vec<(String, f64)> {
-        let mut res = Vec::new();
+    pub fn get_volume_for_stock(&self, id: &String) -> Vec<(String, (f64, f64))> {
+        let mut res: Vec<(String, (f64, f64))> = Vec::new();
         let prices = self.price_series.get(id);
         if let Some(prices) = prices {
             for price in prices {
                 let volume: Option<f64> = price.volume;
                 let date = price.date.clone();
+                let color = if price.change_prev_close_percentage.unwrap_or(0.0) >= 0.0 { 1.0 } else { 0.0 };
                 if let Some(vol) = volume {
-                    res.push((date, vol as f64));
+                    res.push((date, (vol as f64, color)));
                 }
             }
         }

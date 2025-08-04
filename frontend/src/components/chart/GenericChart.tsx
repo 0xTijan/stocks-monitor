@@ -25,6 +25,7 @@ export interface BaseSeries<T> {
   type: ChartSeriesType;
   data: T[];
   color?: string;
+  title?: string;
 }
 
 export type CandlestickSeriesInput = BaseSeries<CandlestickData> & {
@@ -146,6 +147,7 @@ export default function GenericChart({
             color: s.color || "#5D5FEF",
             lineWidth: 2,
             lineStyle: LineStyle.Solid,
+            title: s.title
           });
           lineSeries.setData(s.data);
           break;

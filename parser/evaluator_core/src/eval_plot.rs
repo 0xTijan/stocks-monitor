@@ -1,7 +1,7 @@
 use parser_core::ast::{NamedArg, Value};
 use crate::context::EvalContext;
 
-pub fn plot_eval(ctx: &EvalContext, args: &Vec<NamedArg>) {
+pub fn plot_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     // rebase - cut off to the shortest and rebase
     let mut rebase: Option<f64> = None;
 
@@ -17,5 +17,8 @@ pub fn plot_eval(ctx: &EvalContext, args: &Vec<NamedArg>) {
         }
     }
 
-    println!("rebase: {:?}", rebase);
+    if let Some(rebase) = rebase {
+        // rebase all prices in 
+        ctx.rebase = Some(rebase);
+    }
 }

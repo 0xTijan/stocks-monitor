@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::error::Error;
+use std::{collections::HashMap, error::Error};
 use gloo_net::http::Request;
 use crate::types::{Index, Stock, DailyPrice, IndexValue};
 
@@ -74,6 +74,40 @@ pub async fn fetch_all_indexes() -> Result<Vec<Index>, Box<dyn Error>> {
         .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
 
     Ok(indexes)
+}
+
+pub async fn fetch_all_indexes_prices(from: &str, to: &str) -> Result<HashMap<String, Vec<IndexValue>>, Box<dyn Error>> {
+    let url = format!("https://monitor-api.tijan.dev/api/indexes/prices?from={}&to={}", from, to);
+
+    let text = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
+        .text()
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
+
+    let indexes: HashMap<String, Vec<IndexValue>> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
+    Ok(indexes)
+}
+
+pub async fn fetch_all_stocks_prices(from: &str, to: &str) -> Result<HashMap<String, Vec<DailyPrice>>, Box<dyn Error>> {
+    let url = format!("https://monitor-api.tijan.dev/api/stocks/prices?from={}&to={}", from, to);
+
+    let text = Request::get(&url)
+        .send()
+        .await
+        .map_err(|e| boxed(&format!("Request error: {}", e)))?
+        .text()
+        .await
+        .map_err(|e| boxed(&format!("Read body error: {}", e)))?;
+
+    let stocks: HashMap<String, Vec<DailyPrice>> = serde_json::from_str(&text)
+        .map_err(|e| boxed(&format!("JSON error: {}", e)))?;
+
+    Ok(stocks)
 }
 
 

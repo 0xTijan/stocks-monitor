@@ -9,14 +9,6 @@ where
     Ok(s.and_then(|v| v.parse::<f64>().ok()))
 }
 
-fn str_to_u64<'de, D>(deserializer: D) -> Result<Option<u64>, D::Error>
-where
-    D: serde::Deserializer<'de>,
-{
-    let s: Option<String> = Option::deserialize(deserializer)?;
-    Ok(s.and_then(|v| v.parse::<u64>().ok()))
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Stock {
     pub isin: String,

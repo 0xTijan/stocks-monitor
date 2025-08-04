@@ -143,12 +143,31 @@ pub fn enum_to_chart_data(series: Vec<(String, (f64, f64, f64, f64))>) -> Vec<Ch
         .collect()
 }
 
-pub fn vol_to_chart_data(series: Vec<(String, f64)>) -> Vec<ChartData> {
+pub fn vol_to_chart_data(series: Vec<(String, (f64, f64))>) -> Vec<ChartData> {
     series.into_iter()
-        .map(|(date, value)| ChartData { date, value: (value, 0.0, 0.0, 0.0) })
+        .map(|(date, value)| ChartData { date, value: (value.0, value.1, 0.0, 0.0) })
         .collect()
 }
 
 pub fn indicator_to_panel_type() {
     
+}
+
+pub fn rebase_data(data: &Vec<ChartData>, rebase: f64) -> Vec<ChartData> {
+        if data.is_empty() {
+        return vec![];
+    }
+
+    let base_close = data[0].value.0;
+
+    data.iter()
+        .map(|entry| {
+            let (close, open, high, low) = entry.value;
+            let rebased_close = (close / base_close) * rebase;
+            ChartData {
+                date: entry.date.clone(),
+                value: (rebased_close, open, high, low),
+            }
+        })
+        .collect()
 }

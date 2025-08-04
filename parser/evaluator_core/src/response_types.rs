@@ -73,6 +73,7 @@ pub enum ChartType {
     Volume,
     Price,
     Indicator,
+    Rebase,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -57,7 +57,7 @@ export default function PlaygroundQueryPage() {
         console.log("Chart id ", chart.id)
         if (chart.panel_id == 0) {
           if (chart.chart_type == "Volume") {
-            let volSeries: HistogramData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
+            let volSeries: HistogramData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0], color: x.value[1] == 1 ? "green" : "red"})});
             chartSeries.push({
               id: chart.id,
               type: "volume",
@@ -77,6 +77,15 @@ export default function PlaygroundQueryPage() {
               type: "line",
               data: lineSeries,
               color: stringToColor(chart.id)
+            });
+          } else if (chart.chart_type == "Rebase") {
+            let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
+            chartSeries.push({
+              id: chart.id,
+              type: "line",
+              data: lineSeries,
+              color: stringToColor(chart.id),
+              title: chart.id
             });
           }
         }
@@ -153,7 +162,7 @@ export default function PlaygroundQueryPage() {
           </div>
         </div>
 
-        <div className="w-full px-4 py-8 border-t border-neutral-800 max-h-5/12 overflow-y-auto">
+        <div className="w-full px-4 py-8 border-t border-neutral-800 max-h-4/12 overflow-y-auto">
           {/* Replace with your table component if needed */}
           <div className="w-full rounded-xl">
             {response ? <MatchingItemsTable response={response} /> : null}
