@@ -76,3 +76,6 @@ FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
     }
 }
 ```
+
+
+wasm-pack build --target web --out-dir ../my-next-app/public/wasm

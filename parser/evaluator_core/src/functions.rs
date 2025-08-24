@@ -43,6 +43,18 @@ pub async fn handle_calculate_function(ctx: &mut EvalContext, args: &Vec<Functio
                             };
                             rsi(&prices, len)
                         }
+                        "RSIMA" => {
+                            let rsi_len: u64 = match args[0] {
+                                FunctionArg::Number(n) => n as u64,
+                                _ => 14,
+                            };
+                            let ma_len =  match args[1] {
+                                FunctionArg::Number(n) => n as u64,
+                                _ => 14,
+                            };
+                            let rsi = rsi(&prices, rsi_len);
+                            sma(&rsi, ma_len)
+                        }
                         "MA" => {
                             let len: u64 = match args[0] {
                                 FunctionArg::Number(n) => n as u64,
@@ -106,7 +118,7 @@ pub fn rsi(prices: &Vec<(String, (f64, f64, f64, f64))>, len: u64) -> Vec<(Strin
     let mut avg_loss: f64 = losses[..len].iter().sum::<f64>() / len as f64;
 
     let mut rsis: Vec<(String, (f64, f64, f64, f64))> = Vec::with_capacity(values.len() - len);
-    let mut date_offset = len + 1; // +1 because we lose one value due to diff
+    let mut date_offset = len;
 
     let rs = if avg_loss == 0.0 {
         f64::INFINITY

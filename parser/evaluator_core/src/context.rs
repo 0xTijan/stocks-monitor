@@ -1,4 +1,4 @@
-use crate::{helpers::{enum_to_chart_data, get_today, rebase_data, vol_to_chart_data}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
+use crate::{helpers::{enum_to_chart_data, get_today, rebase_data, vol_to_chart_data, indicator_to_panel_id}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -37,7 +37,7 @@ impl EvalContext {
             price_series: HashMap::new(),
             index_series: HashMap::new(),
             derived_series: HashMap::new(),
-            date_range: ("2024-01-01".to_string(), get_today()),
+            date_range: ("2015-01-01".to_string(), get_today()),
             tracked_items: Vec::new(),
             tracked_ids: HashSet::new(),
             rebase: None
@@ -283,8 +283,10 @@ impl EvalContext {
                     for vec in matches {
                         let chart_id = vec.0;
                         let mut chart_type = ChartType::Price;
+                        let mut panel_id = 0;
                         if chart_id.contains("_") {
                             chart_type = ChartType::Indicator;
+                            panel_id = indicator_to_panel_id(&chart_id);
                         }
                         let mut chart_data = enum_to_chart_data(vec.1.clone());
                         if let Some(rebase) = rebase {
@@ -294,7 +296,7 @@ impl EvalContext {
                         let chart = Chart {
                             id: chart_id.to_string(),
                             chart_type: chart_type,
-                            panel_id: 0,
+                            panel_id: panel_id,
                             data: chart_data
                         };
                         response.charts

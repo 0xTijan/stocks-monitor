@@ -149,9 +149,13 @@ pub fn vol_to_chart_data(series: Vec<(String, (f64, f64))>) -> Vec<ChartData> {
         .collect()
 }
 
-pub fn indicator_to_panel_type() {
-    
+pub fn indicator_to_panel_id(string: &str) -> i32 {
+    match string.split('_').next().unwrap_or("") {
+        "RSI" | "RSIMA" | "MA" | "EMA" | "WMA" => 1,
+        _ => 0,
+    }
 }
+
 
 pub fn rebase_data(data: &Vec<ChartData>, rebase: f64) -> Vec<ChartData> {
         if data.is_empty() {

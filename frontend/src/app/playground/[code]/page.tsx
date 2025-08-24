@@ -18,7 +18,9 @@ export default function PlaygroundQueryPage() {
   const [editableText, setEditableText] = useState("");
   const [response, setResponse] = useState<Response | null>(null);
   const [series, setSeries] = useState<GenericSeries[]>([]);
+  const [secondSeries, setSecondSeries] = useState<GenericSeries[]>([]);
   const [ogSeries, setOgSeries] = useState<GenericSeries[]>([]);
+  const [secondOgSeries, setSecondOgSeries] = useState<GenericSeries[]>([]);
 
   useEffect(() => {
     if (typeof code === "string") {
@@ -54,50 +56,78 @@ export default function PlaygroundQueryPage() {
       console.log("got response, crating charzs")
       // create chart series
       let chartSeries: GenericSeries[] = [];
+      let secondChartSeries: GenericSeries[] = [];
       response.charts?.map((chart) => {
         console.log("Chart id ", chart.id)
-        if (chart.panel_id == 0) {
-          if (chart.chart_type == "Volume") {
-            let volSeries: HistogramData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0], color: x.value[1] == 1 ? "green" : "red"})});
-            chartSeries.push({
-              id: chart.id,
-              type: "volume",
-              data: volSeries,
-              title: chart.id
-            });
-          } else if (chart.chart_type == "Price") {
-            let priceSeries: CandlestickData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], close: x.value[0], open: x.value[1], high: x.value[2], low: x.value[3]})});
-            chartSeries.push({
-              id: chart.id,
-              type: "candlestick",
-              data: priceSeries,
-              title: chart.id,
-            });
-          } else if (chart.chart_type == "Indicator") {
-            let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
-            chartSeries.push({
-              id: chart.id,
-              type: "line",
-              data: lineSeries,
-              color: stringToColor(chart.id),
-              title: chart.id,
-            });
-          } else if (chart.chart_type == "Rebase") {
-            let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
-            chartSeries.push({
-              id: chart.id,
-              type: "line",
-              data: lineSeries,
-              color: stringToColor(chart.id),
-              title: chart.id
-            });
+        if (chart.chart_type == "Volume") {
+          let volSeries: HistogramData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0], color: x.value[1] == 1 ? "green" : "red"})});
+          chartSeries.push({
+            id: chart.id,
+            type: "volume",
+            data: volSeries,
+            title: chart.id
+          });
+        } else if (chart.chart_type == "Price") {
+          let priceSeries: CandlestickData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], close: x.value[0], open: x.value[1], high: x.value[2], low: x.value[3]})});
+          chartSeries.push({
+            id: chart.id,
+            type: "candlestick",
+            data: priceSeries,
+            title: chart.id,
+          });
+        } else if (chart.chart_type == "Indicator") {
+          let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
+          let obj: GenericSeries = {
+            id: chart.id,
+            type: "line",
+            data: lineSeries,
+            color: stringToColor(chart.id),
+            title: chart.id,
           }
+          if (chart.panel_id == 0) {
+            chartSeries.push(obj);
+          } else {
+            secondChartSeries.push(obj);
+          }
+        } else if (chart.chart_type == "Rebase") {
+          let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
+          chartSeries.push({
+            id: chart.id,
+            type: "line",
+            data: lineSeries,
+            color: stringToColor(chart.id),
+            title: chart.id
+          });
         }
       });
-      setSeries(chartSeries);
-      setOgSeries(chartSeries);
+      let sortedSeries = sortSeries(chartSeries);
+      let sortedSecondSeries = sortSeries(secondChartSeries);
+      setSeries(sortedSeries);
+      setOgSeries(sortedSeries);
+      setSecondSeries(sortedSecondSeries);
+      setSecondOgSeries(sortedSecondSeries);
     }
   }, [response]);
+
+  const sortSeries = (items: GenericSeries[]) => {
+    return items.slice().sort((a, b) => {
+      const groupA = a.id.includes('_') ? a.id.split('_').pop()! : a.id;
+      const groupB = b.id.includes('_') ? b.id.split('_').pop()! : b.id;
+
+      if (groupA !== groupB) {
+        return groupA.localeCompare(groupB); // group by suffix
+      }
+
+      // Inside same group: plain comes first
+      const isPlainA = a.id === groupA;
+      const isPlainB = b.id === groupB;
+
+      if (isPlainA && !isPlainB) return -1;
+      if (!isPlainA && isPlainB) return 1;
+
+      return a.id.localeCompare(b.id); // fallback tie-breaker
+    });
+  }
 
   function stringToColor(str: string): string {
     let hash = 0;
@@ -117,19 +147,85 @@ export default function PlaygroundQueryPage() {
     return color;
   }
 
-  const toggleSeries = (id: string) => {
-    const exists = series.some(item => item.id === id);
+  const toggleSeries = (id: string, panelId: number) => {
+    let realSeries = series;
+    if (panelId == 1) {
+      realSeries = secondSeries;
+    }
+    let realOgSeries = ogSeries;
+    if (panelId == 1) {
+      realOgSeries = secondOgSeries;
+    }
+
+    const exists = realSeries.some(item => item.id === id);
     if (exists) {
-      const updatedArray = series.filter(item => item.id !== id);
-      setSeries(updatedArray);
+      if (id.includes("_")) {
+        const updatedArray = realSeries.filter(item => item.id !== id);
+        if (panelId == 0) {
+          setSeries(updatedArray);
+        } else {
+          setSecondSeries(updatedArray);
+        }
+      } else {
+        const updatedArray = realSeries.filter(item => !item.id.includes(id));
+        if (panelId == 0) {
+          setSeries(updatedArray);
+        } else {
+          setSecondSeries(updatedArray);
+        }
+      }
     } else {
-      const item = ogSeries.find(x => x.id == id);
-      if (item) {
-        let s = [...series];
-        s.push(item);
-        setSeries(s);
+      let items = [];
+      if (id.includes("_")) {
+        items = realOgSeries.filter(x => x.id == id);
+      } else {
+        items = realOgSeries.filter(x => x.id.includes(id));
+      }
+      if (items.length > 0) {
+        let s = [...realSeries, ...items];
+        if (panelId == 0) {
+          setSeries(s);
+        } else {
+          setSecondSeries(s);
+        }   
       }
     }
+  }
+
+  const toggleIndicators = (panelId: number) => {
+    let realSeries = series;
+    if (panelId == 1) {
+      realSeries = secondSeries;
+    }
+    let realOgSeries = ogSeries;
+    if (panelId == 1) {
+      realOgSeries = secondOgSeries;
+    }
+
+    let exists = realSeries.some(item => item.id.includes("_"));
+    if (exists) {
+      const updatedArray = realSeries.filter(item => !item.id.includes("_"));
+      if (panelId == 0) {
+        setSeries(updatedArray);
+      } else {
+        setSecondSeries(updatedArray);
+      }
+    } else {
+      const toAdd = realOgSeries.filter(x => x.id.includes("_"));
+      if (toAdd.length > 0) {
+        let s = [...realSeries, ...toAdd];
+        if (panelId == 0) {
+          setSeries(s);
+        } else {
+          setSecondSeries(s);
+        } 
+      }
+    }
+  }
+
+  const handleToggleIndicators = () => {
+    toggleIndicators(0);
+    toggleIndicators(1);
   }
 
   return (
@@ -181,8 +277,9 @@ export default function PlaygroundQueryPage() {
 
             <div className="flex-grow overflow-hidden mb-4">
               {/* Replace with your chart component */}
-              <div className="w-full h-full bg-neutral-900 rounded-xl flex items-center justify-center">
+              <div className="w-full h-full bg-neutral-900 rounded-xl flex flex-col items-center justify-center">
                 <GenericChart series={series} />
+                <GenericChart series={secondSeries} heightRatio={0.15} />
               </div>
             </div>
           </div>
@@ -191,9 +288,22 @@ export default function PlaygroundQueryPage() {
           <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
             <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
             <div className="space-y-3 text-sm ">
+              <label className="flex items-center space-x-2" onClick={() => handleToggleIndicators()}>
+                <input type="checkbox" className="accent-blue-500" defaultChecked/>
+                <span>Show all indicators</span>
+              </label>
+              <hr />
               {ogSeries.map((x) => {
                 return(
-                  <label className="flex items-center space-x-2" key={x.id} onClick={() => toggleSeries(x.id)}>
+                  <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 0)}>
+                    <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
+                    <span>{x.title}</span>
+                  </label>
+                )
+              })}
+              {secondOgSeries.map((x) => {
+                return(
+                  <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 1)}>
                     <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
                     <span>{x.title}</span>
                   </label>
