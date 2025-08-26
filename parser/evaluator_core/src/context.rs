@@ -309,7 +309,7 @@ impl EvalContext {
                         let volume_data = self.get_volume_for_stock(id);
                         let vol_data = vol_to_chart_data(volume_data);
                         let volume_chart = Chart {
-                            id: id.to_string() + " - Volume",
+                            id: id.to_string() + "_volume",
                             chart_type: ChartType::Volume,
                             panel_id: 0,
                             data: vol_data

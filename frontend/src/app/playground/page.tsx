@@ -15,6 +15,13 @@ export default function PlaygroundHome() {
     const encoded = encodeURIComponent(code);
     router.push(`/playground/${encoded}`);
   };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.shiftKey && e.key === "Enter") {
+      e.preventDefault();
+      handleExecute(query);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-black text-white p-6 flex flex-col items-center">
@@ -46,6 +53,7 @@ export default function PlaygroundHome() {
           value={query}
           wrap="off"
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}  
           className="w-full h-50 p-4 bg-black text-white rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-white resize-none shadow-md font-mono text-md leading-snug"
         />
         <button
@@ -54,6 +62,7 @@ export default function PlaygroundHome() {
         >
           Execute
         </button>
+        <p className="text-sm text-zinc-400 whitespace-nowrap overflow-x-auto mt-1.5">Shift + Enter</p>
       </div>
 
       {/* Preset Cards */}

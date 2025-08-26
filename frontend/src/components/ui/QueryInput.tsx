@@ -18,12 +18,20 @@ export default function QueryInput(props: {
     router.push(`/playground/${encoded}`);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.shiftKey && e.key === "Enter") {
+      e.preventDefault();
+      handleExecute();
+    }
+  };
+
   return (
     <div className="w-full gap-4 p-4 border-t border-b border-neutral-800">
       {isEditing ? (
         <textarea
           value={editableText}
           onChange={(e) => setEditableText(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full p-4 bg-zinc-900 text-white rounded-xl border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-md font-mono text-sm"
         />
       ) : (
@@ -66,6 +74,7 @@ export default function QueryInput(props: {
           </button>
         )}
       </div>
+      {isEditing ? <p className="text-sm text-zinc-400 whitespace-nowrap overflow-x-auto mt-1.5 text-right mr-1">Shift + Enter</p> : null}
     </div>
   );
 }

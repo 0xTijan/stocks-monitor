@@ -8,6 +8,12 @@ export type Preset = {
 
 export const presets: Preset[] = [
   {
+    id: "basic-chart",
+    title: "Basic Chart",
+    description: "Basic chart with some default indicators.",
+    code: `PLOT(items=[SBITOP, RSI(14), RSIMA(14, 14), MA(36), MA(58)])`,
+  },
+  {
     id: "YTD-performance-stocks",
     title: "YTD Performance Stocks",
     description: "Year-to-date performance of all tracked stocks.",

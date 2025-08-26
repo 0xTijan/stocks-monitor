@@ -106,23 +106,31 @@ export default function PlaygroundQueryPage() {
 
   const sortSeries = (items: GenericSeries[]) => {
     return items.slice().sort((a, b) => {
-      const groupA = a.id.includes('_') ? a.id.split('_').pop()! : a.id;
-      const groupB = b.id.includes('_') ? b.id.split('_').pop()! : b.id;
+      const getSymbol = (id: string) => {
+        const parts = id.split('_');
+        return parts[0] === 'MA' || parts[0] === 'RSI'
+          ? parts[parts.length - 1] // e.g. MA_36_ZVTG → ZVTG
+          : parts[0];               // e.g. ZVTG or ZVTG_volume
+      };
 
-      if (groupA !== groupB) {
-        return groupA.localeCompare(groupB); // group by suffix
+      const symA = getSymbol(a.id);
+      const symB = getSymbol(b.id);
+
+      if (symA !== symB) {
+        return symA.localeCompare(symB); // group by symbol
       }
 
-      // Inside same group: plain comes first
-      const isPlainA = a.id === groupA;
-      const isPlainB = b.id === groupB;
+      // --- order inside the same symbol group ---
+      if (a.id === symA) return -1; // plain first
+      if (b.id === symB) return 1;
 
-      if (isPlainA && !isPlainB) return -1;
-      if (!isPlainA && isPlainB) return 1;
+      if (a.id.endsWith('_volume') && !b.id.endsWith('_volume')) return -1; // volume second
+      if (!a.id.endsWith('_volume') && b.id.endsWith('_volume')) return 1;
 
-      return a.id.localeCompare(b.id); // fallback tie-breaker
+      return a.id.localeCompare(b.id); // tie-breaker
     });
-  }
+  };
+
 
   function stringToColor(str: string): string {
     let hash = 0;
