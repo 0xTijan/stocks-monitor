@@ -24,6 +24,7 @@ export interface BaseSeries<T> {
   id: string;
   type: ChartSeriesType;
   data: T[];
+  panel: number;
   color?: string;
   title?: string;
 }
@@ -64,6 +65,11 @@ export default function GenericChart({
       layout: {
         background: { color: "black" },
         textColor: "#C3BCDB",
+        panes: {
+          separatorColor: '#fff',
+          separatorHoverColor: '#C3BCDB',
+          enableResize: true,
+        },
       },
       grid: {
         vertLines: { color: "#444" },
@@ -107,6 +113,8 @@ export default function GenericChart({
       ? 0.2
       : 0;
 
+    let added = false;
+
     // Create each series
     for (const s of series) {
       switch (s.type) {
@@ -118,7 +126,7 @@ export default function GenericChart({
             downColor: "red",
             borderVisible: false,
             title: s.title
-          });
+          }, s.panel);
           candlestickSeries.setData(s.data);
           candlestickSeries.priceScale().applyOptions({
             autoScale: true,
@@ -132,7 +140,7 @@ export default function GenericChart({
               type: "volume",
             },
             priceScaleId: "",
-          });
+          }, s.panel);
           volumeSeries.setData(s.data);
           volumeSeries.priceScale().applyOptions({
             scaleMargins: {
@@ -149,7 +157,32 @@ export default function GenericChart({
             lineWidth: 2,
             lineStyle: LineStyle.Solid,
             title: s.title
-          });
+          }, s.panel);
+          if (!added && s.panel == 1) {
+            // overbought line
+            lineSeries.createPriceLine({
+              price: 80,
+              color: '#C3BCDB',
+              lineWidth: 2,
+              axisLabelVisible: true,
+            });
+            // middle line
+            lineSeries.createPriceLine({
+              price: 50,
+              color: '#C3BCDB',
+              lineWidth: 1,
+              lineStyle: 2,
+              axisLabelVisible: true,
+            });
+            // oversold line
+            lineSeries.createPriceLine({
+              price: 20,
+              color: '#C3BCDB',
+              lineWidth: 2,
+              axisLabelVisible: true,
+            });
+            added = true;
+          }
           lineSeries.setData(s.data);
           break;
         }

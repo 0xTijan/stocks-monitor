@@ -18,9 +18,7 @@ export default function PlaygroundQueryPage() {
   const [editableText, setEditableText] = useState("");
   const [response, setResponse] = useState<Response | null>(null);
   const [series, setSeries] = useState<GenericSeries[]>([]);
-  const [secondSeries, setSecondSeries] = useState<GenericSeries[]>([]);
   const [ogSeries, setOgSeries] = useState<GenericSeries[]>([]);
-  const [secondOgSeries, setSecondOgSeries] = useState<GenericSeries[]>([]);
 
   useEffect(() => {
     if (typeof code === "string") {
@@ -56,7 +54,7 @@ export default function PlaygroundQueryPage() {
       console.log("got response, crating charzs")
       // create chart series
       let chartSeries: GenericSeries[] = [];
-      let secondChartSeries: GenericSeries[] = [];
+
       response.charts?.map((chart) => {
         console.log("Chart id ", chart.id)
         if (chart.chart_type == "Volume") {
@@ -65,7 +63,8 @@ export default function PlaygroundQueryPage() {
             id: chart.id,
             type: "volume",
             data: volSeries,
-            title: chart.id
+            title: chart.id,
+            panel: chart.panel_id
           });
         } else if (chart.chart_type == "Price") {
           let priceSeries: CandlestickData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], close: x.value[0], open: x.value[1], high: x.value[2], low: x.value[3]})});
@@ -74,21 +73,18 @@ export default function PlaygroundQueryPage() {
             type: "candlestick",
             data: priceSeries,
             title: chart.id,
+            panel: chart.panel_id
           });
         } else if (chart.chart_type == "Indicator") {
           let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
-          let obj: GenericSeries = {
+          chartSeries.push({
             id: chart.id,
             type: "line",
             data: lineSeries,
             color: stringToColor(chart.id),
             title: chart.id,
-          }
-          if (chart.panel_id == 0) {
-            chartSeries.push(obj);
-          } else {
-            secondChartSeries.push(obj);
-          }
+            panel: chart.panel_id
+          });
         } else if (chart.chart_type == "Rebase") {
           let lineSeries: LineData[] = chart.data.map((x) => {return({time: x.date.split("T")[0], value: x.value[0]})});
           chartSeries.push({
@@ -96,16 +92,15 @@ export default function PlaygroundQueryPage() {
             type: "line",
             data: lineSeries,
             color: stringToColor(chart.id),
-            title: chart.id
+            title: chart.id,
+            panel: chart.panel_id
           });
         }
       });
+
       let sortedSeries = sortSeries(chartSeries);
-      let sortedSecondSeries = sortSeries(secondChartSeries);
       setSeries(sortedSeries);
       setOgSeries(sortedSeries);
-      setSecondSeries(sortedSecondSeries);
-      setSecondOgSeries(sortedSecondSeries);
     }
   }, [response]);
 
@@ -148,84 +143,41 @@ export default function PlaygroundQueryPage() {
   }
 
   const toggleSeries = (id: string, panelId: number) => {
-    let realSeries = series;
-    if (panelId == 1) {
-      realSeries = secondSeries;
-    }
-    let realOgSeries = ogSeries;
-    if (panelId == 1) {
-      realOgSeries = secondOgSeries;
-    }
-
-    const exists = realSeries.some(item => item.id === id);
+    const exists = series.some(item => item.id === id);
     if (exists) {
       if (id.includes("_")) {
-        const updatedArray = realSeries.filter(item => item.id !== id);
-        if (panelId == 0) {
-          setSeries(updatedArray);
-        } else {
-          setSecondSeries(updatedArray);
-        }
+        const updatedArray = series.filter(item => item.id !== id);
+        setSeries(updatedArray);
       } else {
-        const updatedArray = realSeries.filter(item => !item.id.includes(id));
-        if (panelId == 0) {
-          setSeries(updatedArray);
-        } else {
-          setSecondSeries(updatedArray);
-        }
+        const updatedArray = series.filter(item => !item.id.includes(id));
+        setSeries(updatedArray);
       }
     } else {
       let items = [];
       if (id.includes("_")) {
-        items = realOgSeries.filter(x => x.id == id);
+        items = ogSeries.filter(x => x.id == id);
       } else {
-        items = realOgSeries.filter(x => x.id.includes(id));
+        items = ogSeries.filter(x => x.id.includes(id));
       }
       if (items.length > 0) {
-        let s = [...realSeries, ...items];
-        if (panelId == 0) {
-          setSeries(s);
-        } else {
-          setSecondSeries(s);
-        }   
+        let s = [...series, ...items];
+        setSeries(s); 
       }
     }
   }
 
-  const toggleIndicators = (panelId: number) => {
-    let realSeries = series;
-    if (panelId == 1) {
-      realSeries = secondSeries;
-    }
-    let realOgSeries = ogSeries;
-    if (panelId == 1) {
-      realOgSeries = secondOgSeries;
-    }
-
-    let exists = realSeries.some(item => item.id.includes("_"));
+  const toggleIndicators = () => {
+    let exists = series.some(item => item.id.includes("_"));
     if (exists) {
-      const updatedArray = realSeries.filter(item => !item.id.includes("_"));
-      if (panelId == 0) {
-        setSeries(updatedArray);
-      } else {
-        setSecondSeries(updatedArray);
-      }
+      const updatedArray = series.filter(item => !item.id.includes("_"));
+      setSeries(updatedArray);
     } else {
-      const toAdd = realOgSeries.filter(x => x.id.includes("_"));
+      const toAdd = ogSeries.filter(x => x.id.includes("_"));
       if (toAdd.length > 0) {
-        let s = [...realSeries, ...toAdd];
-        if (panelId == 0) {
-          setSeries(s);
-        } else {
-          setSecondSeries(s);
-        } 
+        let s = [...series, ...toAdd];
+        setSeries(s);
       }
     }
-  }
-
-  const handleToggleIndicators = () => {
-    toggleIndicators(0);
-    toggleIndicators(1);
   }
 
   return (
@@ -279,7 +231,6 @@ export default function PlaygroundQueryPage() {
               {/* Replace with your chart component */}
               <div className="w-full h-full bg-neutral-900 rounded-xl flex flex-col items-center justify-center">
                 <GenericChart series={series} />
-                <GenericChart series={secondSeries} heightRatio={0.15} />
               </div>
             </div>
           </div>
@@ -288,7 +239,7 @@ export default function PlaygroundQueryPage() {
           <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
             <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
             <div className="space-y-3 text-sm ">
-              <label className="flex items-center space-x-2" onClick={() => handleToggleIndicators()}>
+              <label className="flex items-center space-x-2" onClick={() => toggleIndicators()}>
                 <input type="checkbox" className="accent-blue-500" defaultChecked/>
                 <span>Show all indicators</span>
               </label>
@@ -296,14 +247,6 @@ export default function PlaygroundQueryPage() {
               {ogSeries.map((x) => {
                 return(
                   <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 0)}>
-                    <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
-                    <span>{x.title}</span>
-                  </label>
-                )
-              })}
-              {secondOgSeries.map((x) => {
-                return(
-                  <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 1)}>
                     <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
                     <span>{x.title}</span>
                   </label>
