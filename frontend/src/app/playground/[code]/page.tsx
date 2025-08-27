@@ -105,32 +105,38 @@ export default function PlaygroundQueryPage() {
   }, [response]);
 
   const sortSeries = (items: GenericSeries[]) => {
-    return items.slice().sort((a, b) => {
-      const getSymbol = (id: string) => {
-        const parts = id.split('_');
-        return parts[0] === 'MA' || parts[0] === 'RSI'
-          ? parts[parts.length - 1] // e.g. MA_36_ZVTG → ZVTG
-          : parts[0];               // e.g. ZVTG or ZVTG_volume
-      };
+    const NON_SYMBOL_SUFFIXES = new Set(['volume']); // add more suffixes here if needed
 
+    const getSymbol = (id: string) => {
+      const parts = id.split('_');
+      if (parts.length === 1) return id; // plain symbol like "POSR"
+      const last = parts[parts.length - 1].toLowerCase();
+      if (NON_SYMBOL_SUFFIXES.has(last)) {
+        return parts[parts.length - 2]; // e.g. "ZVTG_volume" -> "ZVTG"
+      }
+      return parts[parts.length - 1]; // usual case: symbol is last segment
+    };
+
+    return items.slice().sort((a, b) => {
       const symA = getSymbol(a.id);
       const symB = getSymbol(b.id);
 
-      if (symA !== symB) {
-        return symA.localeCompare(symB); // group by symbol
-      }
+      // group by symbol first
+      if (symA !== symB) return symA.localeCompare(symB);
 
-      // --- order inside the same symbol group ---
-      if (a.id === symA) return -1; // plain first
-      if (b.id === symB) return 1;
+      // same symbol: order by rank
+      const isPlainA = a.id === symA;
+      const isPlainB = b.id === symB;
+      if (isPlainA !== isPlainB) return isPlainA ? -1 : 1;
 
-      if (a.id.endsWith('_volume') && !b.id.endsWith('_volume')) return -1; // volume second
-      if (!a.id.endsWith('_volume') && b.id.endsWith('_volume')) return 1;
+      const isVolA = a.id.toLowerCase().endsWith(`_volume`);
+      const isVolB = b.id.toLowerCase().endsWith(`_volume`);
+      if (isVolA !== isVolB) return isVolA ? -1 : 1;
 
-      return a.id.localeCompare(b.id); // tie-breaker
+      // fallback: alphabetical among remaining indicators
+      return a.id.localeCompare(b.id);
     });
   };
-
 
   function stringToColor(str: string): string {
     let hash = 0;

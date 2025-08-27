@@ -14,6 +14,12 @@ export const presets: Preset[] = [
     code: `PLOT(items=[SBITOP, RSI(14), RSIMA(14, 14), MA(36), MA(58)])`,
   },
   {
+    id: "most-volatile-stocks",
+    title: "Most Volatile Stocks",
+    description: "All stocks sorted by current volatility levels.",
+    code: `FILTER(items=[stocks], conditions=[country=si]) & SORT(property=BBWP(13, 252), dir=asc)`,
+  },
+  {
     id: "YTD-performance-stocks",
     title: "YTD Performance Stocks",
     description: "Year-to-date performance of all tracked stocks.",
