@@ -1,4 +1,4 @@
-use crate::{helpers::{enum_to_chart_data, get_today, rebase_data, vol_to_chart_data, indicator_to_panel_id}, response_types::{Chart, ChartType, Derived, Item, ItemType, Response, ResponseItem, TrackedItem}};
+use crate::{helpers::{enum_to_chart_data, get_today, indicator_to_panel_id, rebase_data, vol_to_chart_data}, response_types::{Chart, ChartType, Derived, ExtraValue, Item, ItemType, MatchingItem, Response, ResponseItem, TrackedItem}};
 use std::collections::{HashMap, HashSet};
 use crate::types::{Stock, Index, DailyPrice, IndexValue};
 use chrono::NaiveDate;
@@ -18,14 +18,12 @@ pub struct EvalContext {
     // === Derived Series ===
     pub derived_series: HashMap<String, Vec<(String, (f64, f64, f64, f64))>>,    // (CLOSE, OPEN, HIGH, LOW)
 
-    /*// === Function Registry ===
-    functions: HashMap<String, fn(&EvalContext, Vec<String>) -> Vec<f64>>,*/
-
     // === Metadata / Settings ===
     pub date_range: (String, String),
     pub tracked_items: Vec<TrackedItem>,
     pub tracked_ids: HashSet<String>,
     pub rebase: Option<f64>,
+    pub extra_data: HashMap<String, HashMap<String, ExtraValue>>,
 }
 
 
@@ -40,7 +38,8 @@ impl EvalContext {
             date_range: ("2015-01-01".to_string(), get_today()),
             tracked_items: Vec::new(),
             tracked_ids: HashSet::new(),
-            rebase: None
+            rebase: None,
+            extra_data: HashMap::new(),
         }
     }
 
@@ -243,11 +242,15 @@ impl EvalContext {
         for tracked_item in tracked_items {
             // add to matching items
             let data = self.get_item_data(&tracked_item.id);
+            let extra_data = self.extra_data.get(&tracked_item.id).cloned().unwrap_or_default();
             match data {
                 Some(d) => {
-                    let obj: ResponseItem = match d {
-                        Item::Index(index) => ResponseItem::Index(index),
-                        Item::Stock(stock) => ResponseItem::Stock(stock),
+                    let obj: MatchingItem = MatchingItem {
+                        item: match d {
+                            Item::Index(index) => ResponseItem::Index(index),
+                            Item::Stock(stock) => ResponseItem::Stock(stock),
+                        },
+                        extra_data: extra_data,
                     };
                     response
                         .matching_items
@@ -261,7 +264,10 @@ impl EvalContext {
                         .matching_items
                         .as_mut()
                         .expect("Expected matching_items to be Some")
-                        .push(ResponseItem::Derived(Derived {id: tracked_item.id}));
+                        .push(MatchingItem {
+                            item: ResponseItem::Derived(Derived {id: tracked_item.id}),
+                            extra_data: extra_data
+                        });
                 }
             }
         }
@@ -271,7 +277,7 @@ impl EvalContext {
             if let Some(items) = &response.matching_items {  
                 for item in items {
                     // create chart {} for all ids in derived series hashmap that include item id and push to charts
-                    let id = match item {
+                    let id = match &item.item {
                         ResponseItem::Derived(d) => &d.id,
                         ResponseItem::Index(i) => &i.symbol,
                         ResponseItem::Stock(s) => &s.symbol
@@ -354,5 +360,10 @@ impl EvalContext {
             }
         }
         res
+    }
+
+    pub fn save_extra_data(&mut self, item_id: &str, key: &str, value: ExtraValue) {
+        let item_map = self.extra_data.entry(item_id.to_string()).or_insert_with(HashMap::new);
+        item_map.insert(key.to_string(), value);
     }
 }

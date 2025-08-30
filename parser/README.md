@@ -10,35 +10,35 @@
 FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
     & SORT(property=RSI(14), dir=asc, limit=10)  
 
-// gets 10 stocks in uptrend and mc below 50m, sorted by rsi and plots them to chart - returns table and chart data
+// gets 10 stocks in uptrend and mc below 50m, sorted by rsi and CHARTs them to chart - returns table and chart data
 FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
     & SORT(property=RSI(14), dir=asc, limit=10)
-    & PLOT(from=2019-01-01, to=today)
+    & CHART(from=2019-01-01, to=today)
 
-// plots basket od stocks from date to today on daily timeframe
-PLOT(items=[(AAPL + MSFT + GOOG + AMZN) / 4], from=2010-01-01, to=today, timeframe=1d)
+// CHARTs basket od stocks from date to today on daily timeframe
+CHART(items=[(AAPL + MSFT + GOOG + AMZN) / 4], from=2010-01-01, to=today, timeframe=1d)
 
-// plots aapl msft ration and rsi for spy
-PLOT(items=[AAPL / MSFT, RSI(14, SPY)], ...) // plots ratio of aapl and msft and rsi for spy
+// CHARTs aapl msft ration and rsi for spy
+CHART(items=[AAPL / MSFT, RSI(14, SPY)], ...) // CHARTs ratio of aapl and msft and rsi for spy
 
-// filters all stocks and backtests all slovenian stocks with entry condition (ma crossed above other ma) and exit condition, tests with size 1000 and fee 0.05% and plots these slovenian stocks on chart (as well as mas)
-FILTER(items=[stocks], conditions=[country=si]) & BACKTEST(entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & PLOT
+// filters all stocks and backtests all slovenian stocks with entry condition (ma crossed above other ma) and exit condition, tests with size 1000 and fee 0.05% and CHARTs these slovenian stocks on chart (as well as mas)
+FILTER(items=[stocks], conditions=[country=si]) & BACKTEST(entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & CHART
 
 // gets all stocks that have mas crossed on (this day!) and sorts them by market cap
 FILTER(items=[stocks], conditions=[CROSSES(MA(36), MA(58), up)]) & SORT(property=market_cap, dir=desc)
 
-// backtests krka with this conditions and size, fee and plots krka and mas charts
-BACKTEST(items=[KRKA], entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & PLOT
+// backtests krka with this conditions and size, fee and CHARTs krka and mas charts
+BACKTEST(items=[KRKA], entry=[MA(36) > MA(58)], exit=[MA(36) > MA(58)], size=1000, fee=0.05) & CHART
 
-// backtests krka entry is only when SBITOP is in uptrend and rsi below 30, exit only on rsi above 70 or sbitop in downtrend, and plots 
-BACKTEST(items=[KRKA], entry=[RSI(14) < 30 AND MA(36, SBITOP) > MA(58, SBITOP)], exit=[(MA(36, SBITOP) < MA(58, SBITOP)) OR RSI(14) > 70], size=1000, fee=0.05) & PLOT
+// backtests krka entry is only when SBITOP is in uptrend and rsi below 30, exit only on rsi above 70 or sbitop in downtrend, and CHARTs 
+BACKTEST(items=[KRKA], entry=[RSI(14) < 30 AND MA(36, SBITOP) > MA(58, SBITOP)], exit=[(MA(36, SBITOP) < MA(58, SBITOP)) OR RSI(14) > 70], size=1000, fee=0.05) & CHART
 
-// takes only slovenian stocks with market cap under 1B, sorts them by volatility (desc) and groups them into 2 groups: bull and bear, and plots
+// takes only slovenian stocks with market cap under 1B, sorts them by volatility (desc) and groups them into 2 groups: bull and bear, and CHARTs
 FILTER(items=[stocks], conditions=[country=si AND market_cap <= 1000000000])
     & SORT(property=BBWP(), dir=asc)
     & GROUP(conditions=[MA(36) > MA(58)], name="bull trend")
     & GROUP(conditions=[MA(36) < MA(58)], name="bear trend")
-    & PLOT(from=2024-01-01, to=today)
+    & CHART(from=2024-01-01, to=today)
 ```
 
 #### Defaults:
@@ -57,7 +57,7 @@ timeframe=1d
 ```js
 FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
     & SORT(property=RSI(14), dir=asc, limit=10)
-    & PLOT(from=2024-01-01, to=today)
+    & CHART(from=2024-01-01, to=today)
 
 // response
 {
@@ -65,7 +65,7 @@ FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000])
     "matching_items": [
         Stock {}, Stock {}, ...
     ],
-    // because of plot this is added
+    // because of CHART this is added
     "charts": {
         "{stock_1_id}": {x, y}[],   
         "{stock_1_volume}": {x, y}[],

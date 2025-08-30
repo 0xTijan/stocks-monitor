@@ -19,6 +19,7 @@ export default function PlaygroundQueryPage() {
   const [response, setResponse] = useState<Response | null>(null);
   const [series, setSeries] = useState<GenericSeries[]>([]);
   const [ogSeries, setOgSeries] = useState<GenericSeries[]>([]);
+  const [hasChart, setHasChart] = useState(false); 
 
   useEffect(() => {
     if (typeof code === "string") {
@@ -51,6 +52,9 @@ export default function PlaygroundQueryPage() {
 
   useEffect(() => {
     if (response) {
+      if (response.charts !== undefined && response.charts.length > 0) {
+        setHasChart(true);
+      }
       console.log("got response, crating charzs")
       // create chart series
       let chartSeries: GenericSeries[] = [];
@@ -229,46 +233,48 @@ export default function PlaygroundQueryPage() {
       </main>
       <div className="flex flex-col min-h-screen bg-black text-white overflow-hidden">
         {/* Top section: Chart + Settings */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Chart */}
-          <div className="flex flex-col w-10/12 p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-2xl font-semibold">Query Results</h2>
-                <p className="text-sm text-gray-400">
-                  Your query response
-                </p>
+        {hasChart ? (
+          <div className="flex flex-1 overflow-hidden">
+            {/* Chart */}
+            <div className="flex flex-col w-10/12 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-semibold">Query Results</h2>
+                  <p className="text-sm text-gray-400">
+                    Your query response
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-grow overflow-hidden mb-4">
+                {/* Replace with your chart component */}
+                <div className="w-full h-full bg-neutral-900 rounded-xl flex flex-col items-center justify-center">
+                  <GenericChart series={series} />
+                </div>
               </div>
             </div>
 
-            <div className="flex-grow overflow-hidden mb-4">
-              {/* Replace with your chart component */}
-              <div className="w-full h-full bg-neutral-900 rounded-xl flex flex-col items-center justify-center">
-                <GenericChart series={series} />
+            {/* Settings */}
+            <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
+              <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
+              <div className="space-y-3 text-sm ">
+                <label className="flex items-center space-x-2" onClick={() => toggleIndicators()}>
+                  <input type="checkbox" className="accent-blue-500" defaultChecked/>
+                  <span>Show all indicators</span>
+                </label>
+                <hr />
+                {ogSeries.map((x) => {
+                  return(
+                    <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 0)}>
+                      <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
+                      <span>{x.title}</span>
+                    </label>
+                  )
+                })}
               </div>
             </div>
           </div>
-
-          {/* Settings */}
-          <div className="w-2/12 bg-black p-4 border-l border-neutral-800 overflow-y-auto">
-            <h3 className="text-xl font-semibold mb-4">Chart Settings</h3>
-            <div className="space-y-3 text-sm ">
-              <label className="flex items-center space-x-2" onClick={() => toggleIndicators()}>
-                <input type="checkbox" className="accent-blue-500" defaultChecked/>
-                <span>Show all indicators</span>
-              </label>
-              <hr />
-              {ogSeries.map((x) => {
-                return(
-                  <label className={`flex items-center space-x-2 ${x.title?.includes('_') ? "pl-8 text-xs -mt-2" : "pt-2"}`} key={x.id} onClick={() => toggleSeries(x.id, 0)}>
-                    <input type="checkbox" className="accent-blue-500" checked={series.includes(x)} />
-                    <span>{x.title}</span>
-                  </label>
-                )
-              })}
-            </div>
-          </div>
-        </div>
+        ):null}
 
         <div className="w-full px-4 py-8 border-t border-neutral-800 max-h-4/12 overflow-y-auto">
           {/* Replace with your table component if needed */}

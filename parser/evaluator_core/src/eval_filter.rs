@@ -1,6 +1,6 @@
 use std::pin::Pin;
 use parser_core::ast::{Comparator, LogicalExpr, LogicalOp, NamedArg, Operand, Value};
-use crate::{context::EvalContext, evaluator::evaluate_function_call, response_types::{Item, TrackedItem}};
+use crate::{context::EvalContext, evaluator::evaluate_function_call, response_types::{ExtraValue, Item, TrackedItem}};
 
 
 pub async fn filter_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
@@ -89,16 +89,32 @@ async fn evaluate_operand(ctx: &mut EvalContext, operand: &Operand, item: &Track
                     "country" => {
                         match data {
                             Item::Stock(stock) => {
-                                if stock.mic == "XZAG" { 0.0 } else { 1.0 }
+                                if stock.mic == "XZAG" { 
+                                    ctx.save_extra_data(&stock.symbol, "country", ExtraValue::Text("Croatia".to_string()));
+                                    0.0
+                                } else {
+                                    ctx.save_extra_data(&stock.symbol, "country", ExtraValue::Text("Slovenia".to_string()));
+                                    1.0
+                                }
                             }
                             Item::Index(index) => {
-                                if index.mic == "XZAG" { 0.0 } else { 1.0 }
+                                if index.mic == "XZAG" {
+                                    ctx.save_extra_data(&index.symbol, "country", ExtraValue::Text("Croatia".to_string()));
+                                    0.0
+                                } else {
+                                    ctx.save_extra_data(&index.symbol, "country", ExtraValue::Text("Slovenia".to_string()));
+                                    1.0
+                                }
                             }
                         }
                     },
                     "market_cap" => {
                         match data {
-                            Item::Stock(stock) => stock.quantity.unwrap_or(0) as f64 * stock.last_price.unwrap_or(0.0),
+                            Item::Stock(stock) => {
+                                let mc = stock.quantity.unwrap_or(0) as f64 * stock.last_price.unwrap_or(0.0);
+                                ctx.save_extra_data(&stock.symbol, "market_cap", ExtraValue::Number(mc));
+                                mc
+                            },
                             Item::Index(_) => 0.0,
                         }
                     }
@@ -121,10 +137,18 @@ async fn evaluate_operand(ctx: &mut EvalContext, operand: &Operand, item: &Track
             let res_id = evaluate_function_call(ctx, func_call).await;
             let id = res_id + &item.id;
             if let Some(series) = ctx.derived_series.get(&id) {
+                let func_id_clear = match id.rfind('_') {
+                    Some(pos) => &id[..pos],
+                    None => &id,
+                };
+
                 if series.is_empty() {
+                    ctx.save_extra_data(&item.id, func_id_clear, ExtraValue::Number(0.0));
                     0.0
                 } else {
-                    series[series.len() - 1].1.0    // take price (.1) and close value - only important one (.0)
+                    let res = series[series.len() - 1].1.0;    // take price (.1) and close value - only important one (.0)
+                    ctx.save_extra_data(&item.id, func_id_clear, ExtraValue::Number(res));
+                    res
                 }
             } else {
                 panic!("No series found for function call {}", id);

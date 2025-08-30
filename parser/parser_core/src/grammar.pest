@@ -6,7 +6,7 @@ command = { filter_cmd | sort_cmd | plot_cmd | backtest_cmd | group_cmd }
 
 filter_cmd = { "FILTER" ~ "(" ~ named_args ~ ")" }
 sort_cmd = { "SORT" ~ "(" ~ named_args ~ ")" }
-plot_cmd = { "PLOT" ~ "(" ~ named_args? ~ ")" }
+plot_cmd = { "CHART" ~ "(" ~ named_args? ~ ")" }
 backtest_cmd = { "BACKTEST" ~ "(" ~ named_args ~ ")" }
 group_cmd = { "GROUP" ~ "(" ~ named_args ~ ")" }
 

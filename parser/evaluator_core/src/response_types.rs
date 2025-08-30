@@ -9,11 +9,24 @@ use crate::types::{IndexValue, DailyPrice};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Response {
     pub charts: Option<Vec<Chart>>,
-    pub matching_items: Option<Vec<ResponseItem>>,
+    pub matching_items: Option<Vec<MatchingItem>>,
     pub backtest: Option<Vec<Backtest>>,
 }
 
 // TYPES
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MatchingItem {
+    pub item: ResponseItem,
+    pub extra_data: HashMap<String, ExtraValue>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ExtraValue {
+    Number(f64),
+    Text(String)
+}
+
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ResponseItem {
     Stock(Stock),

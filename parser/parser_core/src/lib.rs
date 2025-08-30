@@ -45,7 +45,7 @@ pub fn parse_script(input: &str) -> Result<Program, &'static str> {
             match command {
                 "FILTER" => program.commands.push(Command::Filter(Vec::new())),
                 "SORT" => program.commands.push(Command::Sort(Vec::new())),
-                "PLOT" => program.commands.push(Command::Plot(Vec::new())),
+                "CHART" => program.commands.push(Command::Plot(Vec::new())),
                 "BACKTEST" => program.commands.push(Command::Backtest(Vec::new())),
                 _ => panic!("Unknown command: {}", command),
             }

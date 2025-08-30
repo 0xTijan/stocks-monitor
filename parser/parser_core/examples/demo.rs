@@ -19,7 +19,7 @@ fn main() {
         }
     } else {
         // Default command if no args
-        "PLOT(items=[(SBITOP / 2) , RSI(14, (ZVTG / POSR))], from=2015-01-01, to=today)".to_string()
+        "CHART(items=[(SBITOP / 2) , RSI(14, (ZVTG / POSR))], from=2015-01-01, to=today)".to_string()
     };
 
     match parse_script(&input) {

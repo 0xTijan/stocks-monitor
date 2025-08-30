@@ -1,9 +1,9 @@
 # Custom Financial Scripting Language Documentation
 
 ## Overview
-This scripting language allows users to query, filter, sort, plot, and backtest financial data. It is designed to be intuitive yet powerful, enabling the creation of data pipelines using a series of **commands** chained with the `&` operator.
+This scripting language allows users to query, filter, sort, chart, and backtest financial data. It is designed to be intuitive yet powerful, enabling the creation of data pipelines using a series of **commands** chained with the `&` operator.
 
-Each command performs a specific task (filtering, sorting, plotting, or backtesting) and passes its output to the next command in the pipeline.
+Each command performs a specific task (filtering, sorting, CHARTING, or backtesting) and passes its output to the next command in the pipeline.
 
 ---
 
@@ -73,12 +73,12 @@ FILTER(items=[stocks], conditions=[RSI(14) > 50]) & SORT(item=RSI(14), dir=asc, 
 
 ---
 
-### 2.3 PLOT
+### 2.3 CHART
 **Purpose:** Visualizes items on a chart.
 
 **Syntax:**
 ```dsl
-PLOT(items=[list_of_items], from=date, to=date, timeframe=duration, rebase=yes|no)
+CHART(items=[list_of_items], from=date, to=date, timeframe=duration, rebase=yes|no)
 ```
 
 **Arguments:**
@@ -90,9 +90,9 @@ PLOT(items=[list_of_items], from=date, to=date, timeframe=duration, rebase=yes|n
 
 **Examples:**
 ```dsl
-PLOT(items=[AAPL, MSFT], from=2020-01-01, to=today, timeframe=1d)
-PLOT(items=[(AAPL + MSFT) / 2], from=2015-01-01, timeframe=1w)
-PLOT(items=[AAPL / MSFT, RSI(14, SPY)])
+CHART(items=[AAPL, MSFT], from=2020-01-01, to=today, timeframe=1d)
+CHART(items=[(AAPL + MSFT) / 2], from=2015-01-01, timeframe=1w)
+CHART(items=[AAPL / MSFT, RSI(14, SPY)])
 ```
 
 ---
@@ -118,9 +118,9 @@ BACKTEST(items=[KRKA], entry=[RSI(14) < 30], exit=[RSI(14) > 70], size=1000, fee
 BACKTEST(items=[AAPL], entry=[MA(36) > MA(58)], exit=[MA(36) < MA(58)], size=500, fee=0.1)
 ```
 
-Backtesting can be combined with plotting:
+Backtesting can be combined with charting:
 ```dsl
-BACKTEST(items=[AAPL], entry=[RSI(14) < 30], exit=[RSI(14) > 70], size=1000, fee=0.05) & PLOT
+BACKTEST(items=[AAPL], entry=[RSI(14) < 30], exit=[RSI(14) > 70], size=1000, fee=0.05) & CHART
 ```
 
 ---
@@ -222,11 +222,11 @@ FILTER(items=[stocks], conditions=[MA(36) > MA(58) AND market_cap <= 50000000]) 
 SORT(item=RSI(14), dir=asc, limit=10)
 ```
 
-### Example 2: Filter → Sort → Plot
+### Example 2: Filter → Sort → CHART
 ```dsl
 FILTER(items=[stocks], conditions=[RSI(14) < 30]) & 
 SORT(item=market_cap, dir=desc, limit=5) & 
-PLOT(from=2018-01-01, to=today, timeframe=1d)
+CHART(from=2018-01-01, to=today, timeframe=1d)
 ```
 
 ### Example 3: Backtest with Conditions
@@ -235,12 +235,12 @@ BACKTEST(items=[KRKA],
          entry=[RSI(14) < 30 AND MA(36, SBITOP) > MA(58, SBITOP)], 
          exit=[(MA(36, SBITOP) < MA(58, SBITOP)) OR RSI(14) > 70], 
          size=1000, fee=0.05) & 
-PLOT
+CHART
 ```
 
-### Example 4: Plot Ratios
+### Example 4: CHART Ratios
 ```dsl
-PLOT(items=[AAPL / MSFT, RSI(14, SPY)], from=2010-01-01, to=today, timeframe=1d)
+CHART(items=[AAPL / MSFT, RSI(14, SPY)], from=2010-01-01, to=today, timeframe=1d)
 ```
 
 ---
@@ -250,7 +250,7 @@ PLOT(items=[AAPL / MSFT, RSI(14, SPY)], from=2010-01-01, to=today, timeframe=1d)
 - Always ensure parentheses match correctly in logical and arithmetic expressions.
 - Start simple and test each command before chaining.
 - Use clear and explicit arguments to avoid ambiguity.
-- Follow the pipeline rules: `FILTER → SORT → PLOT/BACKTEST`.
+- Follow the pipeline rules: `FILTER → SORT → CHART/BACKTEST`.
 
 ---
 
@@ -260,7 +260,7 @@ PLOT(items=[AAPL / MSFT, RSI(14, SPY)], from=2010-01-01, to=today, timeframe=1d)
 |------------|----------------------|
 | FILTER     | Select instruments    |
 | SORT       | Order results         |
-| PLOT       | Visualize data        |
+| CHART       | Visualize data        |
 | BACKTEST   | Run strategy tests    |
 
 ---

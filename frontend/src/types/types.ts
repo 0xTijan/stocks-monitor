@@ -78,11 +78,20 @@ export interface ChartData {
     value: number[];
 }
 
-export type Item = 
-    | { Derived: Derived }
+export interface Item {
+    item: MatchingItem;
+    extra_data: Record<string, ExtraValue>;
+}
+
+export type MatchingItem = 
     | { Stock: Stock }
+    | { Derived: Derived }
     | { Index: Index}
 
 export interface Derived {
     id: string;
 }
+
+export type ExtraValue = 
+    | { Number: number }
+    | { Text: string }

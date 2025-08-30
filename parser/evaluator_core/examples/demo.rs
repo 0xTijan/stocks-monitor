@@ -20,7 +20,7 @@ fn main() {
         }
     } else {
         // Default command if no args
-        "PLOT(items=[ZVTG], from=2025-06-01, to=today)".to_string()
+        "CHART(items=[ZVTG], from=2025-06-01, to=today)".to_string()
     };
 
     block_on(evaluate_script(&input));

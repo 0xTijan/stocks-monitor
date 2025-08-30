@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use parser_core::ast::{NamedArg, Value};
-use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::expr_to_id, response_types::{Item, TrackedItem}, types::Direction};
+use crate::{context::EvalContext, evaluator::{compute_expr_series, evaluate_function_call}, helpers::expr_to_id, response_types::{Item, TrackedItem, ExtraValue}, types::Direction};
 
 pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
     let mut direction: Direction = Direction::Asc;
@@ -99,6 +99,19 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                 .partial_cmp(&b_val)
                 .unwrap_or(std::cmp::Ordering::Equal);
 
+            let a_data_id = match a_id.rfind('_') {
+                Some(pos) => &a_id[..pos],
+                None => &a_id,
+            };
+            let b_data_id = match b_id.rfind('_') {
+                Some(pos) => &b_id[..pos],
+                None => &b_id,
+            };
+
+            // save to extra_data
+            ctx.save_extra_data(a.id.as_str(), a_data_id, ExtraValue::Number(a_val.1.0));
+            ctx.save_extra_data(&b.id, b_data_id, ExtraValue::Number(b_val.1.0));
+
             match direction {
                 Direction::Asc => ordering,
                 Direction::Desc => ordering.reverse(),
@@ -143,6 +156,8 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
             
             let a_item = a_info.unwrap();
             let b_item = b_info.unwrap();
+            let a_id = a.id.as_str();
+            let b_id = b.id.as_str();
 
             let ordering = match field.as_deref() {
                 Some("market_cap") => {
@@ -154,6 +169,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.quantity.unwrap_or(0) as f64 * stock.last_price.unwrap_or(0.0),
                         Item::Index(index) => index.last_value.unwrap_or(0.0),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "market_cap", ExtraValue::Number(a_val));
+                    ctx.save_extra_data(b_id, "market_cap", ExtraValue::Number(b_val));
+                    // compare
                     a_val.partial_cmp(&b_val).unwrap_or(std::cmp::Ordering::Equal)
                 }
                 Some("price") => {
@@ -165,6 +184,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.last_price.unwrap_or(0.0),
                         Item::Index(index) => index.last_value.unwrap_or(0.0),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "price", ExtraValue::Number(a_val));
+                    ctx.save_extra_data(b_id, "price", ExtraValue::Number(b_val));
+                    // compare
                     a_val.partial_cmp(&b_val).unwrap_or(std::cmp::Ordering::Equal)
                 }
                 Some("quantity") => {
@@ -176,6 +199,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.quantity.unwrap_or(0) as f64,
                         Item::Index(_) => 0.0,
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "quantity", ExtraValue::Number(a_val));
+                    ctx.save_extra_data(b_id, "quantity", ExtraValue::Number(b_val));
+                    // compare
                     a_val.partial_cmp(&b_val).unwrap_or(std::cmp::Ordering::Equal)
                 }
                 Some("change_prev_close_percentage") => {
@@ -187,6 +214,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.change_prev_close_percentage.unwrap_or(0.0),
                         Item::Index(index) => index.change_prev_close_percentage.unwrap_or(0.0),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "change", ExtraValue::Number(a_val));
+                    ctx.save_extra_data(b_id, "change", ExtraValue::Number(b_val));
+                    // compare
                     a_val.partial_cmp(&b_val).unwrap_or(std::cmp::Ordering::Equal)
                 }
                 Some("sector_id") => {
@@ -198,6 +229,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.sector_id.clone().unwrap_or_default(),
                         Item::Index(_) => String::new(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "sector_id", ExtraValue::Text(a_str.clone()));
+                    ctx.save_extra_data(b_id, "sector_id", ExtraValue::Text(b_str.clone()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 Some("country") => {
@@ -209,6 +244,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.isin.chars().nth(0).clone().unwrap_or_default(),
                         Item::Index(index) => index.isin.chars().nth(0).clone().unwrap_or_default(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "country", ExtraValue::Text(a_str.to_string()));
+                    ctx.save_extra_data(b_id, "country", ExtraValue::Text(b_str.to_string()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 Some("mic") => {
@@ -220,6 +259,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.mic.clone(),
                         Item::Index(index) => index.mic.clone(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "mic", ExtraValue::Text(a_str.clone()));
+                    ctx.save_extra_data(b_id, "mic", ExtraValue::Text(b_str.clone()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 Some("symbol") => {
@@ -231,6 +274,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.symbol.clone(),
                         Item::Index(index) => index.symbol.clone(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "symbol", ExtraValue::Text(a_str.clone()));
+                    ctx.save_extra_data(b_id, "symbol", ExtraValue::Text(b_str.clone()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 Some("name") => {
@@ -242,6 +289,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.name.clone().unwrap_or_default(),
                         Item::Index(index) => index.name.clone().unwrap_or_default(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "name", ExtraValue::Text(a_str.clone()));
+                    ctx.save_extra_data(b_id, "name", ExtraValue::Text(b_str.clone()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 Some("isin") => {
@@ -253,6 +304,10 @@ pub async  fn sort_eval(ctx: &mut EvalContext, args: &Vec<NamedArg>) {
                         Item::Stock(stock) => stock.isin.clone(),
                         Item::Index(index) => index.isin.clone(),
                     };
+                    // save to extra_data
+                    ctx.save_extra_data(a_id, "isin", ExtraValue::Text(a_str.clone()));
+                    ctx.save_extra_data(b_id, "isin", ExtraValue::Text(b_str.clone()));
+                    // compare
                     a_str.cmp(&b_str)
                 }
                 _ => std::cmp::Ordering::Equal,
