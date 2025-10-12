@@ -1,0 +1,36 @@
+{
+  "scrapedAt": "2025-10-12T17:13:44.315Z",
+  "foundUrl": "https://ljse.si/en/papir-311/310?isin=SI0031102120&tab=stock_publisher",
+  "sections": {
+    "financialData": {
+      "rows": [
+        {
+          "metric": "Bid",
+          "values": [
+            "Ask"
+          ]
+        }
+      ]
+    },
+    "valuationRatios": {
+      "rows": [
+        {
+          "metric": "Bid",
+          "values": [
+            "Ask"
+          ]
+        }
+      ]
+    },
+    "tradingData": {
+      "rows": [
+        {
+          "metric": "Bid",
+          "values": [
+            "Ask"
+          ]
+        }
+      ]
+    }
+  }
+}

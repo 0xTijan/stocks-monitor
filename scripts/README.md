@@ -28,4 +28,17 @@ WHERE
 
 ```
 
+**After that run the following sql scripts for stock splits:**
+```
+UPDATE daily_prices
+SET
+    open_price = open_price / 70.5,
+    high_price = high_price / 70.5,
+    low_price = low_price / 70.5,
+    last_price = last_price / 70.5
+WHERE
+    stock_isin = 'SI0031110453' AND
+    date < '2025-06-02';
+```
+
 SQL schema after which the scripts are formulated is in `/sql`.

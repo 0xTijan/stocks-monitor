@@ -11,6 +11,7 @@ async function main() {
 
     for (const id of STOCK_IDS) {
         try {
+            console.log(`Scraping data for ${id}...`);
             // open a new page
             const instrumentPage = await browser.newPage();
             const dataPage = await browser.newPage();

@@ -149,14 +149,6 @@ pub fn vol_to_chart_data(series: Vec<(String, (f64, f64))>) -> Vec<ChartData> {
         .collect()
 }
 
-pub fn indicator_to_panel_id(string: &str) -> i32 {
-    match string.split('_').next().unwrap_or("") {
-        "RSI" | "RSIMA" | "BBWP" | "BBWPMA" => 1,   // list of indicators that range from 0 to 100 (are in separate panel)
-        _ => 0,                 // default panel for other indicators (all lines that go on candles)
-    }
-}
-
-
 pub fn rebase_data(data: &Vec<ChartData>, rebase: f64) -> Vec<ChartData> {
         if data.is_empty() {
         return vec![];
