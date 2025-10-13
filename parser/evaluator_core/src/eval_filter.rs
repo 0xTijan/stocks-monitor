@@ -121,6 +121,7 @@ async fn evaluate_operand(ctx: &mut EvalContext, operand: &Operand, item: &Track
                     // other side identifiers
                     "si" => 1.0,
                     "hr" => 0.0,
+                    "at" => 2.0,
                     _ => {
                         if let Ok(num) = ident.parse::<f64>() {
                             num

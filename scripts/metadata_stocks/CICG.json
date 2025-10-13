@@ -6,8 +6,9 @@
   "sectorId": "C",
   "sectorName": "Manufacturing",
   "firstDay": "1998-03-05",
-  "quantity": "8079770",
+  "quantity": 8079770,
   "description": "Cinkarna Celje is a company that was founded in 1873. Until 1986, a predominantly metallurgical company gradually transitioned into a chemical company. Today, the focus of activity is on the production and marketing of titanium dioxide pigment. It is now one of the largest Slovenian chemical companies, as a single joint-stock company it employs a little less than 800 people and generates around 200 million euros in total annual sales. More than 80 percent of its total sales are realized in global markets. ",
   "url": "https://www.cinkarna.si/si/",
+  "webId": "SI0031103805",
   "id": "SI0031103805"
 }

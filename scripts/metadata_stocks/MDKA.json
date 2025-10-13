@@ -6,8 +6,9 @@
   "sectorId": "G",
   "sectorName": "Wholesale and retail trade; repair of motor vehicles and motorcycles",
   "firstDay": "2005-10-19",
-  "quantity": "30194",
+  "quantity": 30194,
   "description": null,
   "url": "https://www.medika.hr/",
+  "webId": "HRMDKARA0000",
   "id": "HRMDKARA0000"
 }

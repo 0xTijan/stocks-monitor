@@ -49,7 +49,7 @@ async function main() {
                 const uls = blockInner.querySelectorAll('ul');
                 const _firstDay = uls[4].querySelectorAll('li')[1].textContent.trim();                  
                 const firstDay = new Date(_firstDay).toISOString().split('T')[0];
-                const quantity = uls[5].querySelectorAll('li')[1].textContent.trim().replaceAll(",", "");
+                const quantity = Number(uls[5].querySelectorAll('li')[1].textContent.trim().replaceAll(",", ""));
 
                 return { name, logo, symbol, nace, sectorId, sectorName, firstDay, quantity };
             });
@@ -66,6 +66,7 @@ async function main() {
             const data = {
                 ...instrumentData,
                 ...pageData,
+                webId: id,
                 id,
             };
             const stockMetadataDir = path.join(__dirname, 'metadata_stocks');

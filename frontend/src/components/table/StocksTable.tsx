@@ -30,12 +30,14 @@ export default function StockTable({ initialStocks }: Props) {
   const getCountryFlag = (isin: string) => {
     if (isin.startsWith("SI")) return "🇸🇮";
     if (isin.startsWith("HR")) return "🇭🇷";
+    if (isin.startsWith("AT")) return "🇦🇹";
     return "";
   };
 
   const getCountryName = (isin: string) => {
     if (isin.startsWith("SI")) return "Slovenia";
     if (isin.startsWith("HR")) return "Croatia";
+    if (isin.startsWith("AT")) return "Austria";
     return "Other";
   };
 

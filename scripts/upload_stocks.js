@@ -12,15 +12,15 @@ async function main() {
 
     for (const file of files) {
         if (!file.endsWith('.json')) continue;
-
+        
         const filePathHistory = path.join(stocksDir, file);
         const contentHistory = await fs.readFile(filePathHistory, 'utf-8');
         const { isin, mic, symbol, history } = JSON.parse(contentHistory);
 
         const filePathMetadata = path.join(metadataDir, file);
         const contentMetadata = await fs.readFile(filePathMetadata, 'utf-8');
-        const { name, logo, nace, sectorId, sectorName, firstDay, quantity, description, url } = JSON.parse(contentMetadata);
-
+        const { name, logo, nace, sectorId, sectorName, firstDay, quantity, description, url, webId } = JSON.parse(contentMetadata);
+        console.log(`Processing: `, name, logo, nace, sectorId, sectorName, firstDay, quantity, url, webId);
         try {
             await connection.beginTransaction();
 
@@ -40,9 +40,10 @@ async function main() {
                     logo_url,
                     website_url,
                     last_price,
-                    change_prev_close_percentage
+                    change_prev_close_percentage,
+                    web_id
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE mic = VALUES(mic), symbol = VALUES(symbol), name = VALUES(name)
             `, [
                 isin,
@@ -58,9 +59,10 @@ async function main() {
                 logo,
                 url,
                 history[0].last_price,
-                history[0].change_prev_close_percentage
+                history[0].change_prev_close_percentage,
+                webId
             ]);
-
+            console.log("pricesing daily prices for", symbol);
             // Insert each daily price
             for (const record of history) {
                 await connection.execute(`

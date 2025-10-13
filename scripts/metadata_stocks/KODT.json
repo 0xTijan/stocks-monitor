@@ -6,8 +6,9 @@
   "sectorId": "CJ",
   "sectorName": "Manufacture of electrical equipment",
   "firstDay": "2018-09-16",
-  "quantity": "388376",
+  "quantity": 388376,
   "description": null,
   "url": "https://www.koncar-dst.hr/hr",
+  "webId": "HRKODTRA0007",
   "id": "HRKODTRA0007"
 }

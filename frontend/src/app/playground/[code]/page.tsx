@@ -210,6 +210,9 @@ export default function PlaygroundQueryPage() {
             <Link className="px-4" href="/stocks/HRADPLRA0006">
               hr
             </Link>
+            <Link className="px-4" href="/stocks/AT000ADDIKO0">
+              at
+            </Link>
             <Link className="px-4" href="/stocks">
               all
             </Link>

@@ -6,8 +6,9 @@
   "sectorId": "CI",
   "sectorName": "Manufacture of computer, electronic and optical products",
   "firstDay": "2003-07-16",
-  "quantity": "1331650",
+  "quantity": 1331650,
   "description": null,
   "url": "https://www.ericssonnikolatesla.com/",
+  "webId": "HRERNTRA0000",
   "id": "HRERNTRA0000"
 }

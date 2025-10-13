@@ -6,8 +6,9 @@
   "sectorId": "K",
   "sectorName": "Financial and insurance activities",
   "firstDay": "2003-07-24",
-  "quantity": "148000",
+  "quantity": 148000,
   "description": null,
   "url": "https://www.ikb.hr/",
+  "webId": "HRIKBARA0008",
   "id": "HRIKBARA0008"
 }

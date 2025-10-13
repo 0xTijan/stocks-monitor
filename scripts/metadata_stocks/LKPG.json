@@ -6,8 +6,9 @@
   "sectorId": "H",
   "sectorName": "Transportation and storage",
   "firstDay": "1996-11-19",
-  "quantity": "14000000",
+  "quantity": 14000000,
   "description": "The Port of Koper in Slovenia is a multipurpose port operated by Luka Koper, a public limited company that operates all the 12 specialized terminals of the port, on which various types of cargo, such as containers, finished vehicles and other Ro-Ro cargo, break bulk, dry bulk, and liquid bulk cargoes, are handled. The port enjoys a very favorable geographical position in the northernmost part of the Adriatic Sea, allowing sea-going vessels to bring their cargo very near to important Central and East European markets in the port’s hinterland. The port’s main markets are the Central European countries in its hinterland: Austria, Hungary, Slovakia, Czech Republic, south Poland, and south Germany, while Slovenia is the domestic market. ",
   "url": "https://luka-kp.si/slo/",
+  "webId": "SI0031101346",
   "id": "SI0031101346"
 }

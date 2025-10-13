@@ -6,8 +6,9 @@
   "sectorId": "JB",
   "sectorName": "Telecommunications",
   "firstDay": "2020-10-13",
-  "quantity": "78000000",
+  "quantity": 78000000,
   "description": "Hrvatski Telekom (HT) is the leading provider of telecommunications services in Croatia and Montenegro. It offers a wide range of services including mobile and fixed telecommunications, internet, TV, and ICT solutions for private and business users. It is recognized and awarded for its commitment to sustainable business development and the application of the highest standards of corporate governance.",
   "url": "https://www.t.ht.hr/",
+  "webId": "HRHT00RA0005",
   "id": "HRHT00RA0005"
 }

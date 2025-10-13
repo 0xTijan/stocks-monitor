@@ -6,8 +6,9 @@
   "sectorId": "K",
   "sectorName": "Financial and insurance activities",
   "firstDay": "2016-08-30",
-  "quantity": "2317850",
+  "quantity": 2317850,
   "description": "Zagreb Stock Exchange Inc. is the only operator of the regulated capital market in the Republic of Croatia, which has been operating since 1991 as the central place for trading securities with the approval of the Croatian Financial Services Supervisory Agency. In addition to the regulated market, the ZSE manages the multilateral trading platform \"Progress,\" which enables capital raising for small and medium-sized enterprises. ZSE is the owner of 100% of the Ljubljana Stock Exchange and 30% of the Macedonian Stock Exchange, and it provides other services related to securities trading, such as issuing LEI codes, reporting OTC transactions, and providing APA services. ZSE is also the largest provider of education services in the field of financial topics and literacy in Croatia. ZSE ensures a transparent, secure, and cost-effective market, maintaining the highest quality of services according to the needs of investors, issuers, and shareholders. Additional info: zse.hr/en",
   "url": "https://www.zse.hr/",
+  "webId": "HRZB00RA0003",
   "id": "HRZB00RA0003"
 }

@@ -6,8 +6,9 @@
   "sectorId": "I",
   "sectorName": "Accommodation and food service activities",
   "firstDay": "2023-07-11",
-  "quantity": "10673027",
+  "quantity": 10673027,
   "description": null,
   "url": "https://www.monperin.hr/",
+  "webId": "HRMONPRA0007",
   "id": "HRMONPRA0007"
 }

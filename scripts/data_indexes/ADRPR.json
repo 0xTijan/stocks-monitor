@@ -1,9 +1,288 @@
 {
-  "timestamp": "2025-08-30T18:09:23.942186+02:00",
+  "timestamp": "2025-10-13T21:11:12.329695+02:00",
   "mic": "XZAG",
   "symbol": "ADRPR",
   "isin": "HRZB00IADPR4",
   "history": [
+    {
+      "date": "2025-10-13",
+      "open_value": "2906.25",
+      "high_value": "2926.90",
+      "low_value": "2904.92",
+      "last_value": "2926.90",
+      "change_prev_close_percentage": "0.71",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-10",
+      "open_value": "2895.17",
+      "high_value": "2910.89",
+      "low_value": "2859.35",
+      "last_value": "2906.25",
+      "change_prev_close_percentage": "0.35",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-09",
+      "open_value": "2932.56",
+      "high_value": "2935.56",
+      "low_value": "2896.19",
+      "last_value": "2896.19",
+      "change_prev_close_percentage": "-1.24",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-08",
+      "open_value": "2942.38",
+      "high_value": "2942.38",
+      "low_value": "2919.01",
+      "last_value": "2932.56",
+      "change_prev_close_percentage": "-0.44",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-07",
+      "open_value": "2983.98",
+      "high_value": "2985.72",
+      "low_value": "2937.17",
+      "last_value": "2945.43",
+      "change_prev_close_percentage": "-1.30",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-06",
+      "open_value": "3004.14",
+      "high_value": "3006.53",
+      "low_value": "2975.81",
+      "last_value": "2984.32",
+      "change_prev_close_percentage": "-0.58",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-03",
+      "open_value": "3002.09",
+      "high_value": "3006.13",
+      "low_value": "2991.51",
+      "last_value": "3001.83",
+      "change_prev_close_percentage": "-0.01",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-02",
+      "open_value": "3001.29",
+      "high_value": "3013.72",
+      "low_value": "2998.91",
+      "last_value": "3002.09",
+      "change_prev_close_percentage": "0.03",
+      "turnover": null
+    },
+    {
+      "date": "2025-10-01",
+      "open_value": "2993.58",
+      "high_value": "3004.60",
+      "low_value": "2982.04",
+      "last_value": "3001.29",
+      "change_prev_close_percentage": "0.39",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-30",
+      "open_value": "2978.74",
+      "high_value": "2992.11",
+      "low_value": "2974.14",
+      "last_value": "2989.51",
+      "change_prev_close_percentage": "0.50",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-29",
+      "open_value": "2965.23",
+      "high_value": "2974.91",
+      "low_value": "2960.75",
+      "last_value": "2974.76",
+      "change_prev_close_percentage": "0.30",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-26",
+      "open_value": "2962.16",
+      "high_value": "2975.38",
+      "low_value": "2953.50",
+      "last_value": "2965.81",
+      "change_prev_close_percentage": "0.12",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-25",
+      "open_value": "2957.44",
+      "high_value": "2966.90",
+      "low_value": "2943.94",
+      "last_value": "2962.16",
+      "change_prev_close_percentage": "0.16",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-24",
+      "open_value": "2942.03",
+      "high_value": "2963.31",
+      "low_value": "2941.61",
+      "last_value": "2957.44",
+      "change_prev_close_percentage": "0.46",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-23",
+      "open_value": "2959.01",
+      "high_value": "2964.58",
+      "low_value": "2924.43",
+      "last_value": "2943.86",
+      "change_prev_close_percentage": "-0.51",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-22",
+      "open_value": "2980.70",
+      "high_value": "2985.66",
+      "low_value": "2958.74",
+      "last_value": "2959.01",
+      "change_prev_close_percentage": "-0.73",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-19",
+      "open_value": "2963.84",
+      "high_value": "2992.36",
+      "low_value": "2963.84",
+      "last_value": "2980.70",
+      "change_prev_close_percentage": "0.57",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-18",
+      "open_value": "2973.76",
+      "high_value": "2978.40",
+      "low_value": "2961.99",
+      "last_value": "2963.84",
+      "change_prev_close_percentage": "-0.33",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-17",
+      "open_value": "2975.72",
+      "high_value": "2980.36",
+      "low_value": "2960.51",
+      "last_value": "2973.76",
+      "change_prev_close_percentage": "-0.07",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-16",
+      "open_value": "2998.51",
+      "high_value": "3000.71",
+      "low_value": "2975.72",
+      "last_value": "2975.72",
+      "change_prev_close_percentage": "-0.73",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-15",
+      "open_value": "2993.33",
+      "high_value": "3016.70",
+      "low_value": "2990.11",
+      "last_value": "2997.63",
+      "change_prev_close_percentage": "0.14",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-12",
+      "open_value": "2985.27",
+      "high_value": "3000.69",
+      "low_value": "2979.06",
+      "last_value": "2993.33",
+      "change_prev_close_percentage": "0.26",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-11",
+      "open_value": "2976.09",
+      "high_value": "2987.78",
+      "low_value": "2964.11",
+      "last_value": "2985.45",
+      "change_prev_close_percentage": "0.61",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-10",
+      "open_value": "2981.13",
+      "high_value": "2992.71",
+      "low_value": "2962.21",
+      "last_value": "2967.44",
+      "change_prev_close_percentage": "-0.39",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-09",
+      "open_value": "2971.50",
+      "high_value": "2982.80",
+      "low_value": "2967.67",
+      "last_value": "2978.97",
+      "change_prev_close_percentage": "0.25",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-08",
+      "open_value": "2952.21",
+      "high_value": "2975.91",
+      "low_value": "2945.25",
+      "last_value": "2971.50",
+      "change_prev_close_percentage": "0.81",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-05",
+      "open_value": "2930.18",
+      "high_value": "2956.87",
+      "low_value": "2928.51",
+      "last_value": "2947.67",
+      "change_prev_close_percentage": "0.60",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-04",
+      "open_value": "2933.42",
+      "high_value": "2937.28",
+      "low_value": "2921.28",
+      "last_value": "2930.18",
+      "change_prev_close_percentage": "-0.07",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-03",
+      "open_value": "2913.97",
+      "high_value": "2932.32",
+      "low_value": "2910.81",
+      "last_value": "2932.32",
+      "change_prev_close_percentage": "0.63",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-02",
+      "open_value": "2909.72",
+      "high_value": "2921.99",
+      "low_value": "2905.62",
+      "last_value": "2913.97",
+      "change_prev_close_percentage": "0.15",
+      "turnover": null
+    },
+    {
+      "date": "2025-09-01",
+      "open_value": "2894.68",
+      "high_value": "2912.06",
+      "low_value": "2894.68",
+      "last_value": "2909.72",
+      "change_prev_close_percentage": "0.49",
+      "turnover": null
+    },
     {
       "date": "2025-08-29",
       "open_value": "2904.63",

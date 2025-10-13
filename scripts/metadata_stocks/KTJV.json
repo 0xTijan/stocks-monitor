@@ -6,8 +6,9 @@
   "sectorId": "A",
   "sectorName": "Agriculture, forestry and fishing",
   "firstDay": "2003-07-30",
-  "quantity": "5726429",
+  "quantity": 5726429,
   "description": null,
   "url": "https://www.kutjevo.com/hr",
+  "webId": "HRKTJVRA0002",
   "id": "HRKTJVRA0002"
 }

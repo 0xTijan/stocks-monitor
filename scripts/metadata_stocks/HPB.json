@@ -6,8 +6,9 @@
   "sectorId": "K",
   "sectorName": "Financial and insurance activities",
   "firstDay": "2015-11-09",
-  "quantity": "2024625",
+  "quantity": 2024625,
   "description": "Hrvatska poštanska banka, plc. (\"HPB\") is the largest Croatian-owned bank, majority owned by the Republic of Croatia.\nHPB operates as a universal credit institution (bank) and provides all banking and financial services in accordance with the Credit Institutions Act and for providing investment services and performing investment activities in accordance with the Capital Market Act.\nHPB is the leading company in the group of related parties - HPB Group – comprising of the following companies wholly owned by HPB:\n HPB-nekretnine, društvo s ograničenom odgovornošću za promet nekretninama i graditeljstvo, Zagreb (limited liability company for real estate and construction),\n HPB Invest, društvo s ograničenom odgovornošću za upravljanje UCITS fondovima, Zagreb (limited liability company for managing UCITS funds).\n",
   "url": "https://www.hpb.hr/",
+  "webId": "HRHPB0RA0002",
   "id": "HRHPB0RA0002"
 }

@@ -6,8 +6,9 @@
   "sectorId": "CA",
   "sectorName": "Manufacture of food products, beverages and tobacco products",
   "firstDay": "2015-03-22",
-  "quantity": "1901643",
+  "quantity": 1901643,
   "description": null,
   "url": "https://www.granolio.hr/",
+  "webId": "HRGRNLRA0006",
   "id": "HRGRNLRA0006"
 }

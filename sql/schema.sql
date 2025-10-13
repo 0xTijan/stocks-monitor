@@ -12,6 +12,7 @@ CREATE TABLE stocks (
     description TEXT,
     logo_url TEXT,
     website_url TEXT,
+    web_id TEXT,
     last_price NUMERIC(10, 2),
     change_prev_close_percentage NUMERIC(6, 2),
     CONSTRAINT unique_stock UNIQUE (mic, symbol)

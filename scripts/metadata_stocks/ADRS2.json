@@ -6,8 +6,9 @@
   "sectorId": "MA",
   "sectorName": "Legal, accounting, management, architecture, engineering, technical testing and analysis activities",
   "firstDay": "2003-07-29",
-  "quantity": "6784100",
+  "quantity": 6784100,
   "description": null,
   "url": "https://www.adris.hr/",
+  "webId": "HRADRSPA0009",
   "id": "HRADRSPA0009"
 }

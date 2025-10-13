@@ -4,47 +4,47 @@
     {
       "isin": "SI0031103805",
       "freeFloatFactor": "0.55",
-      "weight": "3.22 %"
+      "weight": "2.97 %"
     },
     {
       "isin": "SI0031117813",
       "freeFloatFactor": "0.17",
-      "weight": "0.41 %"
+      "weight": "0.38 %"
     },
     {
       "isin": "SI0031102120",
-      "freeFloatFactor": "0.67",
-      "weight": "30.24 %"
+      "freeFloatFactor": "0.66",
+      "weight": "26.89 %"
     },
     {
       "isin": "SI0031101346",
       "freeFloatFactor": "0.38",
-      "weight": "5.41 %"
+      "weight": "6.95 %"
     },
     {
       "isin": "SI0021117344",
-      "freeFloatFactor": "0.40",
-      "weight": "19.50 %"
+      "freeFloatFactor": "0.41",
+      "weight": "21.87 %"
     },
     {
       "isin": "SI0031102153",
-      "freeFloatFactor": "0.60",
-      "weight": "20.38 %"
+      "freeFloatFactor": "0.51",
+      "weight": "19.62 %"
     },
     {
       "isin": "SI0021110513",
       "freeFloatFactor": "0.41",
-      "weight": "7.92 %"
+      "weight": "8.75 %"
     },
     {
       "isin": "SI0031104290",
       "freeFloatFactor": "0.32",
-      "weight": "4.26 %"
+      "weight": "3.76 %"
     },
     {
       "isin": "SI0021111651",
-      "freeFloatFactor": "0.36",
-      "weight": "8.66 %"
+      "freeFloatFactor": "0.35",
+      "weight": "8.80 %"
     }
   ],
   "id": "SI0028409892"

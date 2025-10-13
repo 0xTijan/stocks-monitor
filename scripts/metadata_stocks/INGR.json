@@ -6,8 +6,9 @@
   "sectorId": "MA",
   "sectorName": "Legal, accounting, management, architecture, engineering, technical testing and analysis activities",
   "firstDay": "2015-10-11",
-  "quantity": "13545200",
+  "quantity": 13545200,
   "description": null,
   "url": "https://www.ingra.hr/",
+  "webId": "HRINGRRA0001",
   "id": "HRINGRRA0001"
 }

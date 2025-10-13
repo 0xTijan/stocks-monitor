@@ -6,8 +6,9 @@
   "sectorId": "H",
   "sectorName": "Transportation and storage",
   "firstDay": "2003-08-13",
-  "quantity": "110845",
+  "quantity": 110845,
   "description": null,
   "url": "https://www.jadroagent.hr/",
+  "webId": "HRJDGTRA0000",
   "id": "HRJDGTRA0000"
 }

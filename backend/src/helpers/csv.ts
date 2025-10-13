@@ -24,7 +24,10 @@ export async function downloadFile(url: string, destFileName: string): Promise<v
       }
 
       response.pipe(file);
-      file.on('finish', () => file.close(resolve));
+      file.on('finish', () => file.close((err?: NodeJS.ErrnoException | null) => {
+        if (err) reject(err);
+        else resolve();
+      }));
     }).on('error', async (err) => {
       await unlink(destPath).catch(() => {});
       reject(err);

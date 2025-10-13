@@ -16,6 +16,7 @@ function main() {
     runTask("node get.js");
     runTask("node get_stocks_metadata.js");
     runTask("node get_indexes_metadata.js");
+    runTask("node get_wiener.js");
     runTask("node upload_stocks.js");
     runTask("node upload_indexes.js");
     runTask("node upload_index_members.js");
