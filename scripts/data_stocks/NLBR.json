@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:19:23.995082+02:00",
+  "timestamp": "2025-10-14T18:57:22.385148+02:00",
   "mic": "XLJU",
   "symbol": "NLBR",
   "isin": "SI0021117344",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "177.50",
+      "high_price": "178.00",
+      "low_price": "175.50",
+      "last_price": "176.00",
+      "vwap_price": "177.053880513680",
+      "change_prev_close_percentage": "-1.12",
+      "num_trades": 58,
+      "volume": "3582.00000",
+      "turnover": "634207.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

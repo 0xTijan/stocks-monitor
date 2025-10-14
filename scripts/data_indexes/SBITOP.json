@@ -1,9 +1,18 @@
 {
-  "timestamp": "2025-10-13T21:11:11.428608+02:00",
+  "timestamp": "2025-10-14T18:57:29.837067+02:00",
   "mic": "XLJU",
   "symbol": "SBITOP",
   "isin": "SI0026109882",
   "history": [
+    {
+      "date": "2025-10-14",
+      "open_value": "2429.78",
+      "high_value": "2442.83",
+      "low_value": "2418.35",
+      "last_value": "2437.75",
+      "change_prev_close_percentage": "0.53",
+      "turnover": "2633067.60"
+    },
     {
       "date": "2025-10-13",
       "open_value": "2409.77",

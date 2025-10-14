@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:10.218879+02:00",
+  "timestamp": "2025-10-14T18:57:28.631985+02:00",
   "mic": "XZAG",
   "symbol": "ZABA",
   "isin": "HRZABARA0009",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "24.20",
+      "high_price": "24.20",
+      "low_price": "23.90",
+      "last_price": "24.10",
+      "vwap_price": "24.0214241676940",
+      "change_prev_close_percentage": "0.00",
+      "num_trades": 20,
+      "volume": "3244.00000",
+      "turnover": "77925.50",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

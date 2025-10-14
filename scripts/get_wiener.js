@@ -271,7 +271,7 @@ async function main() {
         turnover: row["Total Value1"].replace(/,/g, ""),
         price_currency: "EUR",
         turnover_currency: "EUR",
-      }));
+      })).reverse(); // reverse to have oldest first
 
       const jsonData = {
         timestamp: "",
@@ -281,7 +281,7 @@ async function main() {
         history: jsonDataArr,
       };
 
-      const lastPrice = jsonData.history.slice(-1)[0].last_price;
+      const lastPrice = jsonData.history[0].last_price;
 
       await fs1.writeFile(jsonPath, JSON.stringify(jsonData, null, 2));
 

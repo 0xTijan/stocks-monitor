@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:05.52838+02:00",
+  "timestamp": "2025-10-14T18:57:23.564698+02:00",
   "mic": "XLJU",
   "symbol": "ZVTG",
   "isin": "SI0021111651",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "57.20",
+      "high_price": "57.60",
+      "low_price": "56.60",
+      "last_price": "56.60",
+      "vwap_price": "56.796282100422",
+      "change_prev_close_percentage": "-1.74",
+      "num_trades": 40,
+      "volume": "5218.00000",
+      "turnover": "296363.00",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

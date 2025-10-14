@@ -1,9 +1,18 @@
 {
-  "timestamp": "2025-10-13T21:11:11.575656+02:00",
+  "timestamp": "2025-10-14T18:57:29.980715+02:00",
   "mic": "XLJU",
   "symbol": "SBITR",
   "isin": "SI0028409892",
   "history": [
+    {
+      "date": "2025-10-14",
+      "open_value": "3630.27",
+      "high_value": "3649.77",
+      "low_value": "3613.20",
+      "last_value": "3642.19",
+      "change_prev_close_percentage": "0.53",
+      "turnover": "2633067.60"
+    },
     {
       "date": "2025-10-13",
       "open_value": "3600.39",

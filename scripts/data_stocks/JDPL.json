@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:11.058851+02:00",
+  "timestamp": "2025-10-14T18:57:29.500318+02:00",
   "mic": "XZAG",
   "symbol": "JDPL",
   "isin": "HRJDPLRA0007",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "6.90",
+      "high_price": "6.90",
+      "low_price": "6.90",
+      "last_price": "6.90",
+      "vwap_price": "6.9000000000000",
+      "change_prev_close_percentage": "-1.43",
+      "num_trades": 1,
+      "volume": "166.00000",
+      "turnover": "1145.40",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

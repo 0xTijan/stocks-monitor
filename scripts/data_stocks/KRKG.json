@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:19:23.691266+02:00",
+  "timestamp": "2025-10-14T18:57:21.508798+02:00",
   "mic": "XLJU",
   "symbol": "KRKG",
   "isin": "SI0031102120",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "197.50",
+      "high_price": "202.00",
+      "low_price": "195.50",
+      "last_price": "202.00",
+      "vwap_price": "198.159628170400",
+      "change_prev_close_percentage": "3.06",
+      "num_trades": 124,
+      "volume": "8122.00000",
+      "turnover": "1609452.50",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

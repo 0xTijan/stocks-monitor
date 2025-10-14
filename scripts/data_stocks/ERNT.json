@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:08.975764+02:00",
+  "timestamp": "2025-10-14T18:57:27.38179+02:00",
   "mic": "XZAG",
   "symbol": "ERNT",
   "isin": "HRERNTRA0000",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "193.00",
+      "high_price": "197.00",
+      "low_price": "193.00",
+      "last_price": "193.50",
+      "vwap_price": "194.39655172414",
+      "change_prev_close_percentage": "0.00",
+      "num_trades": 14,
+      "volume": "261.00000",
+      "turnover": "50737.50",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

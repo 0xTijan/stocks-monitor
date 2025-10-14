@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:04.892864+02:00",
+  "timestamp": "2025-10-14T18:57:22.697029+02:00",
   "mic": "XLJU",
   "symbol": "PETG",
   "isin": "SI0031102153",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "48.00",
+      "high_price": "48.50",
+      "low_price": "48.00",
+      "last_price": "48.50",
+      "vwap_price": "48.334684684685",
+      "change_prev_close_percentage": "1.04",
+      "num_trades": 15,
+      "volume": "444.00000",
+      "turnover": "21460.60",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

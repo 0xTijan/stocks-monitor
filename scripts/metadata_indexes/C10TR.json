@@ -4,27 +4,27 @@
     {
       "isin": "HRADRSPA0009",
       "freeFloatFactor": "0.95",
-      "weight": "10.66 %"
+      "weight": "10.87 %"
     },
     {
       "isin": "HRATGRRA0003",
       "freeFloatFactor": "0.45",
-      "weight": "5.34 %"
+      "weight": "5.39 %"
     },
     {
       "isin": "HRERNTRA0000",
       "freeFloatFactor": "0.55",
-      "weight": "3.00 %"
+      "weight": "3.02 %"
     },
     {
       "isin": "HRHPB0RA0002",
       "freeFloatFactor": "0.30",
-      "weight": "3.89 %"
+      "weight": "3.88 %"
     },
     {
       "isin": "HRHT00RA0005",
       "freeFloatFactor": "0.40",
-      "weight": "19.87 %"
+      "weight": "19.58 %"
     },
     {
       "isin": "HRIG00RA0009",
@@ -34,22 +34,22 @@
     {
       "isin": "HRKODTRA0007",
       "freeFloatFactor": "0.35",
-      "weight": "10.20 %"
+      "weight": "10.13 %"
     },
     {
       "isin": "HRKOEIRA0009",
       "freeFloatFactor": "1.00",
-      "weight": "17.85 %"
+      "weight": "17.61 %"
     },
     {
       "isin": "HRPODRRA0004",
       "freeFloatFactor": "0.80",
-      "weight": "18.42 %"
+      "weight": "18.68 %"
     },
     {
       "isin": "HRRIVPRA0000",
       "freeFloatFactor": "0.55",
-      "weight": "9.11 %"
+      "weight": "9.18 %"
     }
   ],
   "id": "HRZB00ICB103"

@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:09.813008+02:00",
+  "timestamp": "2025-10-14T18:57:28.222098+02:00",
   "mic": "XZAG",
   "symbol": "ULPL",
   "isin": "HRULPLRA0002",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "11.20",
+      "high_price": "11.20",
+      "low_price": "11.10",
+      "last_price": "11.10",
+      "vwap_price": "11.168164794007",
+      "change_prev_close_percentage": "-0.89",
+      "num_trades": 3,
+      "volume": "267.00000",
+      "turnover": "2981.90",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

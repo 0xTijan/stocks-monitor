@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:07.127551+02:00",
+  "timestamp": "2025-10-14T18:57:25.38176+02:00",
   "mic": "XZAG",
   "symbol": "RIVP",
   "isin": "HRRIVPRA0000",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "6.18",
+      "high_price": "6.22",
+      "low_price": "6.16",
+      "last_price": "6.22",
+      "vwap_price": "6.1943222764775",
+      "change_prev_close_percentage": "0.32",
+      "num_trades": 14,
+      "volume": "5939.00000",
+      "turnover": "36788.08",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

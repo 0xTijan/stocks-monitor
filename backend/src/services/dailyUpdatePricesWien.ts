@@ -13,26 +13,79 @@ const getFormattedDate = (n: number) => {
   return `${mm}%2F${dd}%2F${yyyy}`;
 }
 
-export const updatePrices = async() => {
-    console.log('Starting daily update task...');
+const getFormattedDateToSave = (n: number) => {
+  const now = new Date();
+
+  const yyyy = now.getFullYear();
+  const dd = String(now.getDate() - n).padStart(2, '0');
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+type RecordData = Record<string, string>;
+
+function csvToRecord(csv: string): RecordData {
+  // Split into non-empty lines
+  const lines = csv.trim().split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return {};
+
+  // Parse header and first data row
+  const headers = lines[0]
+    .split(';')
+    .map(h => h.replace(/[";]/g, '').trim())
+    .filter(Boolean);
+
+  const values = lines[1]
+    .split(';')
+    .map(v => v.replace(/[";]/g, '').trim())
+    .filter(Boolean);
+
+  // Convert header names -> camelCase keys
+  const normalizeKey = (key: string): string =>
+    key
+      .toLowerCase()
+      .replace(/\s*%/g, 'Pct')          // Replace '%' with 'Pct'
+      .replace(/\s+/g, ' ')             // Normalize spaces
+      .replace(/\s(.)/g, (_, c) => c.toUpperCase()) // CamelCase
+      .replace(/\s/g, '')               // Remove spaces
+      .replace('.', '');                // Remove dots
+
+  const record: RecordData = {};
+
+  headers.forEach((header, i) => {
+    const key = normalizeKey(header);
+    const value = values[i];
+    if (value !== undefined && value !== '') {
+      record[key] = value;
+    }
+  });
+
+  return record;
+}
+
+
+export const updatePricesAt = async() => {
+    console.log('Starting daily update task - AT...');
     try {
         const conn = await getConnection();
 
-        const [stockRows] = await conn.query<RowDataPacket[]>('SELECT isin FROM stocks');
-        const [indexRows] = await conn.query<RowDataPacket[]>('SELECT isin FROM indexes');    
+        const [stockRows] = await conn.query<RowDataPacket[]>('SELECT isin, web_id FROM stocks');
+        // const [indexRows] = await conn.query<RowDataPacket[]>('SELECT isin FROM indexes');    
             
         for (const stock of stockRows) {
             const isin = stock.isin;
+            const web_id = stock.web_id;
             if (isin.startsWith("AT")) {
                 const DATE_TILL = getFormattedDate(0);
                 const DATE_FROM = getFormattedDate(0);
-
-                const url = `https://www.wienerborse.at/en/stock-prime-market/${stock.webId}/historical-data/?c48840%5BDOWNLOAD%5D=csv&c48840%5BDATETIME_TZ_END_RANGE%5D=${DATE_TILL}&c48840%5BDATETIME_TZ_START_RANGE%5D=${DATE_FROM}`;
-
+                const DATE_TO_SAVE = getFormattedDateToSave(0);
+                console.log(web_id)
+                const url = `https://www.wienerborse.at/en/stock-prime-market/${web_id}/historical-data/?c48840%5BDOWNLOAD%5D=csv&c48840%5BDATETIME_TZ_END_RANGE%5D=${DATE_TILL}&c48840%5BDATETIME_TZ_START_RANGE%5D=${DATE_FROM}`;
+                console.log("URL:", url);
                 try {
                     const response = await axios.get(url);
-                    const record = response.data.history[0];
-
+                    const record = csvToRecord(response.data);
                     if (record) {
                         console.log(`Saving data for ISIN: ${isin}`);
                         // insert or update daily prices
@@ -55,11 +108,11 @@ export const updatePrices = async() => {
                                 price_currency = VALUES(price_currency),
                                 turnover_currency = VALUES(turnover_currency)
                         `, [
-                            isin, record.date, record.trading_model_id, record.open_price,
-                            record.high_price, record.low_price, record.last_price,
-                            record.vwap_price, record.change_prev_close_percentage,
-                            record.num_trades, record.volume, record.turnover,
-                            record.price_currency, record.turnover_currency
+                            isin, DATE_TO_SAVE, "CT", Number(record.open) ?? null,
+                            Number(record.high) ?? null, Number(record.low) ?? null, Number(record.lastClose) ?? null,
+                            null, Number(record.chgPct.replace('%', '')) ?? null,
+                            null, Number(record.totalVolume1.replace(/,/g, "")) ?? null, Number(record.totalValue1.replace(/,/g, "")) ?? null,
+                            "EUR", "EUR"
                         ]);
 
                         // update price in stocks table               
@@ -70,7 +123,7 @@ export const updatePrices = async() => {
                                 change_prev_close_percentage = ?
                             WHERE isin = ?
                         `, [
-                            record.last_price, record.change_prev_close_percentage, isin
+                            Number(record.lastClose) ?? null, Number(record.chgPct.replace('%', '')) ?? null, isin
                         ]);
                     }
                 } catch (error) {
@@ -93,7 +146,7 @@ export const updatePrices = async() => {
             }
         }
 
-        for (const index of indexRows) {
+        /*for (const index of indexRows) {
             const DATE_TILL = getFormattedDate(0);
             const DATE_FROM = getFormattedDate(1);
             const isin = index.isin;
@@ -155,7 +208,7 @@ export const updatePrices = async() => {
                     0, isin
                 ]);
             }
-        }
+        }*/
 
         await conn.end();
         await sendSuccessEmail();

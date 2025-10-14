@@ -4,7 +4,7 @@
     {
       "isin": "HRADPLRA0006",
       "freeFloatFactor": "0.70",
-      "weight": "2.54 %"
+      "weight": "2.57 %"
     },
     {
       "isin": "HRARNTRA0004",
@@ -14,22 +14,22 @@
     {
       "isin": "HRATGRRA0003",
       "freeFloatFactor": "0.45",
-      "weight": "12.43 %"
+      "weight": "12.50 %"
     },
     {
       "isin": "HRHT00RA0005",
       "freeFloatFactor": "0.40",
-      "weight": "30.54 %"
+      "weight": "30.00 %"
     },
     {
       "isin": "HRPODRRA0004",
       "freeFloatFactor": "0.80",
-      "weight": "29.90 %"
+      "weight": "30.23 %"
     },
     {
       "isin": "HRRIVPRA0000",
       "freeFloatFactor": "0.55",
-      "weight": "21.19 %"
+      "weight": "21.29 %"
     }
   ],
   "id": "HRZB00ICBPR4"

@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:07.365173+02:00",
+  "timestamp": "2025-10-14T18:57:25.64365+02:00",
   "mic": "XZAG",
   "symbol": "IG",
   "isin": "HRIG00RA0009",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "55.40",
+      "high_price": "55.40",
+      "low_price": "55.40",
+      "last_price": "55.40",
+      "vwap_price": "55.400000000000",
+      "change_prev_close_percentage": "-0.72",
+      "num_trades": 15,
+      "volume": "524.00000",
+      "turnover": "29029.60",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",

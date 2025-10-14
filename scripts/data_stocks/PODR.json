@@ -1,9 +1,24 @@
 {
-  "timestamp": "2025-10-13T21:11:06.949964+02:00",
+  "timestamp": "2025-10-14T18:57:25.189682+02:00",
   "mic": "XZAG",
   "symbol": "PODR",
   "isin": "HRPODRRA0004",
   "history": [
+    {
+      "date": "2025-10-14",
+      "trading_model_id": "CT",
+      "open_price": "152.00",
+      "high_price": "154.00",
+      "low_price": "152.00",
+      "last_price": "154.00",
+      "vwap_price": "153.190721649480",
+      "change_prev_close_percentage": "0.98",
+      "num_trades": 12,
+      "volume": "97.00000",
+      "turnover": "14859.50",
+      "price_currency": "EUR",
+      "turnover_currency": "EUR"
+    },
     {
       "date": "2025-10-13",
       "trading_model_id": "CT",
